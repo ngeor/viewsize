@@ -30,5 +30,21 @@ namespace ViewSizeMac
                 // Update the view, if already loaded.
             }
         }
+
+        partial void OnSelectFolder(NSObject sender)
+        {
+            var dlg = NSOpenPanel.OpenPanel;
+            dlg.CanChooseFiles = false;
+            dlg.CanChooseDirectories = true;
+            dlg.CanCreateDirectories = false;
+            if (dlg.RunModal() == 1)
+            {
+                txtFolder.StringValue = dlg.Url.Path;
+            }
+        }
+
+        partial void OnScan(NSObject sender)
+        {
+        }
     }
 }
