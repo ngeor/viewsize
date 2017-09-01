@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{BB6E4909-9A32-4682-801F-CF4B2ABD5C5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewSizeWpf", "ViewSizeWpf\ViewSizeWpf.csproj", "{BB6E4909-9A32-4682-801F-CF4B2ABD5C5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewSizeGtk", "ViewSizeGtk\ViewSizeGtk.csproj", "{B6F8FE67-B7D8-4976-AFF1-D917CAF95787}"
 EndProject
