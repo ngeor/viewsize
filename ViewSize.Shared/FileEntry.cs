@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace WpfApp1
+namespace CRLFLabs.ViewSize
 {
     class FileEntry
     {
@@ -41,4 +41,6 @@ namespace WpfApp1
             finished(1);
         }
     }
+
+    delegate void NotifyProgress(int number);
 }

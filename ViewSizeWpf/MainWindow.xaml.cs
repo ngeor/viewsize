@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using CRLFLabs.ViewSize;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -99,5 +100,5 @@ namespace WpfApp1
         }
     }
 
-    delegate void NotifyProgress(int number);
+    
 }
