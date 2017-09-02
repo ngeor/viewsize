@@ -9,83 +9,91 @@ using System.CodeDom.Compiler;
 
 namespace ViewSizeMac
 {
-	[Register ("ViewController")]
-	partial class ViewController
-	{
-		[Outlet]
-		AppKit.NSButton btnCancel { get; set; }
+    [Register ("ViewController")]
+    partial class ViewController
+    {
+        [Outlet]
+        AppKit.NSButton btnCancel { get; set; }
 
-		[Outlet]
-		AppKit.NSButton btnScan { get; set; }
+        [Outlet]
+        AppKit.NSButton btnScan { get; set; }
 
-		[Outlet]
-		AppKit.NSButton btnSelectFolder { get; set; }
+        [Outlet]
+        AppKit.NSButton btnSelectFolder { get; set; }
 
-		[Outlet]
-		AppKit.NSTableColumn colFolder { get; set; }
+        [Outlet]
+        AppKit.NSTableColumn colFolder { get; set; }
 
-		[Outlet]
-		AppKit.NSTableColumn colSize { get; set; }
+        [Outlet]
+        AppKit.NSTableColumn colSize { get; set; }
 
-		[Outlet]
-		AppKit.NSTextField lblStatus { get; set; }
+        [Outlet]
+        ViewSizeMac.NSFolderGraph folderGraph { get; set; }
 
-		[Outlet]
-		AppKit.NSOutlineView outlineView { get; set; }
+        [Outlet]
+        AppKit.NSTextField lblStatus { get; set; }
 
-		[Outlet]
-		AppKit.NSTextField txtFolder { get; set; }
+        [Outlet]
+        AppKit.NSOutlineView outlineView { get; set; }
 
-		[Action ("OnCancelScan:")]
-		partial void OnCancelScan (Foundation.NSObject sender);
+        [Outlet]
+        AppKit.NSTextField txtFolder { get; set; }
 
-		[Action ("OnScan:")]
-		partial void OnScan (Foundation.NSObject sender);
+        [Action ("OnCancelScan:")]
+        partial void OnCancelScan (Foundation.NSObject sender);
 
-		[Action ("OnSelectFolder:")]
-		partial void OnSelectFolder (Foundation.NSObject sender);
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (btnCancel != null) {
-				btnCancel.Dispose ();
-				btnCancel = null;
-			}
+        [Action ("OnScan:")]
+        partial void OnScan (Foundation.NSObject sender);
 
-			if (btnScan != null) {
-				btnScan.Dispose ();
-				btnScan = null;
-			}
+        [Action ("OnSelectFolder:")]
+        partial void OnSelectFolder (Foundation.NSObject sender);
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (btnCancel != null) {
+                btnCancel.Dispose ();
+                btnCancel = null;
+            }
 
-			if (btnSelectFolder != null) {
-				btnSelectFolder.Dispose ();
-				btnSelectFolder = null;
-			}
+            if (btnScan != null) {
+                btnScan.Dispose ();
+                btnScan = null;
+            }
 
-			if (colFolder != null) {
-				colFolder.Dispose ();
-				colFolder = null;
-			}
+            if (btnSelectFolder != null) {
+                btnSelectFolder.Dispose ();
+                btnSelectFolder = null;
+            }
 
-			if (colSize != null) {
-				colSize.Dispose ();
-				colSize = null;
-			}
+            if (colFolder != null) {
+                colFolder.Dispose ();
+                colFolder = null;
+            }
 
-			if (outlineView != null) {
-				outlineView.Dispose ();
-				outlineView = null;
-			}
+            if (colSize != null) {
+                colSize.Dispose ();
+                colSize = null;
+            }
 
-			if (txtFolder != null) {
-				txtFolder.Dispose ();
-				txtFolder = null;
-			}
+            if (lblStatus != null) {
+                lblStatus.Dispose ();
+                lblStatus = null;
+            }
 
-			if (lblStatus != null) {
-				lblStatus.Dispose ();
-				lblStatus = null;
-			}
-		}
-	}
+            if (outlineView != null) {
+                outlineView.Dispose ();
+                outlineView = null;
+            }
+
+            if (txtFolder != null) {
+                txtFolder.Dispose ();
+                txtFolder = null;
+            }
+
+            if (folderGraph != null) {
+                folderGraph.Dispose ();
+                folderGraph = null;
+            }
+        }
+    }
 }

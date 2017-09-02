@@ -84,6 +84,7 @@
     <Compile Include="FolderOutlineDataSource.cs" />
     <Compile Include="FolderViewModel.cs" />
     <Compile Include="FolderOutlineDelegate.cs" />
+    <Compile Include="NSFolderGraph.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
