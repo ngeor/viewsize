@@ -3,18 +3,20 @@ using System.Linq;
 
 namespace CRLFLabs.ViewSize
 {
-    class FileEntry
+    public class FileEntry
     {
-        public FileEntry(string path)
+        public FileEntry(FolderScanner folderScanner, string path)
         {
             Path = path;
+            FolderScanner = folderScanner;
             Owner = this;
         }
 
-        private FileEntry(FileEntry root, string path)
+        private FileEntry(FolderScanner folderScanner, FileEntry owner, string path)
         {
             Path = path;
-            Owner = root;
+            FolderScanner = folderScanner;
+            Owner = owner;
         }
 
         public string Path { get; }
@@ -22,25 +24,29 @@ namespace CRLFLabs.ViewSize
         public long TotalSize { get; private set; }
         public List<FileEntry> Children { get; private set; }
         public double Percentage => (double)TotalSize / Owner.TotalSize;
+        public bool IsRoot => Owner == this;
 
         private FileEntry Owner { get; }
+        private FolderScanner FolderScanner { get; }
 
-        public void Calculate(NotifyProgress pending, NotifyProgress finished)
+        public void Calculate()
         {
-            pending(1);
-            Children = FileUtils.EnumerateDirectories(Path).Select(p => new FileEntry(Owner, p)).ToList();
+            if (FolderScanner.CancelRequested)
+            {
+                return;
+            }
+
+            Children = FileUtils.EnumerateDirectories(Path).Select(p => new FileEntry(FolderScanner, Owner, p)).ToList();
 
             OwnSize = FileUtils.EnumerateFiles(Path).Select(FileUtils.FileLength).Sum();
             foreach (var child in Children)
             {
-                child.Calculate(pending, finished);
+                child.Calculate();
             }
 
             TotalSize = OwnSize + Children.Select(c => c.TotalSize).Sum();
-
-            finished(1);
         }
     }
 
-    delegate void NotifyProgress(int number);
+    public delegate void NotifyProgress(int number);
 }

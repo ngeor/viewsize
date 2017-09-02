@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)FileEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />
   </ItemGroup>
 </Project>

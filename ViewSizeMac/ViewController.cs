@@ -8,6 +8,8 @@ namespace ViewSizeMac
 {
     public partial class ViewController : NSViewController
     {
+        private readonly FolderScanner folderScanner = new FolderScanner();
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -52,10 +54,10 @@ namespace ViewSizeMac
             {
                 try
                 {
-                    FileEntry root = new FileEntry(path);
-                    root.Calculate(ReportProgress, (finished) => { });
+                    folderScanner.Scan(path);
                     InvokeOnMainThread(() => {
-                        outlineView.DataSource = new FolderOutlineDataSource(new FolderViewModel(root));
+                        outlineView.DataSource = new FolderOutlineDataSource(new FolderViewModel(folderScanner.Root));
+                        outlineView.Delegate = new FolderOutlineDelegate();
                     });
                 }
                 catch (Exception ex)
@@ -81,6 +83,11 @@ namespace ViewSizeMac
             });
         }
 
+        partial void OnCancelScan(NSObject sender)
+        {
+            folderScanner.Cancel();
+        }
+
         private void ReportProgress(int number)
         {
             InvokeOnMainThread(() => {
@@ -90,6 +97,7 @@ namespace ViewSizeMac
         private void EnableUI(bool enable)
         {
 			btnScan.Enabled = enable;
+            btnCancel.Enabled = !enable;
 			btnSelectFolder.Enabled = enable;
 			txtFolder.Enabled = enable;
         }

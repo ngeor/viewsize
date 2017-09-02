@@ -82,6 +82,8 @@
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderOutlineDataSource.cs" />
+    <Compile Include="FolderViewModel.cs" />
+    <Compile Include="FolderOutlineDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
