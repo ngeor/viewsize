@@ -5,13 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="Size Usage" Height="480" Width="640">
-    <Grid>
-        <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtFolder" HorizontalAlignment="Left" Height="23" Margin="140,12,0,0" Text="" VerticalAlignment="Top" Width="224"/>
-        <Button x:Name="btnSelectFolder" Content="..." Margin="369,14,226,0" VerticalAlignment="Top" Click="btnSelectFolder_Click"/>
-        <Button x:Name="btnScan" Content="Scan" HorizontalAlignment="Left" Margin="334,40,0,0" VerticalAlignment="Top" Width="75" Click="btnScan_Click"/>
-        <TreeView x:Name="treeView" HorizontalAlignment="Left" Height="173" Margin="10,91,0,0" VerticalAlignment="Top" Width="615"/>
-
-    </Grid>
+        Title="ViewSize" Height="480" Width="640">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
+            <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" />
+            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" Click="btnSelectFolder_Click" HorizontalAlignment="Right" Margin="8"/>
+        </Grid>
+        <Grid DockPanel.Dock="Top">
+                <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="btnScan_Click"/>
+            <Button x:Name="btnCancel" Margin="0,8,88,0" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="btnCancel_Click" />
+        </Grid>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <Label x:Name="lblStatus" Content="Welcome to ViewSize" Padding="8"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <ProgressBar x:Name="progressBar" Width="100" Height="16" Margin="8" />
+            </StatusBarItem>
+        </StatusBar>
+        <TreeView x:Name="treeView" Height="Auto" Margin="8" />
+    </DockPanel>
 </Window>

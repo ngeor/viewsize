@@ -29,6 +29,9 @@ namespace CRLFLabs.ViewSize
         public double Percentage => (double)TotalSize / FolderScanner.TotalSize;
         public bool IsRoot => FolderScanner.IsRoot(this);
 
+        public string DisplayText => IsRoot ? Path : System.IO.Path.GetFileName(Path);
+        public string DisplaySize => FileUtils.FormatBytes(TotalSize) + $" ({Percentage:P2})";
+
         private FolderScanner FolderScanner { get; }
 
         public void Calculate()

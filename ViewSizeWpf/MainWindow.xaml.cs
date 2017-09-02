@@ -1,4 +1,5 @@
 ﻿using CRLFLabs.ViewSize;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,51 +21,26 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private BackgroundWorker backgroundWorker;
-        private Folder rootFileEntry;
-        private Progress progressDialog;
+        private readonly FolderScanner folderScanner;
 
         public MainWindow()
         {
             InitializeComponent();
-
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerReportsProgress = true;
-            backgroundWorker.WorkerSupportsCancellation = true;
-            backgroundWorker.DoWork += BackgroundWorker_DoWork;
-            backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
-            backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
+            folderScanner = new FolderScanner();
+            folderScanner.Scanning += FolderScanner_Scanning;
         }
 
-        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void FolderScanner_Scanning(object sender, FolderEventArgs e)
         {
-            progressDialog.progressBar.Maximum = pending;
-            progressDialog.progressBar.Value = finished;
-            progressDialog.lblProgress.Content = $"Processed {finished} folders out of {pending}";
-        }
-
-        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            treeView.Items.Clear();
-            Populate(treeView.Items, rootFileEntry);
-            Cursor = System.Windows.Input.Cursors.Arrow;
-            btnScan.IsEnabled = true;
-            progressDialog.Close();
-        }
-
-        private int pending;
-        private int finished;
-
-        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            pending = 0;
-            finished = 0;
-            rootFileEntry.Calculate(x => { pending += x; backgroundWorker.ReportProgress(0); }, x => { finished += x; backgroundWorker.ReportProgress(0); });            
+            Dispatcher.Invoke(() =>
+            {
+                lblStatus.Content = e.Folder.Path;
+            });
         }
 
         private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new FolderBrowserDialog())
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
                 var result = dialog.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
@@ -77,28 +52,65 @@ namespace WpfApp1
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
         {
-            Cursor = System.Windows.Input.Cursors.Wait;
-            btnScan.IsEnabled = false;
-            rootFileEntry = new Folder(txtFolder.Text);
-            progressDialog = new Progress();
-            progressDialog.Show();
-            backgroundWorker.RunWorkerAsync();
+            Cursor = Cursors.Wait;
+            EnableUI(false);
+            string path = txtFolder.Text;
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    folderScanner.Scan(path);
+                    Dispatcher.Invoke(() =>
+                    {
+                        treeView.Items.Clear();
+                        Populate(treeView.Items, folderScanner.Root);
+                        lblStatus.Content = $"Finished in {folderScanner.Duration}";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    });
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Cursor = Cursors.Arrow;
+                        EnableUI(true);
+                    });
+                }
+            });
         }
 
-        private void Populate(ItemCollection items, Folder root)
+        private void Populate(ItemCollection items, Folder folder)
         {
             var treeViewItem = new TreeViewItem
             {
-                Header = root.Path + " (" + FileUtils.FormatBytes(root.TotalSize) + $") ({root.Percentage:P2})"
+                Header = folder.DisplayText + " (" + folder.DisplaySize + ")"
             };
 
             items.Add(treeViewItem);
-            foreach(var child in root.Children.OrderByDescending(c=>c.TotalSize))
+            foreach (var child in folder.Children.OrderByDescending(c => c.TotalSize))
             {
                 Populate(treeViewItem.Items, child);
             }
         }
-    }
 
-    
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            folderScanner.Cancel();
+        }
+
+        private void EnableUI(bool enable)
+        {
+            txtFolder.IsEnabled = enable;
+            btnScan.IsEnabled = enable;
+            btnSelectFolder.IsEnabled = enable;
+            btnCancel.IsEnabled = !enable;
+        }
+    }
 }
