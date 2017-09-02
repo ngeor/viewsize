@@ -7,12 +7,12 @@ namespace ViewSizeMac
 {
     class FolderViewModel : NSObject
     {
-        public FolderViewModel(FileEntry fileEntry)
+        public FolderViewModel(Folder fileEntry)
         {
             FileEntry = fileEntry;
         }
 
-        private FileEntry FileEntry { get; }
+        private Folder FileEntry { get; }
 
         public List<FolderViewModel> Children => FileEntry.Children.Select(c => new FolderViewModel(c))
                                                           .OrderByDescending(c => c.TotalSize)

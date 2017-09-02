@@ -22,7 +22,7 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         private BackgroundWorker backgroundWorker;
-        private FileEntry rootFileEntry;
+        private Folder rootFileEntry;
         private Progress progressDialog;
 
         public MainWindow()
@@ -79,13 +79,13 @@ namespace WpfApp1
         {
             Cursor = System.Windows.Input.Cursors.Wait;
             btnScan.IsEnabled = false;
-            rootFileEntry = new FileEntry(txtFolder.Text);
+            rootFileEntry = new Folder(txtFolder.Text);
             progressDialog = new Progress();
             progressDialog.Show();
             backgroundWorker.RunWorkerAsync();
         }
 
-        private void Populate(ItemCollection items, FileEntry root)
+        private void Populate(ItemCollection items, Folder root)
         {
             var treeViewItem = new TreeViewItem
             {

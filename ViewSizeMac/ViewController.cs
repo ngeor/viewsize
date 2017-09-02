@@ -12,6 +12,7 @@ namespace ViewSizeMac
 
         public ViewController(IntPtr handle) : base(handle)
         {
+            folderScanner.Scanning += ReportProgress;
         }
 
         public override void ViewDidLoad()
@@ -55,14 +56,16 @@ namespace ViewSizeMac
                 try
                 {
                     folderScanner.Scan(path);
-                    InvokeOnMainThread(() => {
+                    InvokeOnMainThread(() =>
+                    {
                         outlineView.DataSource = new FolderOutlineDataSource(new FolderViewModel(folderScanner.Root));
                         outlineView.Delegate = new FolderOutlineDelegate();
                     });
                 }
                 catch (Exception ex)
                 {
-                    InvokeOnMainThread(() => {
+                    InvokeOnMainThread(() =>
+                    {
                         NSAlert alert = new NSAlert
                         {
                             AlertStyle = NSAlertStyle.Critical,
@@ -71,14 +74,14 @@ namespace ViewSizeMac
                         };
 
                         alert.RunModal();
-                    });    
+                    });
                 }
                 finally
                 {
-					InvokeOnMainThread(() =>
-					{
-						EnableUI(true);
-					});
+                    InvokeOnMainThread(() =>
+                    {
+                        EnableUI(true);
+                    });
                 }
             });
         }
@@ -88,18 +91,21 @@ namespace ViewSizeMac
             folderScanner.Cancel();
         }
 
-        private void ReportProgress(int number)
+        private void ReportProgress(object sender, FolderEventArgs args)
         {
-            InvokeOnMainThread(() => {
+            InvokeOnMainThread(() =>
+            {
+                lblStatus.StringValue = args.Folder.Path;
             });
         }
 
         private void EnableUI(bool enable)
         {
-			btnScan.Enabled = enable;
+            btnScan.Enabled = enable;
             btnCancel.Enabled = !enable;
-			btnSelectFolder.Enabled = enable;
-			txtFolder.Enabled = enable;
+            btnSelectFolder.Enabled = enable;
+            txtFolder.Enabled = enable;
+            lblStatus.StringValue = $"Finished in {folderScanner.Duration}";
         }
     }
 }

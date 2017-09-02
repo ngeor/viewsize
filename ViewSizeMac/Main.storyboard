@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -717,13 +718,13 @@
                                 </buttonCell>
                             </button>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ylH-An-JoE">
-                                <rect key="frame" x="20" y="20" width="440" height="198"/>
+                                <rect key="frame" x="20" y="37" width="440" height="181"/>
                                 <clipView key="contentView" id="fd9-lP-cfW">
-                                    <rect key="frame" x="1" y="0.0" width="438" height="197"/>
+                                    <rect key="frame" x="1" y="0.0" width="438" height="180"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="9cP-Nx-woN" viewBased="YES" indentationPerLevel="16" outlineTableColumn="dXz-5u-GC3" id="tZV-UP-ZxC">
-                                            <rect key="frame" x="0.0" y="0.0" width="438" height="174"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="438" height="157"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -820,9 +821,11 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0WV-1F-sqF">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0WV-1F-sqF">
                                 <rect key="frame" x="314" y="218" width="81" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="69" id="juI-1o-2n1"/>
+                                </constraints>
                                 <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eAS-zw-bqk">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -834,22 +837,47 @@ Gw
                                     </connections>
                                 </buttonCell>
                             </button>
+                            <box boxType="secondary" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="bJo-K3-7AL">
+                                <rect key="frame" x="-3" y="-4" width="486" height="35"/>
+                                <view key="contentView" id="gw5-nr-s65">
+                                    <rect key="frame" x="1" y="1" width="484" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J2p-fZ-1wT">
+                                            <rect key="frame" x="18" y="8" width="448" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="VHc-v6-kmN">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                </view>
+                            </box>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="ylH-An-JoE" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="106" id="273-uy-f9q"/>
+                            <constraint firstItem="ylH-An-JoE" firstAttribute="centerX" secondItem="bJo-K3-7AL" secondAttribute="centerX" id="6JX-e5-RF0"/>
                             <constraint firstAttribute="trailing" secondItem="eTa-ec-Swl" secondAttribute="trailing" constant="20" id="6am-2t-s72"/>
+                            <constraint firstItem="bJo-K3-7AL" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="7W5-c2-1UB"/>
                             <constraint firstItem="e8e-is-snm" firstAttribute="leading" secondItem="eTa-ec-Swl" secondAttribute="leading" id="7Xs-rd-eB1"/>
                             <constraint firstItem="Xcb-12-opa" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="EMY-5A-9Qj"/>
                             <constraint firstItem="mdi-7t-Sa0" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="Ej5-GD-gj4"/>
-                            <constraint firstItem="ylH-An-JoE" firstAttribute="trailing" secondItem="eTa-ec-Swl" secondAttribute="trailing" id="Hwl-rO-pg3"/>
+                            <constraint firstAttribute="bottom" secondItem="bJo-K3-7AL" secondAttribute="bottom" id="GTs-D7-I7I"/>
+                            <constraint firstItem="ylH-An-JoE" firstAttribute="leading" secondItem="mdi-7t-Sa0" secondAttribute="leading" id="I34-v0-EEL"/>
                             <constraint firstItem="eTa-ec-Swl" firstAttribute="top" secondItem="e8e-is-snm" secondAttribute="bottom" constant="12" symbolic="YES" id="JQ1-Zi-6st"/>
-                            <constraint firstItem="ylH-An-JoE" firstAttribute="top" secondItem="eTa-ec-Swl" secondAttribute="bottom" constant="7" id="KqX-wv-O0n"/>
                             <constraint firstItem="mdi-7t-Sa0" firstAttribute="top" secondItem="Xcb-12-opa" secondAttribute="bottom" constant="8" symbolic="YES" id="MlF-lI-xtw"/>
+                            <constraint firstAttribute="bottom" secondItem="ylH-An-JoE" secondAttribute="bottom" constant="37" id="NgB-Q5-7Sh"/>
                             <constraint firstItem="e8e-is-snm" firstAttribute="top" secondItem="mdi-7t-Sa0" secondAttribute="top" id="OO3-oZ-lCi"/>
-                            <constraint firstAttribute="bottom" secondItem="ylH-An-JoE" secondAttribute="bottom" constant="20" symbolic="YES" id="W9i-5u-4Kv"/>
+                            <constraint firstItem="bJo-K3-7AL" firstAttribute="top" secondItem="ylH-An-JoE" secondAttribute="bottom" constant="8" id="T29-t9-uhw"/>
+                            <constraint firstItem="0WV-1F-sqF" firstAttribute="trailing" secondItem="mdi-7t-Sa0" secondAttribute="trailing" id="ftL-CR-g9t"/>
+                            <constraint firstItem="ylH-An-JoE" firstAttribute="top" secondItem="0WV-1F-sqF" secondAttribute="bottom" constant="7" id="hUm-p1-QE7"/>
                             <constraint firstItem="e8e-is-snm" firstAttribute="leading" secondItem="mdi-7t-Sa0" secondAttribute="trailing" constant="2" id="jFh-eh-Zwe"/>
                             <constraint firstItem="e8e-is-snm" firstAttribute="trailing" secondItem="eTa-ec-Swl" secondAttribute="trailing" id="nDY-WN-e5H"/>
                             <constraint firstItem="Xcb-12-opa" firstAttribute="leading" secondItem="mdi-7t-Sa0" secondAttribute="leading" id="nSX-yb-kq8"/>
-                            <constraint firstItem="ylH-An-JoE" firstAttribute="leading" secondItem="mdi-7t-Sa0" secondAttribute="leading" id="z43-uL-LgN"/>
+                            <constraint firstItem="bJo-K3-7AL" firstAttribute="top" secondItem="ylH-An-JoE" secondAttribute="bottom" constant="8" symbolic="YES" id="pN3-c4-21P"/>
+                            <constraint firstItem="ylH-An-JoE" firstAttribute="trailing" secondItem="eTa-ec-Swl" secondAttribute="trailing" id="uWE-53-kSH"/>
                         </constraints>
                     </view>
                     <connections>
@@ -858,6 +886,7 @@ Gw
                         <outlet property="btnSelectFolder" destination="e8e-is-snm" id="CeA-Vd-wE2"/>
                         <outlet property="colFolder" destination="dXz-5u-GC3" id="fKj-Op-ZUH"/>
                         <outlet property="colSize" destination="dKw-ye-1Bn" id="KUn-tM-WCj"/>
+                        <outlet property="lblStatus" destination="J2p-fZ-1wT" id="gXe-6k-2Eb"/>
                         <outlet property="outlineView" destination="tZV-UP-ZxC" id="XwJ-KI-g9d"/>
                         <outlet property="txtFolder" destination="mdi-7t-Sa0" id="a8U-Z4-O98"/>
                     </connections>

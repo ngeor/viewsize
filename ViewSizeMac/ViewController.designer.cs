@@ -28,6 +28,9 @@ namespace ViewSizeMac
 		AppKit.NSTableColumn colSize { get; set; }
 
 		[Outlet]
+		AppKit.NSTextField lblStatus { get; set; }
+
+		[Outlet]
 		AppKit.NSOutlineView outlineView { get; set; }
 
 		[Outlet]
@@ -44,6 +47,11 @@ namespace ViewSizeMac
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (btnCancel != null) {
+				btnCancel.Dispose ();
+				btnCancel = null;
+			}
+
 			if (btnScan != null) {
 				btnScan.Dispose ();
 				btnScan = null;
@@ -74,9 +82,9 @@ namespace ViewSizeMac
 				txtFolder = null;
 			}
 
-			if (btnCancel != null) {
-				btnCancel.Dispose ();
-				btnCancel = null;
+			if (lblStatus != null) {
+				lblStatus.Dispose ();
+				lblStatus = null;
 			}
 		}
 	}
