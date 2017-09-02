@@ -86,5 +86,6 @@
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
   </ItemGroup>
+  <Import Project="..\ViewSize.Shared\ViewSize.Shared.projitems" Label="Shared" Condition="Exists('..\ViewSize.Shared\ViewSize.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>
