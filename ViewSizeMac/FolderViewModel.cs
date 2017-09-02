@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ViewSizeMac
 {
-    class FolderViewModel : NSObject
+    public class FolderViewModel : NSObject
     {
         public FolderViewModel(Folder fileEntry)
         {

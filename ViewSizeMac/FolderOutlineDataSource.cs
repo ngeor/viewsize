@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ViewSizeMac
 {
-    class FolderOutlineDataSource : NSOutlineViewDataSource
+    public class FolderOutlineDataSource : NSOutlineViewDataSource
     {
         public FolderOutlineDataSource(FolderViewModel root)
         {

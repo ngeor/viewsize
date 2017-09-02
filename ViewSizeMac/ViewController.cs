@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AppKit;
 using CRLFLabs.ViewSize;
@@ -60,6 +61,10 @@ namespace ViewSizeMac
                     {
                         outlineView.DataSource = new FolderOutlineDataSource(new FolderViewModel(folderScanner.Root));
                         outlineView.Delegate = new FolderOutlineDelegate();
+                        folderGraph.DataSource = new List<FolderViewModel>()
+                        {
+                            new FolderViewModel(folderScanner.Root)
+                        };
                     });
                 }
                 catch (Exception ex)
