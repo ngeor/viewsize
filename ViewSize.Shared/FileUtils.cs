@@ -25,32 +25,17 @@ namespace CRLFLabs.ViewSize
 
                 return true;
             }
+            catch (PathTooLongException)
+            {
+                return false;
+            }
             catch (UnauthorizedAccessException)
             {
                 return false;
             }
         }
-        public static IEnumerable<string> EnumerateDirectories(string path)
-        {
-            try
-            {
-                if (!IsDirectory(path))
-                {
-                    // ignore symlinks
-                    return Enumerable.Empty<string>();
-                }
-                else
-                {
-                    return Directory.EnumerateDirectories(path);
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Enumerable.Empty<string>();
-            }
-        }
 
-        public static IEnumerable<string> EnumerateFiles(string path)
+        public static IEnumerable<string> EnumerateFileSystemEntries(string path)
         {
             try
             {
@@ -60,7 +45,7 @@ namespace CRLFLabs.ViewSize
                 }
                 else
                 {
-                    return Directory.EnumerateFiles(path);
+                    return Directory.EnumerateFileSystemEntries(path);
                 }
             }
             catch (UnauthorizedAccessException)
@@ -73,7 +58,8 @@ namespace CRLFLabs.ViewSize
         {
             try
             {
-                return new FileInfo(path).Length;
+                var fileInfo = new FileInfo(path);
+                return fileInfo.Exists ? fileInfo.Length : 0;
             }
             catch (PathTooLongException)
             {

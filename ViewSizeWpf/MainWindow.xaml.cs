@@ -63,8 +63,10 @@ namespace WpfApp1
                     folderScanner.Scan(path);
                     Dispatcher.Invoke(() =>
                     {
-                        treeView.Items.Clear();
-                        Populate(treeView.Items, folderScanner.Root);
+                        //treeView.Items.Clear();
+                        //Populate(treeView.Items, folderScanner.Root);
+                        treeView.DataContext = null;
+                        treeView.DataContext = folderScanner;                        
                         lblStatus.Content = $"Finished in {folderScanner.Duration}";
                     });
                 }

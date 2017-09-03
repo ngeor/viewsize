@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CRLFLabs.ViewSize
 {
@@ -8,17 +10,15 @@ namespace CRLFLabs.ViewSize
     /// </summary>
     public class FolderScanner
     {
+        private readonly List<Folder> topLevelFolders = new List<Folder>();
         private DateTime startScan;
         private DateTime stopScan;
         private bool scanning;
 
-        public Folder Root
-        {
-            get;
-            private set;
-        }
 
-        public long TotalSize => Root?.TotalSize ?? 0;
+        public IList<Folder> TopLevelFolders => topLevelFolders;
+
+        public long TotalSize => topLevelFolders.Select(f=>f.TotalSize).Sum();
 
         /// <summary>
         /// Gets a value indicating whether the user has requested to cancel the scan.
@@ -48,9 +48,10 @@ namespace CRLFLabs.ViewSize
             startScan = DateTime.UtcNow;
             try
             {
-
-                Root = new Folder(this, path);
-                Root.Calculate();
+                TopLevelFolders.Clear();
+                var root = new Folder(this, path);
+                TopLevelFolders.Add(root);
+                root.Calculate();
             }
             finally
             {
@@ -64,7 +65,7 @@ namespace CRLFLabs.ViewSize
         /// </summary>
         internal bool IsRoot(Folder folder)
         {
-            return folder != null && folder == Root;
+            return folder != null && TopLevelFolders.Contains(folder);
         }
 
         public event EventHandler<FolderEventArgs> Scanning;

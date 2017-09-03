@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:local="clr-namespace:ViewSizeWpf.Controls"
         mc:Ignorable="d"
         Title="ViewSize" Height="480" Width="640">
     <DockPanel>
@@ -37,6 +37,29 @@
                 <ProgressBar x:Name="progressBar" Width="100" Height="16" Margin="8" />
             </StatusBarItem>
         </StatusBar>
-        <TreeView x:Name="treeView" Height="Auto" Margin="8" />
+        <local:TreeListView x:Name="treeView" Height="Auto" Margin="8" ItemsSource="{Binding Path=TopLevelFolders}">
+            <local:TreeListView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}" />
+            </local:TreeListView.ItemTemplate>
+            <local:TreeListView.Columns>
+                <GridViewColumn Header="Name" Width="300">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <local:TreeListViewExpander/>
+                                <TextBlock Text="{Binding DisplayText}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Size" Width="150">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>                            
+                            <TextBlock Text="{Binding DisplaySize}"/>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+            </local:TreeListView.Columns>
+        </local:TreeListView>
     </DockPanel>
 </Window>

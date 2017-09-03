@@ -43,15 +43,33 @@ namespace CRLFLabs.ViewSize
 
             FolderScanner.FireScanning(this);
 
-            Children = FileUtils.EnumerateDirectories(Path).Select(p => new Folder(FolderScanner, p)).ToList();
+            // my file size (should be zero for directories)
+            OwnSize = FileUtils.FileLength(Path);
 
-            OwnSize = FileUtils.EnumerateFiles(Path).Select(FileUtils.FileLength).Sum();
+            // calculate children recursively
+            Children = FileUtils.EnumerateFileSystemEntries(Path).Select(p => new Folder(FolderScanner, p)).ToList();
             foreach (var child in Children)
             {
                 child.Calculate();
             }
 
+            // now that children are done, we can calculate total size
             TotalSize = OwnSize + Children.Select(c => c.TotalSize).Sum();
+            Children.Sort((x, y) =>
+            {
+                if (x.TotalSize > y.TotalSize)
+                {
+                    return -1;
+                }
+                else if (x.TotalSize < y.TotalSize)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return x.Path.CompareTo(y.Path);
+                }
+            });
         }
     }
 }
