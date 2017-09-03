@@ -8,12 +8,12 @@ namespace ViewSizeMac
 {
     public class FolderOutlineDataSource : NSOutlineViewDataSource
     {
-        public FolderOutlineDataSource(IList<FolderViewModel> topLevelFolders)
+        public FolderOutlineDataSource(IList<FSEntryModel> topLevelFolders)
         {
             TopLevelFolders = topLevelFolders;
         }
 
-        private IList<FolderViewModel> TopLevelFolders { get; }
+        private IList<FSEntryModel> TopLevelFolders { get; }
 
         public override System.nint GetChildrenCount(NSOutlineView outlineView, NSObject item)
         {
@@ -30,7 +30,7 @@ namespace ViewSizeMac
             return ListOf(item).Any();
         }
 
-        private IList<FolderViewModel> ListOf(NSObject item)
+        private IList<FSEntryModel> ListOf(NSObject item)
         {
             if (item == null)
             {
@@ -38,7 +38,7 @@ namespace ViewSizeMac
             }
             else
             {
-                return ((FolderViewModel)item).Children;
+                return ((FSEntryModel)item).Children;
             }
         }
     }

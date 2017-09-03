@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AppKit;
 using Foundation;
 
@@ -32,9 +33,9 @@ namespace ViewSizeMac
         }
         #endregion
 
-        private IList<FolderViewModel> dataSource;
+        private IList<FSEntryModel> dataSource;
 
-        public IList<FolderViewModel> DataSource
+        public IList<FSEntryModel> DataSource
         {
             get
             {
@@ -50,7 +51,7 @@ namespace ViewSizeMac
         public override void DrawRect(CoreGraphics.CGRect dirtyRect)
         {
             // clear rect
-            NSColor.Yellow.Set();
+            NSColor.White.Set();
             NSBezierPath.FillRect(dirtyRect);
 
             if (DataSource == null)
@@ -61,7 +62,7 @@ namespace ViewSizeMac
             DrawColumns(DataSource, Bounds);
         }
 
-        private void DrawColumns(IList<FolderViewModel> folders, CoreGraphics.CGRect bounds)
+        private void DrawColumns(IList<FSEntryModel> fileSystemEntries, CoreGraphics.CGRect bounds)
         {
             // paint left -> right top level folders
             var width = bounds.Width;
@@ -69,20 +70,27 @@ namespace ViewSizeMac
             double left = bounds.Left;
             var top = bounds.Top;
 
-            foreach (var item in folders)
+            foreach (var item in fileSystemEntries)
             {
+                // calculate the bounds where this item will be drawn
                 var itemWidth = item.Percentage * width;
-                var itemBounds = new CoreGraphics.CGRect(left + 1, top + 1, itemWidth - 2, height - 2);
-                NSColor.Red.Set();
-                NSBezierPath.FillRect(itemBounds);
+                var itemBounds = new CoreGraphics.CGRect(left, top, itemWidth, height);
 
-                DrawRows(item.Children, itemBounds);
+                if (item.Children.Any())
+                {
+                    DrawRows(item.Children, itemBounds);
+                }
+                else
+                {
+                    NSColor.Red.Set();
+                    NSBezierPath.FillRect(itemBounds);
+                }
 
                 left = left + itemWidth;
             }
         }
 
-        private void DrawRows(IList<FolderViewModel> folders, CoreGraphics.CGRect bounds)
+        private void DrawRows(IList<FSEntryModel> fileSystemEntries, CoreGraphics.CGRect bounds)
         {
             // paint top -> bottom folders
             var width = bounds.Width;
@@ -90,12 +98,21 @@ namespace ViewSizeMac
             var left = bounds.Left;
             double top = bounds.Top;
 
-            foreach (var item in folders)
+            foreach (var item in fileSystemEntries)
             {
                 var itemHeight = item.Percentage * height;
-                var itemBounds = new CoreGraphics.CGRect(left + 1, top + 1, width - 2, itemHeight - 2);
-                NSColor.Blue.Set();
-                NSBezierPath.FillRect(itemBounds);
+                var itemBounds = new CoreGraphics.CGRect(left, top, width, itemHeight);
+
+                if (item.Children.Any())
+                {
+                    DrawColumns(item.Children, itemBounds);
+                }
+                else
+                {
+                    NSColor.Blue.Set();
+                    NSBezierPath.FillRect(itemBounds);
+                }
+
                 top = top + itemHeight;
             }
         }

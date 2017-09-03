@@ -82,7 +82,7 @@
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderOutlineDataSource.cs" />
-    <Compile Include="FolderViewModel.cs" />
+    <Compile Include="FSEntryModel.cs" />
     <Compile Include="FolderOutlineDelegate.cs" />
     <Compile Include="NSFolderGraph.cs" />
   </ItemGroup>

@@ -15,6 +15,19 @@ namespace ViewSizeMac
         public ViewController(IntPtr handle) : base(handle)
         {
             folderScanner.Scanning += ReportProgress;
+            TroubleshootNativeCrashes();
+        }
+
+        private static void TroubleshootNativeCrashes()
+        {
+            new System.Threading.Thread(() =>
+            {
+                while (true)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    GC.Collect();
+                }
+            }).Start();
         }
 
         public override void ViewDidLoad()
@@ -60,8 +73,9 @@ namespace ViewSizeMac
                     folderScanner.Scan(path);
                     InvokeOnMainThread(() =>
                     {
-                        var models = FolderViewModel.ToModels(folderScanner.TopLevelFolders);
-                        outlineView.DataSource = new FolderOutlineDataSource(models);
+                        var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
+                        var dataSource = new FolderOutlineDataSource(models);
+                        outlineView.DataSource = dataSource;
                         outlineView.Delegate = new FolderOutlineDelegate();
                         folderGraph.DataSource = models;
                     });

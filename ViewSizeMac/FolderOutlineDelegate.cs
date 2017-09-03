@@ -26,16 +26,16 @@ namespace ViewSizeMac
 			}
 
 			// Cast item
-            var folder = item as FolderViewModel;
+            var folder = item as FSEntryModel;
 
 			// Setup view based on the column selected
 			switch (tableColumn.Title)
 			{
 				case "Folder":
-                    view.StringValue = folder.IsRoot ? folder.Path : folder.FileName;
+                    view.StringValue = folder.DisplayText;
 					break;
 				case "Size":
-                    view.StringValue = FileUtils.FormatBytes(folder.TotalSize) + $" ({folder.Percentage:P2})";
+                    view.StringValue = folder.DisplaySize;
 					break;
                 default:
                     view.StringValue = tableColumn.Title;
