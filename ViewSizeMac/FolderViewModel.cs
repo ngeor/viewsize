@@ -14,9 +14,7 @@ namespace ViewSizeMac
 
         private Folder FileEntry { get; }
 
-        public List<FolderViewModel> Children => FileEntry.Children.Select(c => new FolderViewModel(c))
-                                                          .OrderByDescending(c => c.TotalSize)
-                                                          .ToList();
+        public IList<FolderViewModel> Children => FolderViewModel.ToModels(FileEntry.Children);
 
         public string Path => FileEntry.Path;
 
@@ -27,5 +25,10 @@ namespace ViewSizeMac
         public bool IsRoot => FileEntry.IsRoot;
 
         public double Percentage => FileEntry.Percentage;
+
+        public static IList<FolderViewModel> ToModels(IEnumerable<Folder> folders)
+        {
+            return folders.Select(f => new FolderViewModel(f)).ToList();
+        }
     }
 }

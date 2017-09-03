@@ -2,51 +2,43 @@
 using AppKit;
 using Foundation;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ViewSizeMac
 {
     public class FolderOutlineDataSource : NSOutlineViewDataSource
     {
-        public FolderOutlineDataSource(FolderViewModel root)
+        public FolderOutlineDataSource(IList<FolderViewModel> topLevelFolders)
         {
-            Root = root;
+            TopLevelFolders = topLevelFolders;
         }
 
-        private FolderViewModel Root { get; }
+        private IList<FolderViewModel> TopLevelFolders { get; }
 
         public override System.nint GetChildrenCount(NSOutlineView outlineView, NSObject item)
         {
-            if (item == null)
-            {
-                return Root == null ? 0 : 1;
-            }
-            else
-            {
-                return ((FolderViewModel)item).Children.Count;
-            }
+            return ListOf(item).Count;
         }
 
         public override NSObject GetChild(NSOutlineView outlineView, System.nint childIndex, NSObject item)
         {
-            if (item == null)
-            {
-                return Root;
-            }
-            else
-            {
-                return ((FolderViewModel)item).Children[(int)childIndex];
-            }
+            return ListOf(item)[(int)childIndex];
         }
 
         public override bool ItemExpandable(NSOutlineView outlineView, NSObject item)
         {
+            return ListOf(item).Any();
+        }
+
+        private IList<FolderViewModel> ListOf(NSObject item)
+        {
             if (item == null)
             {
-                return Root.Children.Any();
+                return TopLevelFolders;
             }
             else
             {
-                return ((FolderViewModel)item).Children.Any();
+                return ((FolderViewModel)item).Children;
             }
         }
     }

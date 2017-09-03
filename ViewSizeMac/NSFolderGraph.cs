@@ -32,9 +32,9 @@ namespace ViewSizeMac
         }
         #endregion
 
-        private List<FolderViewModel> dataSource;
+        private IList<FolderViewModel> dataSource;
 
-        public List<FolderViewModel> DataSource
+        public IList<FolderViewModel> DataSource
         {
             get
             {

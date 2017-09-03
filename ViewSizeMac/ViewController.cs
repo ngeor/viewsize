@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AppKit;
 using CRLFLabs.ViewSize;
@@ -59,12 +60,10 @@ namespace ViewSizeMac
                     folderScanner.Scan(path);
                     InvokeOnMainThread(() =>
                     {
-                        outlineView.DataSource = new FolderOutlineDataSource(new FolderViewModel(folderScanner.Root));
+                        var models = FolderViewModel.ToModels(folderScanner.TopLevelFolders);
+                        outlineView.DataSource = new FolderOutlineDataSource(models);
                         outlineView.Delegate = new FolderOutlineDelegate();
-                        folderGraph.DataSource = new List<FolderViewModel>()
-                        {
-                            new FolderViewModel(folderScanner.Root)
-                        };
+                        folderGraph.DataSource = models;
                     });
                 }
                 catch (Exception ex)
@@ -98,10 +97,11 @@ namespace ViewSizeMac
 
         private void ReportProgress(object sender, FolderEventArgs args)
         {
-            InvokeOnMainThread(() =>
-            {
-                lblStatus.StringValue = args.Folder.Path;
-            });
+            // TODO: this is too slow for every file and folder there is.
+            //InvokeOnMainThread(() =>
+            //{
+            //    lblStatus.StringValue = args.Folder.Path;
+            //});
         }
 
         private void EnableUI(bool enable)
