@@ -13,7 +13,7 @@
             <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" Click="btnSelectFolder_Click" HorizontalAlignment="Right" Margin="8"/>
         </Grid>
         <Grid DockPanel.Dock="Top">
-                <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="btnScan_Click"/>
+            <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="btnScan_Click"/>
             <Button x:Name="btnCancel" Margin="0,8,88,0" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="btnCancel_Click" />
         </Grid>
         <StatusBar DockPanel.Dock="Bottom">
@@ -37,29 +37,41 @@
                 <ProgressBar x:Name="progressBar" Width="100" Height="16" Margin="8" />
             </StatusBarItem>
         </StatusBar>
-        <local:TreeListView x:Name="treeView" Height="Auto" Margin="8" ItemsSource="{Binding Path=TopLevelFolders}">
-            <local:TreeListView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}" />
-            </local:TreeListView.ItemTemplate>
-            <local:TreeListView.Columns>
-                <GridViewColumn Header="Name" Width="300">
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <local:TreeListViewExpander/>
-                                <TextBlock Text="{Binding DisplayText}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-                <GridViewColumn Header="Size" Width="150">
-                    <GridViewColumn.CellTemplate>
-                        <DataTemplate>                            
-                            <TextBlock Text="{Binding DisplaySize}"/>
-                        </DataTemplate>
-                    </GridViewColumn.CellTemplate>
-                </GridViewColumn>
-            </local:TreeListView.Columns>
-        </local:TreeListView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <local:TreeListView x:Name="treeView" ItemsSource="{Binding Path=TopLevelFolders}" Grid.Column="0">
+                <local:TreeListView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}" />
+                </local:TreeListView.ItemTemplate>
+                <local:TreeListView.Columns>
+                    <GridViewColumn Header="Name" Width="300">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <local:TreeListViewExpander/>
+                                    <TextBlock Text="{Binding DisplayText}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Size" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplaySize}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </local:TreeListView.Columns>
+            </local:TreeListView>
+            <GridSplitter x:Name="gridSplitter"  Width="5" Grid.Column="1" HorizontalAlignment="Stretch"/>
+            <local:TreeMap Grid.Column="2"/>
+        </Grid>
     </DockPanel>
 </Window>
