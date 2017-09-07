@@ -66,7 +66,8 @@ namespace WpfApp1
                         //treeView.Items.Clear();
                         //Populate(treeView.Items, folderScanner.Root);
                         treeView.DataContext = null;
-                        treeView.DataContext = folderScanner;                        
+                        treeView.DataContext = folderScanner;
+                        treeMap.DataSource = folderScanner.TopLevelFolders;
                         lblStatus.Content = $"Finished in {folderScanner.Duration}";
                     });
                 }

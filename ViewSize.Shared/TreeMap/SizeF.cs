@@ -12,8 +12,18 @@ namespace CRLFLabs.ViewSize.TreeMap
     /// </summary>
     public struct SizeF
     {
-        public SizeF(float width, float height)
+        public SizeF(double width, double height)
         {
+            if (width < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(width));
+            }
+
+            if (height < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(height));
+            }
+
             Width = width;
             Height = height;
         }
@@ -21,29 +31,31 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <summary>
         /// Gets or sets the width.
         /// </summary>
-        public float Width { get; set; }
+        public double Width { get; set; }
 
         /// <summary>
         /// Gets or sets the height.
         /// </summary>
-        public float Height { get; set; }
+        public double Height { get; set; }
 
         /// <summary>
         /// Gets the aspect ratio.
         /// </summary>
-        public float AspectRatio => Math.Max(Width / Height, Height / Width);
+        public double AspectRatio => Math.Max(Width / Height, Height / Width);
+
+        public override string ToString() => $"({Width}, {Height})";
     }
 
     public struct Ratio
     {
-        public Ratio(float nominator, float denominator)
+        public Ratio(double nominator, double denominator)
         {
             Nominator = nominator;
             Denominator = denominator;
         }
 
-        public float Nominator { get; set; }
-        public float Denominator { get; set; }
+        public double Nominator { get; set; }
+        public double Denominator { get; set; }
     }
 
     /// <summary>
@@ -54,9 +66,9 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <summary>
         /// The amount of pixels.
         /// </summary>
-        private readonly float amount;
+        private readonly double amount;
 
-        public PixelArea(float amount)
+        public PixelArea(double amount)
         {
             this.amount = amount;
         }
@@ -66,12 +78,12 @@ namespace CRLFLabs.ViewSize.TreeMap
             return new PixelArea(left.amount * ratio.Nominator / ratio.Denominator);
         }
 
-        public static PixelArea operator *(PixelArea left, float scale)
+        public static PixelArea operator *(PixelArea left, double scale)
         {
             return new PixelArea(left.amount * scale);
         }
 
-        public static PixelArea operator /(PixelArea left, float scale)
+        public static PixelArea operator /(PixelArea left, double scale)
         {
             return new PixelArea(left.amount / scale);
         }
@@ -124,21 +136,21 @@ namespace CRLFLabs.ViewSize.TreeMap
             set;
         }
 
-        public float ByteSize
+        public double ByteSize
         {
             get;
             set;
         }
 
-        public PixelArea ToPixelSize(float byteSize) => PixelSize * byteSize / ByteSize;
+        public PixelArea ToPixelSize(double byteSize) => PixelSize * byteSize / ByteSize;
 
-        public SizeF ToSize(RectangleF bounds, bool drawVertically, float realSize)
+        public SizeF ToSize(RectangleF bounds, bool drawVertically, double realSize)
         {
             PixelArea pixelSize = ToPixelSize(realSize);
             return pixelSize.FillOneDimension(bounds, drawVertically);
         }
 
-        public SizeF ToSize(SizeF bounds, bool drawVertically, float realStreakSize, float realSize)
+        public SizeF ToSize(SizeF bounds, bool drawVertically, double realStreakSize, double realSize)
         {
             PixelArea pixelSize = ToPixelSize(realSize);
             PixelArea streakPixelSize = ToPixelSize(realStreakSize);
@@ -146,8 +158,17 @@ namespace CRLFLabs.ViewSize.TreeMap
         }
     }
 
+    delegate void DoRender(RectangleF bounds);
+
+    class FolderWithDrawSize
+    {
+        public Folder Folder { get; set; }
+        public SizeF DrawSize { get; set; }
+    }
+
     class TreeMap
     {
+        public DoRender DoRender { get; set; }
         public void Render(RectangleF bounds, IList<Folder> fileSystemEntries)
         {
             Render(bounds, bounds, fileSystemEntries);
@@ -170,10 +191,9 @@ namespace CRLFLabs.ViewSize.TreeMap
                 ByteSize = realTotalSize
             };
 
-            var streakCandidate = new LinkedList<Folder>();
+            var streakCandidate = new LinkedList<FolderWithDrawSize>();
 
-            float previousAspect = -1;
-
+            double previousAspect = -1;
 
             // copy entries
             var entries = new LinkedList<Folder>(fileSystemEntries);
@@ -185,20 +205,23 @@ namespace CRLFLabs.ViewSize.TreeMap
                 entries.RemoveFirst();
 
                 // add to the current streak
-                streakCandidate.AddLast(entry);
+                streakCandidate.AddLast(new FolderWithDrawSize
+                {
+                    Folder = entry
+                });
 
                 // real size of the streak
-                var realStreakSize = streakCandidate.Sum(f => f.TotalSize);
+                var realStreakSize = streakCandidate.Sum(f => f.Folder.TotalSize);
 
                 // e.g. draw total size = 10 pixels
                 SizeF drawStreakSize = conversions.ToSize(bounds, drawVertically, realStreakSize);
 
-                SizeF[] drawSizes =
-                    streakCandidate.Select(f =>
-                                           conversions.ToSize(drawStreakSize, drawVertically, realStreakSize, f.TotalSize))
-                                   .ToArray();
+                foreach (var f in streakCandidate)
+                {
+                    f.DrawSize = conversions.ToSize(drawStreakSize, drawVertically, realStreakSize, f.Folder.TotalSize);
+                }
 
-                var aspects = drawSizes.Select(s => s.AspectRatio);
+                var aspects = streakCandidate.Select(s => s.DrawSize.AspectRatio);
                 var worseAspect = aspects.Max();
 
                 // is the new aspect worse?
@@ -211,9 +234,18 @@ namespace CRLFLabs.ViewSize.TreeMap
                     // put back in entries
                     entries.AddFirst(entry);
 
-                    // TODO: render streak
+                    // render streak
+                    // recalculate streak etc (TODO: this is duplication)
+                    realStreakSize = streakCandidate.Sum(f => f.Folder.TotalSize);
+                    drawStreakSize = conversions.ToSize(bounds, drawVertically, realStreakSize);
+                    foreach (var f in streakCandidate)
+                    {
+                        f.DrawSize = conversions.ToSize(drawStreakSize, drawVertically, realStreakSize, f.Folder.TotalSize);
+                    }
 
-                    // TODO: continue in remaining bounds
+                    DrawStreak(streakCandidate, fullBounds, bounds, drawVertically);
+
+                    // continue in remaining bounds
                     var newList = entries.ToList();
                     entries.Clear();
                     Render(fullBounds, Subtract(bounds, drawStreakSize, drawVertically), newList);
@@ -223,19 +255,83 @@ namespace CRLFLabs.ViewSize.TreeMap
                     // it got better (or we did not have a previous aspect to compare with)
                     // store it for reference
                     previousAspect = worseAspect;
+
+                    // if it's the last item let's draw
+                    if (!entries.Any())
+                    {
+                        DrawStreak(streakCandidate, fullBounds, bounds, drawVertically);
+                    }
                 }
+            }
+        }
+
+        private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleF fullBounds, RectangleF bounds, bool drawVertically)
+        {
+            var r = bounds;
+            foreach (var s in streakCandidate)
+            {
+                r = Draw(r, s.DrawSize, drawVertically);
+
+                if (s == streakCandidate.Last.Value)
+                {
+                    // adjust bounds for last item due to rounding errors etc
+                    if (drawVertically)
+                    {
+                        r.Height = bounds.Bottom - r.Top;
+                    }
+                    else
+                    {
+                        r.Width = bounds.Right - r.Left;
+                    }
+                }
+
+                AssertInBounds(bounds, r);
+                DoRender?.Invoke(r);
+
+                // subtree
+                Render(fullBounds, r, s.Folder.Children);
+
+                // next
+                if (drawVertically)
+                {
+                    r.Top = r.Bottom;
+                }
+                else
+                {
+                    r.Left = r.Right;
+                }
+            }
+        }
+
+        private void AssertInBounds(RectangleF outerBounds, RectangleF innerBounds)
+        {
+            if (innerBounds.Left < outerBounds.Left || innerBounds.Top < outerBounds.Top || innerBounds.Right > outerBounds.Right || innerBounds.Bottom > outerBounds.Bottom)
+            {
+                throw new InvalidOperationException($"Rectangle {innerBounds} exceeded {outerBounds}");
             }
         }
 
         private RectangleF Subtract(RectangleF bounds, SizeF size, bool drawVertically)
         {
-            if (drawVertically)
+            if (!drawVertically)
             {
                 return new RectangleF(bounds.Left + size.Width, bounds.Top, bounds.Width - size.Width, bounds.Height);
             }
             else
             {
                 return new RectangleF(bounds.Left, bounds.Top + size.Height, bounds.Width, bounds.Height - size.Height);
+            }
+        }
+
+        private RectangleF Draw(RectangleF bounds, SizeF size, bool drawVertically)
+        {
+            if (drawVertically)
+            {
+                return new RectangleF(bounds.Left, bounds.Top, bounds.Width, size.Height);
+            }
+            else
+            {
+                return new RectangleF(bounds.Left, bounds.Top, size.Width, bounds.Height);
             }
         }
     }
