@@ -3,3 +3,4 @@ obj/
 *.userprefs
 .vs/
 UpgradeLog.htm
+packages/
