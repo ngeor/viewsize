@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewSize.Tests
+namespace ViewSize.Tests.TreeMap
 {
     public class SizeFTest
     {

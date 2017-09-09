@@ -11,9 +11,9 @@ namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement
     {
-        private IList<Folder> _dataSource;
+        private IList<FileSystemEntry> _dataSource;
 
-        public IList<Folder> DataSource
+        public IList<FileSystemEntry> DataSource
         {
             get
             {

@@ -7,7 +7,7 @@ namespace ViewSizeMac
 {
     public class FSEntryModel : NSObject
     {
-        public FSEntryModel(Folder fileSystemEntry)
+        public FSEntryModel(IFileSystemEntry fileSystemEntry)
         {
             FileSystemEntry = fileSystemEntry;
 
@@ -16,7 +16,7 @@ namespace ViewSizeMac
             Children = FSEntryModel.ToModels(fileSystemEntry.Children);
         }
 
-        private Folder FileSystemEntry { get; }
+        private IFileSystemEntry FileSystemEntry { get; }
 
         public IList<FSEntryModel> Children { get; } 
 
@@ -24,15 +24,13 @@ namespace ViewSizeMac
 
         public long TotalSize => FileSystemEntry.TotalSize;
 
-        public bool IsRoot => FileSystemEntry.IsRoot;
-
         public double Percentage => FileSystemEntry.Percentage;
 
         public string DisplayText => FileSystemEntry.DisplayText;
 
         public string DisplaySize => FileSystemEntry.DisplaySize;
 
-        public static IList<FSEntryModel> ToModels(IEnumerable<Folder> fileSystemEntries)
+        public static IList<FSEntryModel> ToModels(IEnumerable<IFileSystemEntry> fileSystemEntries)
         {
             return fileSystemEntries.Select(f => new FSEntryModel(f)).ToList();
         }

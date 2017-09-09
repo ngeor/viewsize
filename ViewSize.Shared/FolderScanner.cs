@@ -10,13 +10,13 @@ namespace CRLFLabs.ViewSize
     /// </summary>
     public class FolderScanner
     {
-        private readonly List<Folder> topLevelFolders = new List<Folder>();
+        private readonly List<FileSystemEntry> topLevelFolders = new List<FileSystemEntry>();
         private DateTime startScan;
         private DateTime stopScan;
         private bool scanning;
 
 
-        public IList<Folder> TopLevelFolders => topLevelFolders;
+        public IList<FileSystemEntry> TopLevelFolders => topLevelFolders;
 
         public long TotalSize => topLevelFolders.Select(f=>f.TotalSize).Sum();
 
@@ -49,7 +49,7 @@ namespace CRLFLabs.ViewSize
             try
             {
                 TopLevelFolders.Clear();
-                var root = new Folder(this, path);
+                var root = new FileSystemEntry(this, path);
                 TopLevelFolders.Add(root);
                 root.Calculate();
             }
@@ -63,16 +63,16 @@ namespace CRLFLabs.ViewSize
         /// <summary>
         /// Checks if the given folder is top level.
         /// </summary>
-        internal bool IsRoot(Folder folder)
+        internal bool IsRoot(FileSystemEntry folder)
         {
             return folder != null && TopLevelFolders.Contains(folder);
         }
 
-        public event EventHandler<FolderEventArgs> Scanning;
+        public event EventHandler<FileSystemEventArgs> Scanning;
 
-        internal void FireScanning(Folder folder)
+        internal void FireScanning(FileSystemEntry folder)
         {
-            Scanning?.Invoke(this, new FolderEventArgs(folder));
+            Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }
     }
 }

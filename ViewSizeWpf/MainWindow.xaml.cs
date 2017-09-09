@@ -30,11 +30,11 @@ namespace WpfApp1
             folderScanner.Scanning += FolderScanner_Scanning;
         }
 
-        private void FolderScanner_Scanning(object sender, FolderEventArgs e)
+        private void FolderScanner_Scanning(object sender, FileSystemEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
-                lblStatus.Content = e.Folder.Path;
+                lblStatus.Content = e.FileSystemEntry.Path;
             });
         }
 
@@ -89,7 +89,7 @@ namespace WpfApp1
             });
         }
 
-        private void Populate(ItemCollection items, Folder folder)
+        private void Populate(ItemCollection items, FileSystemEntry folder)
         {
             var treeViewItem = new TreeViewItem
             {

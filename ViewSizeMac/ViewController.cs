@@ -109,7 +109,7 @@ namespace ViewSizeMac
             folderScanner.Cancel();
         }
 
-        private void ReportProgress(object sender, FolderEventArgs args)
+        private void ReportProgress(object sender, FileSystemEventArgs args)
         {
             // TODO: this is too slow for every file and folder there is.
             //InvokeOnMainThread(() =>

@@ -10,10 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Folder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FolderEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileSystemEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\SizeF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
   </ItemGroup>
 </Project>
