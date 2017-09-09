@@ -10,13 +10,13 @@ namespace CRLFLabs.ViewSize
     /// </summary>
     public class FolderScanner
     {
-        private readonly List<FileSystemEntry> topLevelFolders = new List<FileSystemEntry>();
+        private readonly List<IFileSystemEntry> topLevelFolders = new List<IFileSystemEntry>();
         private DateTime startScan;
         private DateTime stopScan;
         private bool scanning;
 
 
-        public IList<FileSystemEntry> TopLevelFolders => topLevelFolders;
+        public IList<IFileSystemEntry> TopLevelFolders => topLevelFolders;
 
         public long TotalSize => topLevelFolders.Select(f=>f.TotalSize).Sum();
 

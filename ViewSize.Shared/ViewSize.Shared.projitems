@@ -9,8 +9,8 @@
     <Import_RootNamespace>ViewSize.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\RectangleF.cs" />

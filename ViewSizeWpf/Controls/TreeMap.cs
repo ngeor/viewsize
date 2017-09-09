@@ -11,9 +11,9 @@ namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement
     {
-        private IList<FileSystemEntry> _dataSource;
+        private IList<IFileSystemEntry> _dataSource;
 
-        public IList<FileSystemEntry> DataSource
+        public IList<IFileSystemEntry> DataSource
         {
             get
             {
@@ -38,7 +38,7 @@ namespace ViewSizeWpf.Controls
                 return;
             }
 
-            var treeMap = new CRLFLabs.ViewSize.TreeMap.TreeMap
+            var treeMap = new CRLFLabs.ViewSize.TreeMap.Renderer
             {
                 DoRender = (r) => DoRender(drawingContext, r)
             };

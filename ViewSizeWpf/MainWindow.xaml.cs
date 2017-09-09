@@ -89,7 +89,7 @@ namespace WpfApp1
             });
         }
 
-        private void Populate(ItemCollection items, FileSystemEntry folder)
+        private void Populate(ItemCollection items, IFileSystemEntry folder)
         {
             var treeViewItem = new TreeViewItem
             {
