@@ -185,7 +185,8 @@ namespace CRLFLabs.ViewSize.TreeMap
         private void AssertInBounds(RectangleF outerBounds, RectangleF innerBounds)
         {
             Debug.Assert(
-                innerBounds.Left < outerBounds.Left || innerBounds.Top < outerBounds.Top || innerBounds.Right > outerBounds.Right || innerBounds.Bottom > outerBounds.Bottom,
+                innerBounds.Left >= outerBounds.Left && innerBounds.Top >= outerBounds.Top
+                && innerBounds.Right <= outerBounds.Right && innerBounds.Bottom <= outerBounds.Bottom,
                 $"Rectangle {innerBounds} exceeded {outerBounds}");
         }
 

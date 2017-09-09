@@ -68,11 +68,12 @@ namespace CRLFLabs.ViewSize
             var result = FileUtils.EnumerateFileSystemEntries(Path).Select(p => new FileSystemEntry(FolderScanner, p)).ToList();
             foreach (var child in result)
             {
+                // recursion is done here
                 child.Calculate();
             }
 
             // now that children are done, we can calculate total size
-            TotalSize = OwnSize + Children.Select(c => c.TotalSize).Sum();
+            TotalSize = OwnSize + result.Select(c => c.TotalSize).Sum();
             result.Sort((x, y) =>
             {
                 if (x.TotalSize > y.TotalSize)
