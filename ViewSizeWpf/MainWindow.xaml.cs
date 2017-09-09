@@ -32,10 +32,11 @@ namespace WpfApp1
 
         private void FolderScanner_Scanning(object sender, FileSystemEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                lblStatus.Content = e.FileSystemEntry.Path;
-            });
+            // TODO: too slow for every file
+            //Dispatcher.Invoke(() =>
+            //{
+            //    lblStatus.Content = e.FileSystemEntry.Path;
+            //});
         }
 
         private void btnSelectFolder_Click(object sender, RoutedEventArgs e)

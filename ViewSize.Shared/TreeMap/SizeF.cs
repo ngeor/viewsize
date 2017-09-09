@@ -87,7 +87,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
             else
             {
-                return bounds.WithHeight(amount / bounds.Height);
+                return bounds.WithHeight(amount / bounds.Width);
             }
         }
 

@@ -8,6 +8,7 @@ namespace CRLFLabs.ViewSize
     {
         string Path { get; }
         long TotalSize { get; }
+        long OwnSize { get; }
         IList<IFileSystemEntry> Children { get; }
         double Percentage { get; }
         string DisplayText { get; }

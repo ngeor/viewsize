@@ -43,21 +43,19 @@ namespace CRLFLabs.ViewSize.TreeMap
         {
             Debug.WriteLine($"Render bounds={bounds} number of fs entries={fileSystemEntries.Count}");
 
-            // TODO: assumes that fileSystemEntries do not contain zero items
             bool drawVertically = bounds.Width > bounds.Height;
-
 
             var streakCandidate = new LinkedList<FolderWithDrawSize>();
 
             double previousAspect = -1;
 
             // copy entries
-            var entries = new LinkedList<IFileSystemEntry>(fileSystemEntries);
+            var entries = new LinkedList<IFileSystemEntry>(fileSystemEntries.Where(f => f.TotalSize > 0));
 
             while (entries.Any())
             {
                 // remove first entry
-                var entry = entries.First();
+                IFileSystemEntry entry = entries.First.Value;
                 entries.RemoveFirst();
 
                 // add to the current streak
@@ -104,7 +102,6 @@ namespace CRLFLabs.ViewSize.TreeMap
                         f.DrawSize = conversions.FillProportionally(drawStreakSize, drawVertically, f.Folder.TotalSize);
                     }
 
-                    Stack(streakCandidate, drawVertically);
 
                     DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions);
 
@@ -123,7 +120,6 @@ namespace CRLFLabs.ViewSize.TreeMap
                     if (!entries.Any())
                     {
                         Debug.WriteLine("rendering due to empty list");
-                        Stack(streakCandidate, drawVertically);
                         DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions);
                     }
                 }
@@ -159,8 +155,17 @@ namespace CRLFLabs.ViewSize.TreeMap
         private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleF bounds, bool drawVertically, Conversions conversions)
         {
             Debug.WriteLine("Draw streak within {0}", bounds);
+
+            Stack(streakCandidate, drawVertically);
+
             foreach (var s in streakCandidate)
             {
+                // at least 3 pixels are needed to draw border and content of box
+                if (s.DrawSize.Width < 3 || s.DrawSize.Height < 3)
+                {
+                    continue;
+                }
+
                 if (s == streakCandidate.Last.Value)
                 {
                     // adjust bounds for last item due to rounding errors etc
@@ -175,6 +180,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                 }
 
                 AssertInBounds(bounds, s.DrawSize);
+
                 DoRender?.Invoke(s.DrawSize);
 
                 // subtree
@@ -202,18 +208,6 @@ namespace CRLFLabs.ViewSize.TreeMap
             else
             {
                 return new RectangleF(bounds.Left, bounds.Top + size.Height, bounds.Width, bounds.Height - size.Height);
-            }
-        }
-
-        private RectangleF Draw(RectangleF bounds, SizeF size, bool drawVertically)
-        {
-            if (drawVertically)
-            {
-                return new RectangleF(bounds.Left, bounds.Top, bounds.Width, size.Height);
-            }
-            else
-            {
-                return new RectangleF(bounds.Left, bounds.Top, size.Width, bounds.Height);
             }
         }
     }

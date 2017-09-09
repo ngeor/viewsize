@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement
     {
+        private static readonly Pen BlackPen = new Pen(Brushes.Black, 1);
         private IList<IFileSystemEntry> _dataSource;
 
         public IList<IFileSystemEntry> DataSource
@@ -30,25 +32,26 @@ namespace ViewSizeWpf.Controls
         {
             base.OnRender(drawingContext);
 
-            drawingContext.DrawRectangle(Brushes.AliceBlue, new Pen(Brushes.Black, 1), new Rect(0, 0, ActualWidth, ActualHeight));
+            drawingContext.DrawRectangle(Brushes.AliceBlue, BlackPen, new Rect(0, 0, ActualWidth, ActualHeight));
 
             var list = DataSource;
             if (list == null)
             {
                 return;
             }
-
+                        
             var treeMap = new CRLFLabs.ViewSize.TreeMap.Renderer
             {
                 DoRender = (r) => DoRender(drawingContext, r)
             };
+
             var bounds = new CRLFLabs.ViewSize.TreeMap.RectangleF(0, 0, ActualWidth, ActualHeight);
             treeMap.Render(bounds, DataSource);
         }
 
         private void DoRender(DrawingContext drawingContext, CRLFLabs.ViewSize.TreeMap.RectangleF rectangle)
         {
-            drawingContext.DrawRectangle(Brushes.AntiqueWhite, new Pen(Brushes.Black, 1), ToRect(rectangle));
+            drawingContext.DrawRectangle(Brushes.AntiqueWhite, BlackPen, ToRect(rectangle));
         }
 
         private static Rect ToRect(CRLFLabs.ViewSize.TreeMap.RectangleF rectangle)
