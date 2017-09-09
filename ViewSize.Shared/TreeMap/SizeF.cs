@@ -79,15 +79,15 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <param name="bounds"></param>
         /// <param name="drawVertically"></param>
         /// <returns></returns>
-        public SizeF FillOneDimension(RectangleF bounds, bool drawVertically)
+        public RectangleF FillOneDimension(RectangleF bounds, bool drawVertically)
         {
             if (drawVertically)
             {
-                return new SizeF(amount / bounds.Height, bounds.Height);
+                return bounds.WithWidth(amount / bounds.Height);
             }
             else
             {
-                return new SizeF(bounds.Width, amount / bounds.Height);
+                return bounds.WithHeight(amount / bounds.Height);
             }
         }
 
@@ -95,18 +95,17 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// Assuming this area is a sub-area of the given total area, it fills the given bounds proportionally.
         /// </summary>
         /// <param name="bounds"></param>
-        /// <param name="totalArea"></param>
         /// <param name="drawVertically"></param>
         /// <returns></returns>
-        public SizeF FillProportionally(SizeF bounds, PixelArea totalArea, bool drawVertically)
+        public RectangleF FillProportionally(RectangleF bounds, bool drawVertically)
         {
             if (drawVertically)
             {
-                return new SizeF(bounds.Width, bounds.Height * amount / totalArea.amount);
+                return bounds.WithHeight(amount / bounds.Width);
             }
             else
             {
-                return new SizeF(bounds.Width * amount / totalArea.amount, bounds.Height);
+                return bounds.WithWidth(amount / bounds.Height);
             }
         }
     }
@@ -127,17 +126,16 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         public PixelArea ToPixelSize(double byteSize) => PixelSize * byteSize / ByteSize;
 
-        public SizeF ToSize(RectangleF bounds, bool drawVertically, double realSize)
+        public RectangleF FillOneDimension(RectangleF bounds, bool drawVertically, double realSize)
         {
             PixelArea pixelSize = ToPixelSize(realSize);
             return pixelSize.FillOneDimension(bounds, drawVertically);
         }
 
-        public SizeF ToSize(SizeF bounds, bool drawVertically, double realStreakSize, double realSize)
+        public RectangleF FillProportionally(RectangleF bounds, bool drawVertically, double realSize)
         {
             PixelArea pixelSize = ToPixelSize(realSize);
-            PixelArea streakPixelSize = ToPixelSize(realStreakSize);
-            return pixelSize.FillProportionally(bounds, streakPixelSize, drawVertically);
+            return pixelSize.FillProportionally(bounds, drawVertically);
         }
     }
 
@@ -146,6 +144,6 @@ namespace CRLFLabs.ViewSize.TreeMap
     class FolderWithDrawSize
     {
         public IFileSystemEntry Folder { get; set; }
-        public SizeF DrawSize { get; set; }
+        public RectangleF DrawSize { get; set; }
     }
 }

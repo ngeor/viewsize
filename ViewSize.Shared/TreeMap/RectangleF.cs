@@ -2,6 +2,32 @@
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
+    public struct OriginF
+    {
+        public OriginF(double left, double top)
+        {
+            if (left < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(left));
+            }
+
+            if (top < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(top));
+            }
+
+            Left = left;
+            Top = top;
+        }
+
+        public double Left { get; }
+        public double Top { get; }
+
+        public override string ToString() => $"({Left}, {Top})";
+
+        public OriginF Move(double dleft, double dtop) => new OriginF(Left + dleft, Top + dtop);
+    }
+
     public struct RectangleF
     {
         public RectangleF(double left, double top, double width, double height)
@@ -39,6 +65,9 @@ namespace CRLFLabs.ViewSize.TreeMap
         public double Right => Left + Width;
         public double Bottom => Top + Height;
 
+        public OriginF Origin => new OriginF(Left, Top);
+        public SizeF Size => new SizeF(Width, Height);
+
         public override string ToString()
             => $"({Left}, {Top}), ({Right}, {Bottom})";
 
@@ -53,5 +82,8 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         public RectangleF WithHeight(double height)
             => new RectangleF(Left, Top, Width, height);
+
+        public RectangleF WithOrigin(OriginF origin)
+            => new RectangleF(origin.Left, origin.Top, Width, Height);
     }
 }
