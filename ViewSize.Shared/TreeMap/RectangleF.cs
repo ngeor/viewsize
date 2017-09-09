@@ -32,14 +32,26 @@ namespace CRLFLabs.ViewSize.TreeMap
             Height = height;
         }
 
-        public double Left { get; set; }
-        public double Top { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
+        public double Left { get; }
+        public double Top { get; }
+        public double Width { get; }
+        public double Height { get; }
         public double Right => Left + Width;
         public double Bottom => Top + Height;
 
         public override string ToString()
             => $"({Left}, {Top}), ({Right}, {Bottom})";
+
+        public RectangleF WithLeft(double left)
+            => new RectangleF(left, Top, Width, Height);
+
+        public RectangleF WithTop(double top)
+            => new RectangleF(Left, top, Width, Height);
+
+        public RectangleF WithWidth(double width)
+            => new RectangleF(Left, Top, width, Height);
+
+        public RectangleF WithHeight(double height)
+            => new RectangleF(Left, Top, Width, height);
     }
 }

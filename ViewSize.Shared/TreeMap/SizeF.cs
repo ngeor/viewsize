@@ -31,12 +31,12 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <summary>
         /// Gets or sets the width.
         /// </summary>
-        public double Width { get; set; }
+        public double Width { get; }
 
         /// <summary>
         /// Gets or sets the height.
         /// </summary>
-        public double Height { get; set; }
+        public double Height { get; }
 
         /// <summary>
         /// Gets the aspect ratio.
@@ -44,18 +44,6 @@ namespace CRLFLabs.ViewSize.TreeMap
         public double AspectRatio => Math.Max(Width / Height, Height / Width);
 
         public override string ToString() => $"({Width}, {Height})";
-    }
-
-    public struct Ratio
-    {
-        public Ratio(double nominator, double denominator)
-        {
-            Nominator = nominator;
-            Denominator = denominator;
-        }
-
-        public double Nominator { get; set; }
-        public double Denominator { get; set; }
     }
 
     /// <summary>
@@ -71,11 +59,6 @@ namespace CRLFLabs.ViewSize.TreeMap
         public PixelArea(double amount)
         {
             this.amount = amount;
-        }
-
-        public static PixelArea operator *(PixelArea left, Ratio ratio)
-        {
-            return new PixelArea(left.amount * ratio.Nominator / ratio.Denominator);
         }
 
         public static PixelArea operator *(PixelArea left, double scale)

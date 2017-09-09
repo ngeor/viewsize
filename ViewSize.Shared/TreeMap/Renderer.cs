@@ -4,9 +4,23 @@ using System.Linq;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
+    /// <summary>
+    /// Renders a tree map.
+    /// </summary>
     class Renderer
     {
+        /// <summary>
+        /// Delegates the rendering to a function.
+        /// This decouples the Renderer from an actual graphics implementation.
+        /// </summary>
+        /// <value>The do render.</value>
         public DoRender DoRender { get; set; }
+
+        /// <summary>
+        /// Renders a tree map of the given file system entries within the given bounds.
+        /// </summary>
+        /// <param name="bounds">The bounds within to render.</param>
+        /// <param name="fileSystemEntries">The file system entries.</param>
         public void Render(RectangleF bounds, IList<IFileSystemEntry> fileSystemEntries)
         {
             Render(bounds, bounds, fileSystemEntries);
@@ -115,11 +129,11 @@ namespace CRLFLabs.ViewSize.TreeMap
                     // adjust bounds for last item due to rounding errors etc
                     if (drawVertically)
                     {
-                        r.Height = bounds.Bottom - r.Top;
+                        r = r.WithHeight(bounds.Bottom - r.Top);
                     }
                     else
                     {
-                        r.Width = bounds.Right - r.Left;
+                        r = r.WithWidth(bounds.Right - r.Left);
                     }
                 }
 
@@ -132,11 +146,11 @@ namespace CRLFLabs.ViewSize.TreeMap
                 // next
                 if (drawVertically)
                 {
-                    r.Top = r.Bottom;
+                    r = r.WithTop(r.Bottom);
                 }
                 else
                 {
-                    r.Left = r.Right;
+                    r = r.WithLeft(r.Right);
                 }
             }
         }
