@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ViewSize.Tests.TreeMap
+namespace ViewSize.Tests
 {
     // TODO Move to NGSoftware.Moq?
     public static class FluentMoq

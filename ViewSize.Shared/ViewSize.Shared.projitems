@@ -13,8 +13,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\RectangleF.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\SizeF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Conversions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PixelArea.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Drawing\" />
   </ItemGroup>
 </Project>

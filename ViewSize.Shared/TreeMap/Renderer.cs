@@ -2,9 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
+    delegate void DoRender(FolderWithDrawSize folderWithDrawSize);
+
+    public class FolderWithDrawSize
+    {
+        public IFileSystemEntry Folder { get; set; }
+        public RectangleF DrawSize { get; set; }
+    }
+
     /// <summary>
     /// Renders a tree map.
     /// </summary>
@@ -108,7 +117,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     // continue in remaining bounds
                     var newList = entries.ToList();
                     entries.Clear();
-                    Render(Subtract(bounds, drawStreakSize, drawVertically), newList, conversions);
+                    Render(bounds.Subtract(drawStreakSize), newList, conversions);
                 }
                 else
                 {
@@ -181,34 +190,24 @@ namespace CRLFLabs.ViewSize.TreeMap
 
                 AssertInBounds(bounds, s.DrawSize);
 
-                DoRender?.Invoke(s.DrawSize);
+                DoRender?.Invoke(s);
 
                 // subtree
                 Render(s.DrawSize, s.Folder.Children, conversions);
             }
         }
 
-        private void AssertInBounds(RectangleF outerBounds, RectangleF innerBounds)
+        /// <summary>
+        /// Asserts that the outer bounds contain the inner bounds.
+        /// </summary>
+        /// <param name="outerBounds">The outer bounds</param>
+        /// <param name="innerBounds">The inner bounds</param>
+        private static void AssertInBounds(RectangleF outerBounds, RectangleF innerBounds)
         {
             Debug.Assert(
                 innerBounds.Left >= outerBounds.Left && innerBounds.Top >= outerBounds.Top
                 && innerBounds.Right <= outerBounds.Right && innerBounds.Bottom <= outerBounds.Bottom,
                 $"Rectangle {innerBounds} exceeded {outerBounds}");
-        }
-
-        private RectangleF Subtract(RectangleF bounds, RectangleF size, bool drawVertically)
-        {
-            /// If we're drawing vertically, it fills the entire height.
-            /// Otherwise, it fills the entire width.
-
-            if (drawVertically)
-            {
-                return new RectangleF(bounds.Left + size.Width, bounds.Top, bounds.Width - size.Width, bounds.Height);
-            }
-            else
-            {
-                return new RectangleF(bounds.Left, bounds.Top + size.Height, bounds.Width, bounds.Height - size.Height);
-            }
-        }
+        }        
     }
 }

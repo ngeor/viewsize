@@ -49,12 +49,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drawing\RectangleFTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TreeMap\PixelAreaTest.cs" />
-    <Compile Include="TreeMap\SizeFTest.cs" />
+    <Compile Include="Drawing\SizeFTest.cs" />
     <Compile Include="TreeMap\RendererTest.cs" />
-    <Compile Include="TreeMap\FluentMoq.cs" />
-    <Compile Include="TreeMap\Lists.cs" />
+    <Compile Include="FluentMoq.cs" />
+    <Compile Include="Lists.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

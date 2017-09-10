@@ -1,33 +1,7 @@
 ﻿using System;
 
-namespace CRLFLabs.ViewSize.TreeMap
+namespace CRLFLabs.ViewSize.Drawing
 {
-    public struct OriginF
-    {
-        public OriginF(double left, double top)
-        {
-            if (left < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(left));
-            }
-
-            if (top < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(top));
-            }
-
-            Left = left;
-            Top = top;
-        }
-
-        public double Left { get; }
-        public double Top { get; }
-
-        public override string ToString() => $"({Left}, {Top})";
-
-        public OriginF Move(double dleft, double dtop) => new OriginF(Left + dleft, Top + dtop);
-    }
-
     public struct RectangleF
     {
         public RectangleF(double left, double top, double width, double height)
@@ -66,6 +40,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         public double Bottom => Top + Height;
 
         public OriginF Origin => new OriginF(Left, Top);
+
         public SizeF Size => new SizeF(Width, Height);
 
         public override string ToString()
@@ -73,6 +48,33 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         public RectangleF WithLeft(double left)
             => new RectangleF(left, Top, Width, Height);
+
+        public RectangleF Subtract(RectangleF innerRect)
+        {
+            // to subtract, we need two points of the two rectangles to be equal
+            if (Origin.Equals(innerRect.Origin))
+            {
+                // top-left are the same
+                if (Width == innerRect.Width)
+                {
+                    // also Width is the same, therefore top-right is the same
+                    return new RectangleF(Left, Top + innerRect.Height, Width, Height - innerRect.Height);
+                }
+                else if (Height == innerRect.Height)
+                {
+                    // also Height is the same, therefore left-bottom is the same
+                    return new RectangleF(Left + innerRect.Width, Top, Width - innerRect.Width, Height);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Subtract cannot return a rectangle");
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public RectangleF WithTop(double top)
             => new RectangleF(Left, top, Width, Height);

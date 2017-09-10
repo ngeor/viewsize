@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ViewSize.Tests.TreeMap
+namespace ViewSize.Tests
 {
     // TODO : move to NGSoftware.Common?
     public static class Lists

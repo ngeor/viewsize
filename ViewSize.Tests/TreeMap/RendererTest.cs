@@ -4,6 +4,7 @@ using CRLFLabs.ViewSize.TreeMap;
 using System.Collections.Generic;
 using Moq;
 using System.Linq;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace ViewSize.Tests.TreeMap
 {
@@ -30,7 +31,7 @@ namespace ViewSize.Tests.TreeMap
             List<RectangleF> calculatedBounds = new List<RectangleF>();
 
             // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds);
+            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
 
             // act
             renderer.Render(fullBounds, folders);
@@ -53,7 +54,7 @@ namespace ViewSize.Tests.TreeMap
             List<RectangleF> calculatedBounds = new List<RectangleF>();
 
             // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds);
+            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
 
             // act
             renderer.Render(fullBounds, folders);
@@ -81,7 +82,7 @@ namespace ViewSize.Tests.TreeMap
             List<RectangleF> calculatedBounds = new List<RectangleF>();
 
             // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds);
+            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
 
             // act
             renderer.Render(fullBounds, folders);
@@ -111,7 +112,7 @@ namespace ViewSize.Tests.TreeMap
             List<RectangleF> calculatedBounds = new List<RectangleF>();
 
             // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds);
+            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
 
             // act
             renderer.Render(fullBounds, folders);

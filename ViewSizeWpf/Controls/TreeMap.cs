@@ -7,15 +7,25 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CRLFLabs.ViewSize.TreeMap;
+using System.Drawing;
+using System.Windows.Interop;
+using System.Drawing.Drawing2D;
 
 namespace ViewSizeWpf.Controls
 {
+    public class TreeMapDataSource
+    {
+        public IList<FolderWithDrawSize> FoldersWithDrawSize { get; set; }
+        public double ActualWidth { get; set; }
+        public double ActualHeight { get; set; }
+    }
+
     public class TreeMap : FrameworkElement
     {
-        private static readonly Pen BlackPen = new Pen(Brushes.Black, 1);
-        private IList<IFileSystemEntry> _dataSource;
+        private TreeMapDataSource _dataSource;
 
-        public IList<IFileSystemEntry> DataSource
+        public TreeMapDataSource DataSource
         {
             get
             {
@@ -31,32 +41,60 @@ namespace ViewSizeWpf.Controls
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
+            var source = RenderWithGdi();
+            drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
+        }
 
-            drawingContext.DrawRectangle(Brushes.AliceBlue, BlackPen, new Rect(0, 0, ActualWidth, ActualHeight));
+        private static System.Drawing.RectangleF ToRectangleF(CRLFLabs.ViewSize.Drawing.RectangleF rectangle)
+        {
+            return new System.Drawing.RectangleF((float)rectangle.Left, (float)rectangle.Top, (float)rectangle.Width, (float)rectangle.Height);
+        }
 
-            var list = DataSource;
-            if (list == null)
+        private BitmapSource RenderWithGdi()
+        {
+            int width = (int)ActualWidth;
+            int height = (int)ActualHeight;
+            using (var tempBitmap = new Bitmap(width, height))
             {
-                return;
+                using (var g = Graphics.FromImage(tempBitmap))
+                {
+                    if (DataSource != null)
+                    {
+                        g.ScaleTransform((float)(ActualWidth / DataSource.ActualWidth), (float)(ActualHeight / DataSource.ActualHeight));
+                    }
+
+                    g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, width, height);
+
+                    var list = DataSource;
+                    if (list != null)
+                    {
+                        foreach (var folderWithSize in list.FoldersWithDrawSize)
+                        {
+                            var r = folderWithSize.DrawSize;
+                            var rf = ToRectangleF(r);
+                            g.FillRectangle(
+                                System.Drawing.Brushes.AntiqueWhite, rf);
+
+                            GraphicsPath graphicsPath = new GraphicsPath();
+                            graphicsPath.AddEllipse(rf);
+                            PathGradientBrush brush = new PathGradientBrush(graphicsPath);
+                            brush.CenterColor = System.Drawing.Color.White;
+                            brush.SurroundColors = new[]
+                            {
+                                System.Drawing.Color.AntiqueWhite
+                            };
+
+                            g.FillEllipse(brush, rf);
+
+                            g.DrawRectangle(Pens.Black, rf.Left, rf.Top, rf.Width, rf.Height);
+                        }
+                    }
+                }
+
+                var hbmp = tempBitmap.GetHbitmap();
+                var options = BitmapSizeOptions.FromEmptyOptions();
+                return Imaging.CreateBitmapSourceFromHBitmap(hbmp, IntPtr.Zero, Int32Rect.Empty, options);
             }
-                        
-            var treeMap = new CRLFLabs.ViewSize.TreeMap.Renderer
-            {
-                DoRender = (r) => DoRender(drawingContext, r)
-            };
-
-            var bounds = new CRLFLabs.ViewSize.TreeMap.RectangleF(0, 0, ActualWidth, ActualHeight);
-            treeMap.Render(bounds, DataSource);
-        }
-
-        private void DoRender(DrawingContext drawingContext, CRLFLabs.ViewSize.TreeMap.RectangleF rectangle)
-        {
-            drawingContext.DrawRectangle(Brushes.AntiqueWhite, BlackPen, ToRect(rectangle));
-        }
-
-        private static Rect ToRect(CRLFLabs.ViewSize.TreeMap.RectangleF rectangle)
-        {
-            return new Rect(rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
         }
     }
 }

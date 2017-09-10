@@ -1,4 +1,5 @@
-﻿using CRLFLabs.ViewSize.TreeMap;
+﻿using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.TreeMap;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

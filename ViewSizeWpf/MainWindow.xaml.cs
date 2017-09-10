@@ -1,6 +1,8 @@
 ﻿using CRLFLabs.ViewSize;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewSizeWpf.Controls;
 
 namespace WpfApp1
 {
@@ -56,20 +59,38 @@ namespace WpfApp1
             Cursor = Cursors.Wait;
             EnableUI(false);
             string path = txtFolder.Text;
+            var treeMapWidth = treeMap.ActualWidth;
+            var treeMapHeight = treeMap.ActualHeight;
+            var treeMapDataSource = new TreeMapDataSource
+            {
+                FoldersWithDrawSize = new List<CRLFLabs.ViewSize.TreeMap.FolderWithDrawSize>(),
+                ActualHeight = treeMapHeight,
+                ActualWidth = treeMapWidth
+            };
 
+            Stopwatch stopwatch = Stopwatch.StartNew();
             Task.Run(() =>
             {
                 try
                 {
                     folderScanner.Scan(path);
+
+                    var renderer = new CRLFLabs.ViewSize.TreeMap.Renderer
+                    {
+                        DoRender = (r) => treeMapDataSource.FoldersWithDrawSize.Add(r)
+                    };
+
+                    var bounds = new CRLFLabs.ViewSize.Drawing.RectangleF(0, 0, treeMapWidth, treeMapHeight);
+                    renderer.Render(bounds, folderScanner.TopLevelFolders);
+
                     Dispatcher.Invoke(() =>
                     {
-                        //treeView.Items.Clear();
-                        //Populate(treeView.Items, folderScanner.Root);
                         treeView.DataContext = null;
                         treeView.DataContext = folderScanner;
-                        treeMap.DataSource = folderScanner.TopLevelFolders;
-                        lblStatus.Content = $"Finished in {folderScanner.Duration}";
+                        treeMap.DataSource = treeMapDataSource;
+
+                        stopwatch.Stop();
+                        lblStatus.Content = $"Finished scanning in {folderScanner.Duration}, total time: {stopwatch.Elapsed}";
                     });
                 }
                 catch (Exception ex)
@@ -88,20 +109,6 @@ namespace WpfApp1
                     });
                 }
             });
-        }
-
-        private void Populate(ItemCollection items, IFileSystemEntry folder)
-        {
-            var treeViewItem = new TreeViewItem
-            {
-                Header = folder.DisplayText + " (" + folder.DisplaySize + ")"
-            };
-
-            items.Add(treeViewItem);
-            foreach (var child in folder.Children.OrderByDescending(c => c.TotalSize))
-            {
-                Populate(treeViewItem.Items, child);
-            }
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
