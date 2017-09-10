@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CRLFLabs.ViewSize.TreeMap;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace ViewSizeWpf.Controls
 {
@@ -14,13 +15,8 @@ namespace ViewSizeWpf.Controls
         public IList<FolderWithDrawSize> FoldersWithDrawSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the draw width of the canvas.
+        /// Gets or sets the draw size of the canvas.
         /// </summary>
-        public double ActualWidth { get; set; }
-
-        /// <summary>
-        /// Gets or sets the draw height of the canvas.
-        /// </summary>
-        public double ActualHeight { get; set; }
+        public SizeD DrawSize { get; set; }
     }
 }

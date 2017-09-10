@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\PointD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Drawing\ScaleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />

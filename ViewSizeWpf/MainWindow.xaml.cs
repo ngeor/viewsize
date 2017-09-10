@@ -56,8 +56,7 @@ namespace WpfApp1
             var treeMapDataSource = new TreeMapDataSource
             {
                 FoldersWithDrawSize = new List<FolderWithDrawSize>(),
-                ActualHeight = treeMapHeight,
-                ActualWidth = treeMapWidth
+                DrawSize = treeMap.ActualSize
             };
 
             Stopwatch stopwatch = Stopwatch.StartNew();

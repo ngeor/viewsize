@@ -57,9 +57,7 @@ namespace ViewSize.Tests.Drawing
         public void Scale()
         {
             RectangleD original = new RectangleD(10, 20, 200, 100);
-
-            // TODO use a ScaleD struct instead of SizeD
-            RectangleD scaled = original.Scale(new SizeD(0.1, 0.2));
+            RectangleD scaled = original.Scale(new ScaleD(0.1, 0.2));
             RectangleD expected = new RectangleD(1, 4, 20, 20);
             Assert.AreEqual(expected, scaled);
         }

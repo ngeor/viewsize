@@ -54,36 +54,44 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private SizeD Scale =>
-            new SizeD(ActualWidth / DataSource.ActualWidth, ActualHeight / DataSource.ActualHeight);
+        /// <summary>
+        /// Gets the actual size of this control.
+        /// </summary>
+        public SizeD ActualSize => new SizeD(ActualWidth, ActualHeight);
+
+        /// <summary>
+        /// Gets the scaling factor in order to convert datasource sizes into actual sizes.
+        /// </summary>
+        private ScaleD ScaleToActual => new ScaleD(DataSource.DrawSize, ActualSize);
 
         private void Render(Graphics g)
         {
-            var list = DataSource;
-            if (list == null)
+            // clear background
+            g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, (float)ActualWidth, (float)ActualHeight);
+
+            var dataSource = DataSource;
+            if (dataSource == null)
             {
-                g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, (float)ActualWidth, (float)ActualHeight);
                 return;
             }
 
-            SizeD scale = Scale;
-
-            g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, (float)DataSource.ActualWidth, (float)DataSource.ActualHeight);
-            foreach (var folderWithSize in list.FoldersWithDrawSize)
+            ScaleD scale = ScaleToActual;
+            foreach (var folderWithSize in dataSource.FoldersWithDrawSize)
             {
                 Render(g, folderWithSize, scale);
             }
         }
 
-        private static void Render(Graphics g, FolderWithDrawSize folderWithSize, SizeD scale)
+        private static void Render(Graphics g, FolderWithDrawSize folderWithSize, ScaleD scale)
         {
-            var r = folderWithSize.DrawSize.Scale(scale);
-            var rf = r.ToRectangleF();
+            // scale rectangle to actual drawing dimensions and convert to GDI
+            var rect = folderWithSize.DrawSize.Scale(scale).ToRectangleF();
             g.FillRectangle(
-                System.Drawing.Brushes.AntiqueWhite, rf);
+                System.Drawing.Brushes.AntiqueWhite, rect);
 
+            // draw ellipse gradient
             GraphicsPath graphicsPath = new GraphicsPath();
-            graphicsPath.AddEllipse(rf);
+            graphicsPath.AddEllipse(rect);
             PathGradientBrush brush = new PathGradientBrush(graphicsPath)
             {
                 CenterColor = System.Drawing.Color.White,
@@ -93,9 +101,10 @@ namespace ViewSizeWpf.Controls
                 }
             };
 
-            g.FillEllipse(brush, rf);
+            g.FillEllipse(brush, rect);
 
-            g.DrawRectangle(Pens.Black, rf.Left, rf.Top, rf.Width, rf.Height);
+            // draw outline
+            g.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
         }
         #endregion
 
@@ -108,7 +117,7 @@ namespace ViewSizeWpf.Controls
             }
 
             // scale back the point into the datasource coordinates
-            PointD point = new PointD(pt.X * DataSource.ActualWidth / ActualWidth, pt.Y * DataSource.ActualHeight / ActualHeight);
+            PointD point = pt.ToPointD().Scale(ScaleToActual.Invert());
             return FolderAtPoint(point, list.FoldersWithDrawSize);
         }
 

@@ -76,10 +76,15 @@ namespace CRLFLabs.ViewSize.Drawing
             }
         }
 
-        public RectangleD Scale(SizeD sizeF)
+        /// <summary>
+        /// Creates a scaled version of this rectangle, applying the given scale transformation.
+        /// </summary>
+        /// <param name="scale">The scaling factor.</param>
+        /// <returns>A new scaled rectangle.</returns>
+        public RectangleD Scale(ScaleD scale)
         {
-            double sx = sizeF.Width;
-            double sy = sizeF.Height;
+            double sx = scale.ScaleX;
+            double sy = scale.ScaleY;
             return new RectangleD(Left * sx, Top * sy, Width * sx, Height * sy);
         }
 

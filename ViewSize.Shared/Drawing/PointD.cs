@@ -15,5 +15,7 @@
         public double Y { get; }
 
         public override string ToString() => $"({X}, {Y})";
+
+        public PointD Scale(ScaleD scale) => new PointD(X * scale.ScaleX, Y * scale.ScaleY);
     }
 }
