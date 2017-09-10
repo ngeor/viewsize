@@ -5,14 +5,14 @@ namespace CRLFLabs.ViewSize.Drawing
     /// <summary>
     /// Represents the origin of a rectangle.
     /// </summary>
-    public struct OriginF
+    public struct OriginD
     {
         /// <summary>
         /// Creates a new origin.
         /// </summary>
         /// <param name="left">The left coordinate.</param>
         /// <param name="top">The top coordinate.</param>
-        public OriginF(double left, double top)
+        public OriginD(double left, double top)
         {
             if (left < 0)
             {
@@ -46,6 +46,6 @@ namespace CRLFLabs.ViewSize.Drawing
         /// <param name="dleft">The amount by which to move the origin horizontally.</param>
         /// <param name="dtop">The amount by which to move the origin vertically.</param>
         /// <returns></returns>
-        public OriginF Move(double dleft, double dtop) => new OriginF(Left + dleft, Top + dtop);
+        public OriginD Move(double dleft, double dtop) => new OriginD(Left + dleft, Top + dtop);
     }
 }

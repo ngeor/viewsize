@@ -1,8 +1,4 @@
-﻿using CRLFLabs.ViewSize;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 
 namespace CRLFLabs.ViewSize.Drawing
 {
@@ -10,9 +6,9 @@ namespace CRLFLabs.ViewSize.Drawing
     /// Represents a size (width and height).
     /// Need to define this as WPF and Cocoa use different structures.
     /// </summary>
-    public struct SizeF
+    public struct SizeD
     {
-        public SizeF(double width, double height)
+        public SizeD(double width, double height)
         {
             if (width < 0)
             {
@@ -45,10 +41,4 @@ namespace CRLFLabs.ViewSize.Drawing
 
         public override string ToString() => $"({Width}, {Height})";
     }
-
-    
-
-    
-
-    
 }

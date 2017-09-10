@@ -11,7 +11,7 @@ namespace CRLFLabs.ViewSize.TreeMap
     public class FolderWithDrawSize
     {
         public IFileSystemEntry Folder { get; set; }
-        public RectangleF DrawSize { get; set; }
+        public RectangleD DrawSize { get; set; }
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <param name="fullBounds">The bounds within to render.</param>
         /// <param name="fileSystemEntries">The file system entries.</param>
-        public void Render(RectangleF fullBounds, IList<IFileSystemEntry> fileSystemEntries)
+        public void Render(RectangleD fullBounds, IList<IFileSystemEntry> fileSystemEntries)
         {
             // e.g. real total size = 200 bytes
             var realTotalSize = fileSystemEntries.Sum(f => f.TotalSize);
@@ -48,7 +48,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             Render(fullBounds, fileSystemEntries, conversions);
         }
 
-        private void Render(RectangleF bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions)
+        private void Render(RectangleD bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions)
         {
             Debug.WriteLine($"Render bounds={bounds} number of fs entries={fileSystemEntries.Count}");
 
@@ -138,7 +138,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         private void Stack(LinkedList<FolderWithDrawSize> streakCandidate, bool drawVertically)
         {
             bool isFirst = true;
-            OriginF lastOrigin = default(OriginF);
+            OriginD lastOrigin = default(OriginD);
             foreach (var x in streakCandidate)
             {
                 if (isFirst)
@@ -161,7 +161,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleF bounds, bool drawVertically, Conversions conversions)
+        private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleD bounds, bool drawVertically, Conversions conversions)
         {
             Debug.WriteLine("Draw streak within {0}", bounds);
 
@@ -202,7 +202,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <param name="outerBounds">The outer bounds</param>
         /// <param name="innerBounds">The inner bounds</param>
-        private static void AssertInBounds(RectangleF outerBounds, RectangleF innerBounds)
+        private static void AssertInBounds(RectangleD outerBounds, RectangleD innerBounds)
         {
             Debug.Assert(
                 innerBounds.Left >= outerBounds.Left && innerBounds.Top >= outerBounds.Top

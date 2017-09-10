@@ -2,9 +2,9 @@
 
 namespace CRLFLabs.ViewSize.Drawing
 {
-    public struct RectangleF
+    public struct RectangleD
     {
-        public RectangleF(double left, double top, double width, double height)
+        public RectangleD(double left, double top, double width, double height)
         {
             if (left < 0)
             {
@@ -39,17 +39,17 @@ namespace CRLFLabs.ViewSize.Drawing
         public double Right => Left + Width;
         public double Bottom => Top + Height;
 
-        public OriginF Origin => new OriginF(Left, Top);
+        public OriginD Origin => new OriginD(Left, Top);
 
-        public SizeF Size => new SizeF(Width, Height);
+        public SizeD Size => new SizeD(Width, Height);
 
         public override string ToString()
             => $"({Left}, {Top}), ({Right}, {Bottom})";
 
-        public RectangleF WithLeft(double left)
-            => new RectangleF(left, Top, Width, Height);
+        public RectangleD WithLeft(double left)
+            => new RectangleD(left, Top, Width, Height);
 
-        public RectangleF Subtract(RectangleF innerRect)
+        public RectangleD Subtract(RectangleD innerRect)
         {
             // to subtract, we need two points of the two rectangles to be equal
             if (Origin.Equals(innerRect.Origin))
@@ -58,12 +58,12 @@ namespace CRLFLabs.ViewSize.Drawing
                 if (Width == innerRect.Width)
                 {
                     // also Width is the same, therefore top-right is the same
-                    return new RectangleF(Left, Top + innerRect.Height, Width, Height - innerRect.Height);
+                    return new RectangleD(Left, Top + innerRect.Height, Width, Height - innerRect.Height);
                 }
                 else if (Height == innerRect.Height)
                 {
                     // also Height is the same, therefore left-bottom is the same
-                    return new RectangleF(Left + innerRect.Width, Top, Width - innerRect.Width, Height);
+                    return new RectangleD(Left + innerRect.Width, Top, Width - innerRect.Width, Height);
                 }
                 else
                 {
@@ -76,16 +76,28 @@ namespace CRLFLabs.ViewSize.Drawing
             }
         }
 
-        public RectangleF WithTop(double top)
-            => new RectangleF(Left, top, Width, Height);
+        public RectangleD Scale(SizeD sizeF)
+        {
+            double sx = sizeF.Width;
+            double sy = sizeF.Height;
+            return new RectangleD(Left * sx, Top * sy, Width * sx, Height * sy);
+        }
 
-        public RectangleF WithWidth(double width)
-            => new RectangleF(Left, Top, width, Height);
+        public bool Contains(PointD point)
+        {
+            return Left <= point.X && point.X < Right && Top <= point.Y && point.Y < Bottom;
+        }
 
-        public RectangleF WithHeight(double height)
-            => new RectangleF(Left, Top, Width, height);
+        public RectangleD WithTop(double top)
+            => new RectangleD(Left, top, Width, Height);
 
-        public RectangleF WithOrigin(OriginF origin)
-            => new RectangleF(origin.Left, origin.Top, Width, Height);
+        public RectangleD WithWidth(double width)
+            => new RectangleD(Left, Top, width, Height);
+
+        public RectangleD WithHeight(double height)
+            => new RectangleD(Left, Top, Width, height);
+
+        public RectangleD WithOrigin(OriginD origin)
+            => new RectangleD(origin.Left, origin.Top, Width, Height);
     }
 }

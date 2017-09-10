@@ -38,7 +38,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <param name="bounds"></param>
         /// <param name="drawVertically"></param>
         /// <returns></returns>
-        public RectangleF FillOneDimension(RectangleF bounds, bool drawVertically)
+        public RectangleD FillOneDimension(RectangleD bounds, bool drawVertically)
         {
             if (drawVertically)
             {
@@ -56,7 +56,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <param name="bounds"></param>
         /// <param name="drawVertically"></param>
         /// <returns></returns>
-        public RectangleF FillProportionally(RectangleF bounds, bool drawVertically)
+        public RectangleD FillProportionally(RectangleD bounds, bool drawVertically)
         {
             if (drawVertically)
             {

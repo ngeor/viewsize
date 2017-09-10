@@ -1,20 +1,12 @@
 ﻿using CRLFLabs.ViewSize;
+using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.TreeMap;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ViewSizeWpf.Controls;
 
 namespace WpfApp1
@@ -63,7 +55,7 @@ namespace WpfApp1
             var treeMapHeight = treeMap.ActualHeight;
             var treeMapDataSource = new TreeMapDataSource
             {
-                FoldersWithDrawSize = new List<CRLFLabs.ViewSize.TreeMap.FolderWithDrawSize>(),
+                FoldersWithDrawSize = new List<FolderWithDrawSize>(),
                 ActualHeight = treeMapHeight,
                 ActualWidth = treeMapWidth
             };
@@ -75,12 +67,12 @@ namespace WpfApp1
                 {
                     folderScanner.Scan(path);
 
-                    var renderer = new CRLFLabs.ViewSize.TreeMap.Renderer
+                    var renderer = new Renderer
                     {
                         DoRender = (r) => treeMapDataSource.FoldersWithDrawSize.Add(r)
                     };
 
-                    var bounds = new CRLFLabs.ViewSize.Drawing.RectangleF(0, 0, treeMapWidth, treeMapHeight);
+                    var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
                     renderer.Render(bounds, folderScanner.TopLevelFolders);
 
                     Dispatcher.Invoke(() =>
@@ -122,6 +114,20 @@ namespace WpfApp1
             btnScan.IsEnabled = enable;
             btnSelectFolder.IsEnabled = enable;
             btnCancel.IsEnabled = !enable;
+        }
+
+        private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var point = e.GetPosition(treeMap);
+            var folder = treeMap.FolderAtPoint(point);
+            if (folder == null)
+            {
+                MessageBox.Show("No folder at point");
+            }
+            else
+            {
+                MessageBox.Show(folder.Folder.Path);
+            }
         }
     }
 }

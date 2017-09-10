@@ -1,26 +1,17 @@
-﻿using CRLFLabs.ViewSize;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using CRLFLabs.ViewSize.TreeMap;
 using System.Drawing;
 using System.Windows.Interop;
 using System.Drawing.Drawing2D;
+using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.TreeMap;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ViewSizeWpf.Controls
 {
-    public class TreeMapDataSource
-    {
-        public IList<FolderWithDrawSize> FoldersWithDrawSize { get; set; }
-        public double ActualWidth { get; set; }
-        public double ActualHeight { get; set; }
-    }
-
     public class TreeMap : FrameworkElement
     {
         private TreeMapDataSource _dataSource;
@@ -38,16 +29,12 @@ namespace ViewSizeWpf.Controls
             }
         }
 
+        #region Rendering
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
             var source = RenderWithGdi();
             drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
-        }
-
-        private static System.Drawing.RectangleF ToRectangleF(CRLFLabs.ViewSize.Drawing.RectangleF rectangle)
-        {
-            return new System.Drawing.RectangleF((float)rectangle.Left, (float)rectangle.Top, (float)rectangle.Width, (float)rectangle.Height);
         }
 
         private BitmapSource RenderWithGdi()
@@ -58,43 +45,77 @@ namespace ViewSizeWpf.Controls
             {
                 using (var g = Graphics.FromImage(tempBitmap))
                 {
-                    if (DataSource != null)
-                    {
-                        g.ScaleTransform((float)(ActualWidth / DataSource.ActualWidth), (float)(ActualHeight / DataSource.ActualHeight));
-                    }
-
-                    g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, width, height);
-
-                    var list = DataSource;
-                    if (list != null)
-                    {
-                        foreach (var folderWithSize in list.FoldersWithDrawSize)
-                        {
-                            var r = folderWithSize.DrawSize;
-                            var rf = ToRectangleF(r);
-                            g.FillRectangle(
-                                System.Drawing.Brushes.AntiqueWhite, rf);
-
-                            GraphicsPath graphicsPath = new GraphicsPath();
-                            graphicsPath.AddEllipse(rf);
-                            PathGradientBrush brush = new PathGradientBrush(graphicsPath);
-                            brush.CenterColor = System.Drawing.Color.White;
-                            brush.SurroundColors = new[]
-                            {
-                                System.Drawing.Color.AntiqueWhite
-                            };
-
-                            g.FillEllipse(brush, rf);
-
-                            g.DrawRectangle(Pens.Black, rf.Left, rf.Top, rf.Width, rf.Height);
-                        }
-                    }
+                    Render(g);
                 }
 
                 var hbmp = tempBitmap.GetHbitmap();
                 var options = BitmapSizeOptions.FromEmptyOptions();
                 return Imaging.CreateBitmapSourceFromHBitmap(hbmp, IntPtr.Zero, Int32Rect.Empty, options);
             }
+        }
+
+        private SizeD Scale =>
+            new SizeD(ActualWidth / DataSource.ActualWidth, ActualHeight / DataSource.ActualHeight);
+
+        private void Render(Graphics g)
+        {
+            var list = DataSource;
+            if (list == null)
+            {
+                g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, (float)ActualWidth, (float)ActualHeight);
+                return;
+            }
+
+            SizeD scale = Scale;
+
+            g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, (float)DataSource.ActualWidth, (float)DataSource.ActualHeight);
+            foreach (var folderWithSize in list.FoldersWithDrawSize)
+            {
+                Render(g, folderWithSize, scale);
+            }
+        }
+
+        private static void Render(Graphics g, FolderWithDrawSize folderWithSize, SizeD scale)
+        {
+            var r = folderWithSize.DrawSize.Scale(scale);
+            var rf = r.ToRectangleF();
+            g.FillRectangle(
+                System.Drawing.Brushes.AntiqueWhite, rf);
+
+            GraphicsPath graphicsPath = new GraphicsPath();
+            graphicsPath.AddEllipse(rf);
+            PathGradientBrush brush = new PathGradientBrush(graphicsPath)
+            {
+                CenterColor = System.Drawing.Color.White,
+                SurroundColors = new[]
+                {
+                    System.Drawing.Color.AntiqueWhite
+                }
+            };
+
+            g.FillEllipse(brush, rf);
+
+            g.DrawRectangle(Pens.Black, rf.Left, rf.Top, rf.Width, rf.Height);
+        }
+        #endregion
+
+        public FolderWithDrawSize FolderAtPoint(System.Windows.Point pt)
+        {
+            var list = DataSource;
+            if (list == null)
+            {
+                return null;
+            }
+
+            // scale back the point into the datasource coordinates
+            PointD point = new PointD(pt.X * DataSource.ActualWidth / ActualWidth, pt.Y * DataSource.ActualHeight / ActualHeight);
+            return FolderAtPoint(point, list.FoldersWithDrawSize);
+        }
+
+        private FolderWithDrawSize FolderAtPoint(PointD point, IList<FolderWithDrawSize> foldersWithDrawSize)
+        {
+            // TODO: need to have a hierarchy similar to Folder here, in order to apply recursion
+            return foldersWithDrawSize.FirstOrDefault(f => f.DrawSize.Contains(point));
         }
     }
 }

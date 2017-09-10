@@ -71,7 +71,7 @@
                 </local:TreeListView.Columns>
             </local:TreeListView>
             <GridSplitter x:Name="gridSplitter"  Width="5" Grid.Column="1" HorizontalAlignment="Stretch"/>
-            <local:TreeMap x:Name="treeMap" Grid.Column="2"/>
+            <local:TreeMap x:Name="treeMap" Grid.Column="2" MouseLeftButtonUp="treeMap_MouseLeftButtonUp"/>
         </Grid>
     </DockPanel>
 </Window>

@@ -21,13 +21,13 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         public PixelArea ToPixelSize(double byteSize) => PixelSize * byteSize / ByteSize;
 
-        public RectangleF FillOneDimension(RectangleF bounds, bool drawVertically, double realSize)
+        public RectangleD FillOneDimension(RectangleD bounds, bool drawVertically, double realSize)
         {
             PixelArea pixelSize = ToPixelSize(realSize);
             return pixelSize.FillOneDimension(bounds, drawVertically);
         }
 
-        public RectangleF FillProportionally(RectangleF bounds, bool drawVertically, double realSize)
+        public RectangleD FillProportionally(RectangleD bounds, bool drawVertically, double realSize)
         {
             PixelArea pixelSize = ToPixelSize(realSize);
             return pixelSize.FillProportionally(bounds, drawVertically);

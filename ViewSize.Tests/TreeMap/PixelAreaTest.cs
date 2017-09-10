@@ -15,16 +15,16 @@ namespace ViewSize.Tests.TreeMap
         public void FillOneDimension_Half_Horizontally()
         {
             PixelArea pixelArea = new PixelArea(50);
-            var result = pixelArea.FillOneDimension(new RectangleF(0, 0, 10, 10), false);
-            Assert.AreEqual(new RectangleF(0, 0, 10, 5), result);
+            var result = pixelArea.FillOneDimension(new RectangleD(0, 0, 10, 10), false);
+            Assert.AreEqual(new RectangleD(0, 0, 10, 5), result);
         }
 
         [Test]
         public void FillOneDimension_Half_Vertically()
         {
             PixelArea pixelArea = new PixelArea(50);
-            var result = pixelArea.FillOneDimension(new RectangleF(0, 0, 10, 10), true);
-            Assert.AreEqual(new RectangleF(0, 0, 5, 10), result);
+            var result = pixelArea.FillOneDimension(new RectangleD(0, 0, 10, 10), true);
+            Assert.AreEqual(new RectangleD(0, 0, 5, 10), result);
         }
 
     }
