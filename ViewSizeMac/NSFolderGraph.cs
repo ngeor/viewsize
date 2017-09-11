@@ -67,9 +67,14 @@ namespace ViewSizeMac
             }
 
             var scale = ScaleToActual;
-            foreach (var folderWithDrawSize in dataSource.FoldersWithDrawSize)
+            Draw(dataSource.FoldersWithDrawSize, scale);
+        }
+
+        private void Draw(IEnumerable<FolderWithDrawSize> foldersWithDrawSize, ScaleD scaleToActual)
+        {
+            foreach (var folderWithDrawSize in foldersWithDrawSize)
             {
-                Draw(folderWithDrawSize, scale);
+                Draw(folderWithDrawSize, scaleToActual);
             }
         }
 
@@ -80,6 +85,9 @@ namespace ViewSizeMac
             NSBezierPath.FillRect(rect);
             NSColor.Black.Set();
             NSBezierPath.StrokeRect(rect);
+
+            // recursion
+            Draw(folderWithDrawSize.Children, scaleToActual);
         }
 
         public override bool IsFlipped => true;

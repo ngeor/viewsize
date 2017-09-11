@@ -14,13 +14,11 @@ namespace ViewSizeMac
     {
         private readonly FolderScanner folderScanner = new FolderScanner();
         private readonly Renderer renderer = new Renderer();
-        private readonly TreeMapDataSource treeMapDataSource = new TreeMapDataSource();
+        private TreeMapDataSource treeMapDataSource;
 
         public ViewController(IntPtr handle) : base(handle)
         {
-            treeMapDataSource.FoldersWithDrawSize = new List<FolderWithDrawSize>();
             folderScanner.Scanning += ReportProgress;
-            renderer.DoRender += _ => treeMapDataSource.FoldersWithDrawSize.Add(_);
             TroubleshootNativeCrashes();
         }
 
@@ -74,12 +72,12 @@ namespace ViewSizeMac
         {
             EnableUI(false);
             string path = txtFolder.StringValue;
-            treeMapDataSource.Bounds = folderGraph.Bounds.ToRectangleD();
+            RectangleD bounds = folderGraph.Bounds.ToRectangleD();
             Task.Run(() =>
             {
                 try
                 {
-                    ScanInBackgroundThread(path);
+                    ScanInBackgroundThread(path, bounds);
                     InvokeOnMainThread(UpdateViewsOnMainThread);
                 }
                 catch (Exception ex)
@@ -96,11 +94,10 @@ namespace ViewSizeMac
             });
         }
 
-        private void ScanInBackgroundThread(string path)
+        private void ScanInBackgroundThread(string path, RectangleD bounds)
         {
             folderScanner.Scan(path);
-            treeMapDataSource.FoldersWithDrawSize.Clear();
-            renderer.Render(treeMapDataSource.Bounds, folderScanner.TopLevelFolders);
+            treeMapDataSource = renderer.Render(bounds, folderScanner.TopLevelFolders);
         }
 
         private void UpdateViewsOnMainThread()

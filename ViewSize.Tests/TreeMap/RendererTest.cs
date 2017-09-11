@@ -28,17 +28,12 @@ namespace ViewSize.Tests.TreeMap
             var mockFileSystemEntry = CreateFileSystemEntryMock();
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
-            List<RectangleD> calculatedBounds = new List<RectangleD>();
-
-            // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
-
             // act
-            renderer.Render(fullBounds, folders);
+            var dataSource = renderer.Render(fullBounds, folders);
 
             // assert
-            Assert.AreEqual(1, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, width, height), calculatedBounds[0]);
+            Assert.AreEqual(1, dataSource.FoldersWithDrawSize.Count);
+            Assert.AreEqual(new RectangleD(0, 0, width, height), dataSource.FoldersWithDrawSize[0].DrawSize);
         }
 
         [Test]
@@ -51,18 +46,13 @@ namespace ViewSize.Tests.TreeMap
             );
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
-            List<RectangleD> calculatedBounds = new List<RectangleD>();
-
-            // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
-
             // act
-            renderer.Render(fullBounds, folders);
+            var calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
-            Assert.AreEqual(2, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0]);
-            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[1]);
+            Assert.AreEqual(1, calculatedBounds.Count);
+            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].DrawSize);
+            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].Children[0].DrawSize);
         }
 
         [Test]
@@ -79,18 +69,13 @@ namespace ViewSize.Tests.TreeMap
 
             var folders = mockFileSystemEntries.ToListOfInstances();
 
-            List<RectangleD> calculatedBounds = new List<RectangleD>();
-
-            // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
-
             // act
-            renderer.Render(fullBounds, folders);
+            var calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(2, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 50, 100), calculatedBounds[0], "first rectangle");
-            Assert.AreEqual(new RectangleD(50, 0, 50, 100), calculatedBounds[1], "second rectangle");
+            Assert.AreEqual(new RectangleD(0, 0, 50, 100), calculatedBounds[0].DrawSize, "first rectangle");
+            Assert.AreEqual(new RectangleD(50, 0, 50, 100), calculatedBounds[1].DrawSize, "second rectangle");
         }
 
         [Test]
@@ -109,20 +94,15 @@ namespace ViewSize.Tests.TreeMap
 
             var folders = mockFileSystemEntries.ToListOfInstances();
 
-            List<RectangleD> calculatedBounds = new List<RectangleD>();
-
-            // accumulate all render results
-            renderer.DoRender = (bounds) => calculatedBounds.Add(bounds.DrawSize);
-
             // act
-            renderer.Render(fullBounds, folders);
+            var calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(4, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 50, 50), calculatedBounds[0], "first rectangle");
-            Assert.AreEqual(new RectangleD(50, 0, 50, 50), calculatedBounds[1], "second rectangle");
-            Assert.AreEqual(new RectangleD(0, 50, 50, 50), calculatedBounds[2], "third rectangle");
-            Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3], "fourth rectangle");
+            Assert.AreEqual(new RectangleD(0, 0, 50, 50), calculatedBounds[0].DrawSize, "first rectangle");
+            Assert.AreEqual(new RectangleD(50, 0, 50, 50), calculatedBounds[1].DrawSize, "second rectangle");
+            Assert.AreEqual(new RectangleD(0, 50, 50, 50), calculatedBounds[2].DrawSize, "third rectangle");
+            Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].DrawSize, "fourth rectangle");
         }
 
         private static Mock<IFileSystemEntry> CreateFileSystemEntryMock(long totalSize = 1024, IList<IFileSystemEntry> children = null)

@@ -6,12 +6,11 @@ using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
-    delegate void DoRender(FolderWithDrawSize folderWithDrawSize);
-
     public class FolderWithDrawSize
     {
         public IFileSystemEntry Folder { get; set; }
         public RectangleD DrawSize { get; set; }
+        public IList<FolderWithDrawSize> Children { get; set; }
     }
 
     /// <summary>
@@ -20,18 +19,11 @@ namespace CRLFLabs.ViewSize.TreeMap
     class Renderer
     {
         /// <summary>
-        /// Delegates the rendering to a function.
-        /// This decouples the Renderer from an actual graphics implementation.
-        /// </summary>
-        /// <value>The do render.</value>
-        public DoRender DoRender { get; set; }
-
-        /// <summary>
         /// Renders a tree map of the given file system entries within the given bounds.
         /// </summary>
         /// <param name="fullBounds">The bounds within to render.</param>
         /// <param name="fileSystemEntries">The file system entries.</param>
-        public void Render(RectangleD fullBounds, IList<IFileSystemEntry> fileSystemEntries)
+        public TreeMapDataSource Render(RectangleD fullBounds, IList<IFileSystemEntry> fileSystemEntries)
         {
             // e.g. real total size = 200 bytes
             var realTotalSize = fileSystemEntries.Sum(f => f.TotalSize);
@@ -45,10 +37,18 @@ namespace CRLFLabs.ViewSize.TreeMap
                 ByteSize = realTotalSize
             };
 
-            Render(fullBounds, fileSystemEntries, conversions);
+            var result = new TreeMapDataSource
+            {
+                Bounds = fullBounds,
+                FoldersWithDrawSize = new List<FolderWithDrawSize>()
+            };
+
+            Render(fullBounds, fileSystemEntries, conversions, result.FoldersWithDrawSize);
+
+            return result;
         }
 
-        private void Render(RectangleD bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions)
+        private void Render(RectangleD bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions, IList<FolderWithDrawSize> result)
         {
             Debug.WriteLine($"Render bounds={bounds} number of fs entries={fileSystemEntries.Count}");
 
@@ -112,12 +112,12 @@ namespace CRLFLabs.ViewSize.TreeMap
                     }
 
 
-                    DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions);
+                    DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions, result);
 
                     // continue in remaining bounds
                     var newList = entries.ToList();
                     entries.Clear();
-                    Render(bounds.Subtract(drawStreakSize), newList, conversions);
+                    Render(bounds.Subtract(drawStreakSize), newList, conversions, result);
                 }
                 else
                 {
@@ -129,7 +129,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     if (!entries.Any())
                     {
                         Debug.WriteLine("rendering due to empty list");
-                        DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions);
+                        DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions, result);
                     }
                 }
             }
@@ -161,7 +161,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleD bounds, bool drawVertically, Conversions conversions)
+        private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleD bounds, bool drawVertically, Conversions conversions, IList<FolderWithDrawSize> result)
         {
             Debug.WriteLine("Draw streak within {0}", bounds);
 
@@ -190,10 +190,13 @@ namespace CRLFLabs.ViewSize.TreeMap
 
                 AssertInBounds(bounds, s.DrawSize);
 
-                DoRender?.Invoke(s);
+                // add in result
+                result.Add(s);
+
 
                 // subtree
-                Render(s.DrawSize, s.Folder.Children, conversions);
+                s.Children = new List<FolderWithDrawSize>();
+                Render(s.DrawSize, s.Folder.Children, conversions, s.Children);
             }
         }
 
