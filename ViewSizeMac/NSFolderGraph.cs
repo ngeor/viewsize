@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using AppKit;
+using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.TreeMap;
 using Foundation;
 
 namespace ViewSizeMac
@@ -30,24 +32,27 @@ namespace ViewSizeMac
         private void Initialize()
         {
             WantsLayer = true;
-            LayerContentsRedrawPolicy = NSViewLayerContentsRedrawPolicy.OnSetNeedsDisplay;
+            LayerContentsRedrawPolicy = NSViewLayerContentsRedrawPolicy.DuringViewResize;
         }
         #endregion
 
-        private IList<FSEntryModel> dataSource;
+        private TreeMapDataSource _dataSource;
 
-        public IList<FSEntryModel> DataSource
+        public TreeMapDataSource DataSource
         {
             get
             {
-                return dataSource;
+                return _dataSource;
             }
             set
             {
-                dataSource = value;
+                _dataSource = value;
                 NeedsDisplay = true;
             }
         }
+
+        public RectangleD ActualSize => Bounds.ToRectangleD();
+        private ScaleD ScaleToActual => DataSource == null ? default(ScaleD) : new ScaleD(DataSource.Bounds.Size, ActualSize.Size);
 
         public override void DrawRect(CoreGraphics.CGRect dirtyRect)
         {
@@ -55,67 +60,26 @@ namespace ViewSizeMac
             NSColor.White.Set();
             NSBezierPath.FillRect(dirtyRect);
 
-            if (DataSource == null)
+            var dataSource = DataSource;
+            if (dataSource == null)
             {
                 return;
             }
 
-            DrawColumns(DataSource, Bounds);
-        }
-
-        private void DrawColumns(IList<FSEntryModel> fileSystemEntries, CoreGraphics.CGRect bounds)
-        {
-            // paint left -> right top level folders
-            var width = bounds.Width;
-            var height = bounds.Height;
-            double left = bounds.Left;
-            var top = bounds.Top;
-
-            foreach (var item in fileSystemEntries)
+            var scale = ScaleToActual;
+            foreach (var folderWithDrawSize in dataSource.FoldersWithDrawSize)
             {
-                // calculate the bounds where this item will be drawn
-                var itemWidth = item.Percentage * width;
-                var itemBounds = new CoreGraphics.CGRect(left, top, itemWidth, height);
-
-                if (item.Children.Any())
-                {
-                    DrawRows(item.Children, itemBounds);
-                }
-                else
-                {
-                    NSColor.Red.Set();
-                    NSBezierPath.FillRect(itemBounds);
-                }
-
-                left = left + itemWidth;
+                Draw(folderWithDrawSize, scale);
             }
         }
 
-        private void DrawRows(IList<FSEntryModel> fileSystemEntries, CoreGraphics.CGRect bounds)
+        private void Draw(FolderWithDrawSize folderWithDrawSize, ScaleD scaleToActual)
         {
-            // paint top -> bottom folders
-            var width = bounds.Width;
-            var height = bounds.Height;
-            var left = bounds.Left;
-            double top = bounds.Top;
-
-            foreach (var item in fileSystemEntries)
-            {
-                var itemHeight = item.Percentage * height;
-                var itemBounds = new CoreGraphics.CGRect(left, top, width, itemHeight);
-
-                if (item.Children.Any())
-                {
-                    DrawColumns(item.Children, itemBounds);
-                }
-                else
-                {
-                    NSColor.Blue.Set();
-                    NSBezierPath.FillRect(itemBounds);
-                }
-
-                top = top + itemHeight;
-            }
+            var rect = folderWithDrawSize.DrawSize.Scale(scaleToActual).ToCGRect();
+            NSColor.Red.Set();
+            NSBezierPath.FillRect(rect);
+            NSColor.Black.Set();
+            NSBezierPath.StrokeRect(rect);
         }
 
         public override bool IsFlipped => true;

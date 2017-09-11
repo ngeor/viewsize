@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using CRLFLabs.ViewSize.TreeMap;
+﻿using System;
+using System.Collections.Generic;
 using CRLFLabs.ViewSize.Drawing;
 
-namespace ViewSizeWpf.Controls
+namespace CRLFLabs.ViewSize.TreeMap
 {
     /// <summary>
-    /// A data source for <see cref="TreeMap"/> control.
+    /// A data source for a TreeMap kind of control.
     /// </summary>
     public class TreeMapDataSource
     {
@@ -15,8 +15,9 @@ namespace ViewSizeWpf.Controls
         public IList<FolderWithDrawSize> FoldersWithDrawSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the draw size of the canvas.
+        /// Gets or sets the drawing bounds.
+        /// This can be used to scale the drawing in the control.
         /// </summary>
-        public SizeD DrawSize { get; set; }
+        public RectangleD Bounds { get; set; }
     }
 }

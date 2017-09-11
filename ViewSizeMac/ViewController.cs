@@ -5,21 +5,28 @@ using System.Threading.Tasks;
 using AppKit;
 using CRLFLabs.ViewSize;
 using Foundation;
+using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.TreeMap;
 
 namespace ViewSizeMac
 {
     public partial class ViewController : NSViewController
     {
         private readonly FolderScanner folderScanner = new FolderScanner();
+        private readonly Renderer renderer = new Renderer();
+        private readonly TreeMapDataSource treeMapDataSource = new TreeMapDataSource();
 
         public ViewController(IntPtr handle) : base(handle)
         {
+            treeMapDataSource.FoldersWithDrawSize = new List<FolderWithDrawSize>();
             folderScanner.Scanning += ReportProgress;
+            renderer.DoRender += _ => treeMapDataSource.FoldersWithDrawSize.Add(_);
             TroubleshootNativeCrashes();
         }
 
         private static void TroubleshootNativeCrashes()
         {
+#if DEBUG
             new System.Threading.Thread(() =>
             {
                 while (true)
@@ -28,6 +35,7 @@ namespace ViewSizeMac
                     GC.Collect();
                 }
             }).Start();
+#endif
         }
 
         public override void ViewDidLoad()
@@ -66,33 +74,17 @@ namespace ViewSizeMac
         {
             EnableUI(false);
             string path = txtFolder.StringValue;
+            treeMapDataSource.Bounds = folderGraph.Bounds.ToRectangleD();
             Task.Run(() =>
             {
                 try
                 {
-                    folderScanner.Scan(path);
-                    InvokeOnMainThread(() =>
-                    {
-                        var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
-                        var dataSource = new FolderOutlineDataSource(models);
-                        outlineView.DataSource = dataSource;
-                        outlineView.Delegate = new FolderOutlineDelegate();
-                        folderGraph.DataSource = models;
-                    });
+                    ScanInBackgroundThread(path);
+                    InvokeOnMainThread(UpdateViewsOnMainThread);
                 }
                 catch (Exception ex)
                 {
-                    InvokeOnMainThread(() =>
-                    {
-                        NSAlert alert = new NSAlert
-                        {
-                            AlertStyle = NSAlertStyle.Critical,
-                            MessageText = ex.Message,
-                            InformativeText = ex.Message
-                        };
-
-                        alert.RunModal();
-                    });
+                    InvokeOnMainThread(ShowExceptionAlert, ex);
                 }
                 finally
                 {
@@ -102,6 +94,22 @@ namespace ViewSizeMac
                     });
                 }
             });
+        }
+
+        private void ScanInBackgroundThread(string path)
+        {
+            folderScanner.Scan(path);
+            treeMapDataSource.FoldersWithDrawSize.Clear();
+            renderer.Render(treeMapDataSource.Bounds, folderScanner.TopLevelFolders);
+        }
+
+        private void UpdateViewsOnMainThread()
+        {
+            var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
+            var dataSource = new FolderOutlineDataSource(models);
+            outlineView.DataSource = dataSource;
+            outlineView.Delegate = new FolderOutlineDelegate();
+            folderGraph.DataSource = treeMapDataSource;
         }
 
         partial void OnCancelScan(NSObject sender)
@@ -125,6 +133,32 @@ namespace ViewSizeMac
             btnSelectFolder.Enabled = enable;
             txtFolder.Enabled = enable;
             lblStatus.StringValue = $"Finished in {folderScanner.Duration}";
+        }
+
+        /// <summary>
+        /// Invokes the given action on the main thread, using the specified argument.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="argument">The argument to pass to the action.</param>
+        /// <typeparam name="TArg">The type parameter of the argument.</typeparam>
+        private void InvokeOnMainThread<TArg>(Action<TArg> action, TArg argument)
+        {
+            InvokeOnMainThread(() =>
+            {
+                action(argument);
+            });
+        }
+
+        private void ShowExceptionAlert(Exception ex)
+        {
+            NSAlert alert = new NSAlert
+            {
+                AlertStyle = NSAlertStyle.Critical,
+                MessageText = ex.Message,
+                InformativeText = ex.Message + ex.StackTrace
+            };
+
+            alert.RunModal();
         }
     }
 }
