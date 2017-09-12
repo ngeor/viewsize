@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.TreeMap
@@ -19,5 +20,24 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// This can be used to scale the drawing in the control.
         /// </summary>
         public RectangleD Bounds { get; set; }
+
+        /// <summary>
+        /// Finds the file system entry that exists within these coordinates.
+        /// </summary>
+        /// <returns>The matching file system entry.</returns>
+        /// <param name="pt">Point.</param>
+        public FolderWithDrawSize Find(PointD pt)
+        {
+            return Find(pt, FoldersWithDrawSize);
+        }
+
+        private FolderWithDrawSize Find(PointD pt, IEnumerable<FolderWithDrawSize> folders)
+        {
+            // find the first folder that contains these coordinates
+            var match = folders.FirstOrDefault(f => f.DrawSize.Contains(pt));
+
+            // try to find a more specific match in its children, otherwise return the match
+            return match == null ? null : (Find(pt, match.Children) ?? match);
+        }
     }
 }

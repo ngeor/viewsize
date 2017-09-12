@@ -18,5 +18,10 @@ namespace ViewSizeMac
         {
             return new CGRect(rect.Left, rect.Top, rect.Width, rect.Height);
         }
+
+        public static PointD ToPointD(this CGPoint point)
+        {
+            return new PointD(point.X, point.Y);
+        }
     }
 }

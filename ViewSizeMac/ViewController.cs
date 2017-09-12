@@ -148,14 +148,7 @@ namespace ViewSizeMac
 
         private void ShowExceptionAlert(Exception ex)
         {
-            NSAlert alert = new NSAlert
-            {
-                AlertStyle = NSAlertStyle.Critical,
-                MessageText = ex.Message,
-                InformativeText = ex.Message + ex.StackTrace
-            };
-
-            alert.RunModal();
+            MessageBox.ShowMessage(ex.Message + ex.StackTrace, ex.Message);
         }
     }
 }

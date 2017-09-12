@@ -86,6 +86,7 @@
     <Compile Include="FolderOutlineDelegate.cs" />
     <Compile Include="NSFolderGraph.cs" />
     <Compile Include="DrawingConversions.cs" />
+    <Compile Include="MessageBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
