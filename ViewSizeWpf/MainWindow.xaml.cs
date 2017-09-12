@@ -112,14 +112,18 @@ namespace ViewSizeWpf
         {
             var point = e.GetPosition(treeMap);
             var folder = treeMap.DataSource?.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
-            if (folder == null)
+            treeMap.Selected = folder;
+        }
+
+        private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
+            if (fileSystemEntry == null)
             {
-                MessageBox.Show("No folder at point");
+                return;
             }
-            else
-            {
-                MessageBox.Show(folder.Folder.Path);
-            }
+
+            treeMap.Selected = treeMap.DataSource.Find(fileSystemEntry.Path);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace ViewSizeWpf.Controls
     public class TreeMap : FrameworkElement
     {
         private TreeMapDataSource _dataSource;
+        private FolderWithDrawSize _selected;
 
         public TreeMapDataSource DataSource
         {
@@ -25,6 +26,7 @@ namespace ViewSizeWpf.Controls
             set
             {
                 _dataSource = value;
+                _selected = null;
                 InvalidateVisual();
             }
         }
@@ -64,6 +66,19 @@ namespace ViewSizeWpf.Controls
         /// </summary>
         public ScaleD ScaleToActual => new ScaleD(DataSource.Bounds.Size, ActualSize);
 
+        public FolderWithDrawSize Selected
+        {
+            get
+            {
+                return _selected;
+            }
+            set
+            {
+                _selected = value;
+                InvalidateVisual();
+            }
+        }
+
         private void Render(Graphics g)
         {
             // clear background
@@ -77,6 +92,12 @@ namespace ViewSizeWpf.Controls
 
             ScaleD scale = ScaleToActual;
             Render(g, dataSource.FoldersWithDrawSize, scale);
+
+            if (_selected != null)
+            {
+                var rect = _selected.DrawSize.Scale(scale).ToRectangleF();
+                g.DrawRectangle(Pens.White, rect.Left, rect.Top, rect.Width, rect.Height);
+            }
         }
 
         private static void Render(Graphics g, IEnumerable<FolderWithDrawSize> folders, ScaleD scale)
@@ -95,18 +116,21 @@ namespace ViewSizeWpf.Controls
                 System.Drawing.Brushes.AntiqueWhite, rect);
 
             // draw ellipse gradient
-            GraphicsPath graphicsPath = new GraphicsPath();
-            graphicsPath.AddEllipse(rect);
-            PathGradientBrush brush = new PathGradientBrush(graphicsPath)
+            using (GraphicsPath graphicsPath = new GraphicsPath())
             {
-                CenterColor = System.Drawing.Color.White,
-                SurroundColors = new[]
+                graphicsPath.AddEllipse(rect);
+                using (PathGradientBrush brush = new PathGradientBrush(graphicsPath)
                 {
-                    System.Drawing.Color.AntiqueWhite
+                    CenterColor = System.Drawing.Color.White,
+                    SurroundColors = new[]
+                    {
+                        System.Drawing.Color.AntiqueWhite
+                    }
+                })
+                {
+                    g.FillEllipse(brush, rect);
                 }
-            };
-
-            g.FillEllipse(brush, rect);
+            }
 
             // draw outline
             g.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
