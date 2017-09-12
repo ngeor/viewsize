@@ -41,6 +41,17 @@ namespace ViewSizeMac
             base.ViewDidLoad();
 
             // Do any additional setup after loading the view.
+
+            // create and assign the outline delegate.
+            // since this does not depend on the datasource,
+            // it can be done upfront. Also subscribing to the event only once.
+            var folderOutlineDelegate = new FolderOutlineDelegate();
+            folderOutlineDelegate.SelectionChanged += (sender, e) =>
+            {
+                FSEntryModel m = outlineView.ItemAtRow(outlineView.SelectedRow) as FSEntryModel;
+                folderGraph.Selected = treeMapDataSource.Find(m.Path);
+            };
+            outlineView.Delegate = folderOutlineDelegate;
         }
 
         public override NSObject RepresentedObject
@@ -105,7 +116,7 @@ namespace ViewSizeMac
             var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
             var dataSource = new FolderOutlineDataSource(models);
             outlineView.DataSource = dataSource;
-            outlineView.Delegate = new FolderOutlineDelegate();
+
             folderGraph.DataSource = treeMapDataSource;
         }
 

@@ -39,5 +39,36 @@ namespace CRLFLabs.ViewSize.TreeMap
             // try to find a more specific match in its children, otherwise return the match
             return match == null ? null : (Find(pt, match.Children) ?? match);
         }
+
+        /// <summary>
+        /// Finds the folder entry of the given path.
+        /// </summary>
+        /// <returns>The matching file system entry.</returns>
+        /// <param name="path">The path to find.</param>
+        public FolderWithDrawSize Find(string path)
+        {
+            // TODO optimize this
+            return Find(path, FoldersWithDrawSize);
+        }
+
+        private FolderWithDrawSize Find(string path, IEnumerable<FolderWithDrawSize> folders)
+        {
+            // TODO optimize this
+            foreach (var f in folders)
+            {
+                if (f.Folder.Path == path)
+                {
+                    return f;
+                }
+
+                var childResult = Find(path, f.Children);
+                if (childResult != null)
+                {
+                    return childResult;
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -1,6 +1,5 @@
-﻿
+﻿using System;
 using AppKit;
-using CRLFLabs.ViewSize;
 using Foundation;
 
 namespace ViewSizeMac
@@ -44,5 +43,13 @@ namespace ViewSizeMac
 
 			return view;
         }
+
+        public override void SelectionDidChange(NSNotification notification)
+        {
+            // do not call base method here
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler SelectionChanged;
     }
 }

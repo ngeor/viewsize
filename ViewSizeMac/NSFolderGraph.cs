@@ -38,6 +38,7 @@ namespace ViewSizeMac
         #endregion
 
         private TreeMapDataSource _dataSource;
+        private FolderWithDrawSize _selected;
 
         public TreeMapDataSource DataSource
         {
@@ -48,9 +49,24 @@ namespace ViewSizeMac
             set
             {
                 _dataSource = value;
+                _selected = null;
                 NeedsDisplay = true;
             }
         }
+
+        public FolderWithDrawSize Selected
+        {
+            get
+            {
+                return _selected;
+            }
+            set
+            {
+                _selected = value;
+                NeedsDisplay = true;
+            }
+        }
+
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="T:ViewSizeMac.NSFolderGraph"/> is flipped.
@@ -79,6 +95,14 @@ namespace ViewSizeMac
 
             var scale = ScaleToActual;
             Draw(dataSource.FoldersWithDrawSize, scale);
+
+            var selected = Selected;
+            if (selected != null)
+            {
+                var rect = selected.DrawSize.Scale(scale).ToCGRect();
+                NSColor.White.Set();
+                NSBezierPath.StrokeRect(rect);
+            }
         }
 
         private void Draw(IEnumerable<FolderWithDrawSize> foldersWithDrawSize, ScaleD scaleToActual)
