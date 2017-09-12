@@ -62,7 +62,7 @@ namespace ViewSizeWpf.Controls
         /// <summary>
         /// Gets the scaling factor in order to convert datasource sizes into actual sizes.
         /// </summary>
-        private ScaleD ScaleToActual => new ScaleD(DataSource.DrawSize, ActualSize);
+        public ScaleD ScaleToActual => new ScaleD(DataSource.Bounds.Size, ActualSize);
 
         private void Render(Graphics g)
         {
@@ -76,7 +76,12 @@ namespace ViewSizeWpf.Controls
             }
 
             ScaleD scale = ScaleToActual;
-            foreach (var folderWithSize in dataSource.FoldersWithDrawSize)
+            Render(g, dataSource.FoldersWithDrawSize, scale);
+        }
+
+        private static void Render(Graphics g, IEnumerable<FolderWithDrawSize> folders, ScaleD scale)
+        {
+            foreach (var folderWithSize in folders)
             {
                 Render(g, folderWithSize, scale);
             }
@@ -105,26 +110,9 @@ namespace ViewSizeWpf.Controls
 
             // draw outline
             g.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
+
+            Render(g, folderWithSize.Children, scale);
         }
         #endregion
-
-        public FolderWithDrawSize FolderAtPoint(System.Windows.Point pt)
-        {
-            var list = DataSource;
-            if (list == null)
-            {
-                return null;
-            }
-
-            // scale back the point into the datasource coordinates
-            PointD point = pt.ToPointD().Scale(ScaleToActual.Invert());
-            return FolderAtPoint(point, list.FoldersWithDrawSize);
-        }
-
-        private FolderWithDrawSize FolderAtPoint(PointD point, IList<FolderWithDrawSize> foldersWithDrawSize)
-        {
-            // TODO: need to have a hierarchy similar to Folder here, in order to apply recursion
-            return foldersWithDrawSize.FirstOrDefault(f => f.DrawSize.Contains(point));
-        }
     }
 }

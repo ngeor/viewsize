@@ -7,9 +7,10 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using ViewSizeWpf;
 using ViewSizeWpf.Controls;
 
-namespace WpfApp1
+namespace ViewSizeWpf
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -53,11 +54,7 @@ namespace WpfApp1
             string path = txtFolder.Text;
             var treeMapWidth = treeMap.ActualWidth;
             var treeMapHeight = treeMap.ActualHeight;
-            var treeMapDataSource = new TreeMapDataSource
-            {
-                FoldersWithDrawSize = new List<FolderWithDrawSize>(),
-                DrawSize = treeMap.ActualSize
-            };
+            TreeMapDataSource treeMapDataSource;
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             Task.Run(() =>
@@ -66,13 +63,9 @@ namespace WpfApp1
                 {
                     folderScanner.Scan(path);
 
-                    var renderer = new Renderer
-                    {
-                        DoRender = (r) => treeMapDataSource.FoldersWithDrawSize.Add(r)
-                    };
-
+                    var renderer = new Renderer();
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    renderer.Render(bounds, folderScanner.TopLevelFolders);
+                    treeMapDataSource = renderer.Render(bounds, folderScanner.TopLevelFolders);
 
                     Dispatcher.Invoke(() =>
                     {
@@ -118,7 +111,7 @@ namespace WpfApp1
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             var point = e.GetPosition(treeMap);
-            var folder = treeMap.FolderAtPoint(point);
+            var folder = treeMap.DataSource?.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
             if (folder == null)
             {
                 MessageBox.Show("No folder at point");
