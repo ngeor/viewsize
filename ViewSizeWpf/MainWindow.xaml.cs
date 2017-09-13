@@ -1,5 +1,6 @@
 ﻿using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.TreeMap;
 using System;
 using System.Collections.Generic;
@@ -15,97 +16,14 @@ namespace ViewSizeWpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IMainView
     {
-        private readonly FolderScanner folderScanner;
+        private readonly MainPresenter mainPresenter = new MainPresenter();
 
         public MainWindow()
         {
             InitializeComponent();
-            folderScanner = new FolderScanner();
-            folderScanner.Scanning += FolderScanner_Scanning;
-        }
-
-        private void FolderScanner_Scanning(object sender, FileSystemEventArgs e)
-        {
-            // TODO: too slow for every file
-            //Dispatcher.Invoke(() =>
-            //{
-            //    lblStatus.Content = e.FileSystemEntry.Path;
-            //});
-        }
-
-        private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
-        {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                var result = dialog.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
-                {
-                    txtFolder.Text = dialog.SelectedPath;
-                }
-            }
-        }
-
-        private void btnScan_Click(object sender, RoutedEventArgs e)
-        {
-            Cursor = Cursors.Wait;
-            EnableUI(false);
-            string path = txtFolder.Text;
-            var treeMapWidth = treeMap.ActualWidth;
-            var treeMapHeight = treeMap.ActualHeight;
-            TreeMapDataSource treeMapDataSource;
-
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            Task.Run(() =>
-            {
-                try
-                {
-                    folderScanner.Scan(path);
-
-                    var renderer = new Renderer();
-                    var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    treeMapDataSource = renderer.Render(bounds, folderScanner.TopLevelFolders);
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        treeView.DataContext = null;
-                        treeView.DataContext = folderScanner;
-                        treeMap.DataSource = treeMapDataSource;
-
-                        stopwatch.Stop();
-                        lblStatus.Content = $"Finished scanning in {folderScanner.Duration}, total time: {stopwatch.Elapsed}";
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        MessageBox.Show(ex.Message + ex.StackTrace, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    });
-                }
-                finally
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        Cursor = Cursors.Arrow;
-                        EnableUI(true);
-                    });
-                }
-            });
-        }
-
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            folderScanner.Cancel();
-        }
-
-        private void EnableUI(bool enable)
-        {
-            txtFolder.IsEnabled = enable;
-            btnScan.IsEnabled = enable;
-            btnSelectFolder.IsEnabled = enable;
-            btnCancel.IsEnabled = !enable;
+            mainPresenter.View = this;
         }
 
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -124,6 +42,98 @@ namespace ViewSizeWpf
             }
 
             treeMap.Selected = treeMap.DataSource.Find(fileSystemEntry.Path);
+        }
+
+        #region IMainView implementation
+        public string SelectedFolder
+        {
+            get { return txtFolder.Text; }
+            set { txtFolder.Text = value; }
+        }
+
+        public event EventHandler SelectFolderClick
+        {
+            add
+            {
+                btnSelectFolder.Click += ToRoutedEventHandler(value);
+            }
+            remove
+            {
+                btnSelectFolder.Click -= ToRoutedEventHandler(value);
+            }
+        }
+
+        public string SelectFolder()
+        {
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                var result = dialog.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    return dialog.SelectedPath;
+                }
+            }
+
+            return null;
+        }
+
+        public event EventHandler ScanClick
+        {
+            add
+            {
+                btnScan.Click += ToRoutedEventHandler(value);
+            }
+
+            remove
+            {
+                btnScan.Click -= ToRoutedEventHandler(value);
+            }
+        }
+
+        public event EventHandler CancelClick
+        {
+            add
+            {
+                btnCancel.Click += ToRoutedEventHandler(value);
+            }
+
+            remove
+            {
+                btnCancel.Click -= ToRoutedEventHandler(value);
+            }
+        }
+
+        public void EnableUI(bool enable)
+        {
+            txtFolder.IsEnabled = enable;
+            btnScan.IsEnabled = enable;
+            btnSelectFolder.IsEnabled = enable;
+            btnCancel.IsEnabled = !enable;
+            Cursor = enable ? Cursors.Arrow : Cursors.Wait;
+        }
+
+        public SizeD TreeMapActualSize => treeMap.ActualSize;
+
+        public void RunOnGuiThread(Action action) => Dispatcher.Invoke(action);
+
+        public void ShowError(Exception ex)
+        {
+            MessageBox.Show(ex.Message + ex.StackTrace, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public void SetResult(FolderScanner folderScanner, TreeMapDataSource treeMapDataSource, string durationLabel)
+        {
+            treeView.DataContext = null;
+            treeView.DataContext = folderScanner;
+            treeMap.DataSource = treeMapDataSource;
+
+            lblStatus.Content = durationLabel;
+        }
+        #endregion
+
+        private static RoutedEventHandler ToRoutedEventHandler(EventHandler eventHandler)
+        {
+            return (obj, e) => eventHandler(obj, e);
         }
     }
 }

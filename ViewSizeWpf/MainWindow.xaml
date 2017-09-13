@@ -10,11 +10,11 @@
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
             <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" />
-            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" Click="btnSelectFolder_Click" HorizontalAlignment="Right" Margin="8"/>
+            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,8,4,0"/>
         </Grid>
         <Grid DockPanel.Dock="Top">
-            <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="btnScan_Click"/>
-            <Button x:Name="btnCancel" Margin="0,8,88,0" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="btnCancel_Click" />
+            <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" />
+            <Button x:Name="btnCancel" Margin="0,8,88,0" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" IsEnabled="False" />
         </Grid>
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBar.ItemsPanel>
