@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Moq;
 using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
+using System.Diagnostics;
+using System;
 
 namespace ViewSize.Tests.TreeMap
 {
@@ -47,7 +49,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            var calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FolderWithDrawSize> calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(1, calculatedBounds.Count);
@@ -70,7 +72,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            var calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FolderWithDrawSize> calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(2, calculatedBounds.Count);
@@ -95,7 +97,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            var calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FolderWithDrawSize> calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(4, calculatedBounds.Count);
@@ -103,6 +105,27 @@ namespace ViewSize.Tests.TreeMap
             Assert.AreEqual(new RectangleD(50, 0, 50, 50), calculatedBounds[1].DrawSize, "second rectangle");
             Assert.AreEqual(new RectangleD(0, 50, 50, 50), calculatedBounds[2].DrawSize, "third rectangle");
             Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].DrawSize, "fourth rectangle");
+        }
+
+        [Test]
+        [Category("Performance")]
+        public void TestPerformance()
+        {
+            const string path = @"C:\\Users\\ngeor\\Projects\\crlflabs";
+            const int iterations = 100;
+
+            FolderScanner fs = new FolderScanner();
+            fs.Scan(path);
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            for (var i = 0; i < iterations; i++)
+            {
+                renderer.Render(new RectangleD(0, 0, 800, 600), fs.TopLevelFolders);
+            }
+
+            stopwatch.Stop();
+            Debug.WriteLine("Stopwatch: {0}", stopwatch.Elapsed);
+            Assert.Less(stopwatch.Elapsed, TimeSpan.FromSeconds(1));
         }
 
         private static Mock<IFileSystemEntry> CreateFileSystemEntryMock(long totalSize = 1024, IList<IFileSystemEntry> children = null)

@@ -50,8 +50,6 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         private void Render(RectangleD bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions, IList<FolderWithDrawSize> result)
         {
-            Debug.WriteLine($"Render bounds={bounds} number of fs entries={fileSystemEntries.Count}");
-
             bool drawVertically = bounds.Width > bounds.Height;
 
             var streakCandidate = new LinkedList<FolderWithDrawSize>();
@@ -79,12 +77,9 @@ namespace CRLFLabs.ViewSize.TreeMap
                 // e.g. draw total size = 10 pixels
                 var drawStreakSize = conversions.FillOneDimension(bounds, drawVertically, realStreakSize);
 
-                Debug.WriteLine($"DrawStreakSize = {drawStreakSize}");
-
                 foreach (var f in streakCandidate)
                 {
                     f.DrawSize = conversions.FillProportionally(drawStreakSize, drawVertically, f.Folder.TotalSize);
-                    Debug.WriteLine($"Calculated rect {f.DrawSize}");
                 }
 
                 var aspects = streakCandidate.Select(s => s.DrawSize.Size.AspectRatio);
@@ -93,8 +88,6 @@ namespace CRLFLabs.ViewSize.TreeMap
                 // is the new aspect worse?
                 if (previousAspect >= 0 && previousAspect < worseAspect)
                 {
-                    Debug.WriteLine("backtracking");
-
                     // it got worse
                     // remove the last item
                     streakCandidate.RemoveLast();
@@ -128,7 +121,6 @@ namespace CRLFLabs.ViewSize.TreeMap
                     // if it's the last item let's draw
                     if (!entries.Any())
                     {
-                        Debug.WriteLine("rendering due to empty list");
                         DrawStreak(streakCandidate, drawStreakSize, drawVertically, conversions, result);
                     }
                 }
@@ -163,8 +155,6 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         private void DrawStreak(LinkedList<FolderWithDrawSize> streakCandidate, RectangleD bounds, bool drawVertically, Conversions conversions, IList<FolderWithDrawSize> result)
         {
-            Debug.WriteLine("Draw streak within {0}", bounds);
-
             Stack(streakCandidate, drawVertically);
 
             foreach (var s in streakCandidate)
@@ -192,7 +182,6 @@ namespace CRLFLabs.ViewSize.TreeMap
 
                 // add in result
                 result.Add(s);
-
 
                 // subtree
                 s.Children = new List<FolderWithDrawSize>();
