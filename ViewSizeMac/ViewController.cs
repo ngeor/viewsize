@@ -11,12 +11,10 @@ using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeMac
 {
-    public partial class ViewController : NSViewController, IMainView
+    public partial class ViewController : NSViewController, IMainView, IFolderChooserView, IFolderChooserModel
     {
-        private readonly MainPresenter _mainPresenter = new MainPresenter();
-        public event EventHandler SelectFolderClick;
-        public event EventHandler ScanClick;
-        public event EventHandler CancelClick;
+        private MainPresenter _mainPresenter;
+        private FolderChooserPresenter _folderChooserPresenter;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -37,12 +35,14 @@ namespace ViewSizeMac
 #endif
         }
 
+        /// <summary>
+        /// Called after the view has loaded.
+        /// Do any additional setup after loading the view.
+        /// </summary>
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            // Do any additional setup after loading the view.
-            _mainPresenter.View = this;
+            CreatePresenters();
 
             // create and assign the outline delegate.
             // since this does not depend on the datasource,
@@ -51,9 +51,15 @@ namespace ViewSizeMac
             folderOutlineDelegate.SelectionChanged += (sender, e) =>
             {
                 FSEntryModel m = outlineView.ItemAtRow(outlineView.SelectedRow) as FSEntryModel;
-                //folderGraph.Selected = treeMapDataSource.Find(m.Path);
+                _mainPresenter.OnTreeViewSelectionChanged(m.Path);
             };
             outlineView.Delegate = folderOutlineDelegate;
+        }
+
+        private void CreatePresenters()
+        {
+            _mainPresenter = new MainPresenter(this);
+            _folderChooserPresenter = new FolderChooserPresenter(this, this);
         }
 
         public override NSObject RepresentedObject
@@ -69,62 +75,45 @@ namespace ViewSizeMac
             }
         }
 
-        public string SelectedFolder
-        {
-            get
-            {
-                return txtFolder.StringValue;
-            }
-            set
-            {
-                txtFolder.StringValue = value;
-            }
-        }
+        #region Cocoa Actions
+
+        partial void OnSelectFolder(NSObject sender) => _folderChooserPresenter.OnSelectFolder();
+        partial void OnScan(NSObject sender) => _mainPresenter.OnBeginScan();
+        partial void OnCancelScan(NSObject sender) => _mainPresenter.OnCancelScan();
+
+        #endregion
+
+        #region IMainView
 
         public SizeD TreeMapActualSize => folderGraph.ActualSize.Size;
+        string IMainView.SelectedFolder => txtFolder.StringValue;
 
-        partial void OnSelectFolder(NSObject sender)
+        public void EnableUI(bool enable)
         {
-            SelectFolderClick(this, EventArgs.Empty);
+            btnScan.Enabled = enable;
+            btnCancel.Enabled = !enable;
+            btnSelectFolder.Enabled = enable;
+            txtFolder.Enabled = enable;
         }
 
-        partial void OnScan(NSObject sender)
+        public void RunOnGuiThread(Action action) => InvokeOnMainThread(action);
+
+        public void ShowError(Exception ex) => ShowExceptionAlert(ex);
+
+        public void SetFolders(IList<IFileSystemEntry> topLevelFolders)
         {
-            ScanClick(this, EventArgs.Empty);
+            var models = FSEntryModel.ToModels(topLevelFolders);
+            var dataSource = new FolderOutlineDataSource(models);
+            outlineView.DataSource = dataSource;
         }
 
-        partial void OnCancelScan(NSObject sender)
-        {
-            CancelClick(this, EventArgs.Empty);
-        }
+        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource) => folderGraph.DataSource = treeMapDataSource;
 
-        private void ReportProgress(object sender, FileSystemEventArgs args)
-        {
-            // TODO: this is too slow for every file and folder there is.
-            //InvokeOnMainThread(() =>
-            //{
-            //    lblStatus.StringValue = args.Folder.Path;
-            //});
-        }
+        public void SetDurationLabel(string durationLabel) => lblStatus.StringValue = durationLabel;
 
-        /// <summary>
-        /// Invokes the given action on the main thread, using the specified argument.
-        /// </summary>
-        /// <param name="action">The action to invoke.</param>
-        /// <param name="argument">The argument to pass to the action.</param>
-        /// <typeparam name="TArg">The type parameter of the argument.</typeparam>
-        private void InvokeOnMainThread<TArg>(Action<TArg> action, TArg argument)
-        {
-            InvokeOnMainThread(() =>
-            {
-                action(argument);
-            });
-        }
+        #endregion
 
-        private void ShowExceptionAlert(Exception ex)
-        {
-            MessageBox.ShowMessage(ex.Message + ex.StackTrace, ex.Message);
-        }
+        #region IFolderChooserView
 
         public string SelectFolder()
         {
@@ -140,26 +129,36 @@ namespace ViewSizeMac
             return null;
         }
 
-        public void EnableUI(bool enable)
+        #endregion
+
+        #region IFolderChooserModel
+
+        string IFolderChooserModel.Folder
         {
-            btnScan.Enabled = enable;
-            btnCancel.Enabled = !enable;
-            btnSelectFolder.Enabled = enable;
-            txtFolder.Enabled = enable;
+            get
+            {
+                return txtFolder.StringValue;
+            }
+            set
+            {
+                txtFolder.StringValue = value;
+            }
         }
 
-        public void RunOnGuiThread(Action action) => InvokeOnMainThread(action);
+        #endregion
 
-        public void ShowError(Exception ex) => ShowExceptionAlert(ex);
-
-        public void SetResult(FolderScanner folderScanner, TreeMapDataSource treeMapDataSource, string durationLabel)
+        private void ReportProgress(object sender, FileSystemEventArgs args)
         {
-            var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
-            var dataSource = new FolderOutlineDataSource(models);
-            outlineView.DataSource = dataSource;
+            // TODO: this is too slow for every file and folder there is.
+            //InvokeOnMainThread(() =>
+            //{
+            //    lblStatus.StringValue = args.Folder.Path;
+            //});
+        }
 
-            folderGraph.DataSource = treeMapDataSource;
-            lblStatus.StringValue = durationLabel;
+        private void ShowExceptionAlert(Exception ex)
+        {
+            MessageBox.ShowMessage(ex.Message + ex.StackTrace, ex.Message);
         }
     }
 }

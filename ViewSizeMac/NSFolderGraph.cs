@@ -14,6 +14,7 @@ namespace ViewSizeMac
     public class NSFolderGraph : NSControl
     {
         #region Constructors
+
         public NSFolderGraph()
         {
             Initialize();
@@ -35,10 +36,10 @@ namespace ViewSizeMac
             WantsLayer = true;
             LayerContentsRedrawPolicy = NSViewLayerContentsRedrawPolicy.DuringViewResize;
         }
+
         #endregion
 
         private TreeMapDataSource _dataSource;
-        private FolderWithDrawSize _selected;
 
         public TreeMapDataSource DataSource
         {
@@ -48,21 +49,18 @@ namespace ViewSizeMac
             }
             set
             {
-                _dataSource = value;
-                _selected = null;
-                NeedsDisplay = true;
-            }
-        }
+                if (_dataSource != null)
+                {
+                    Detach();
+                }
 
-        public FolderWithDrawSize Selected
-        {
-            get
-            {
-                return _selected;
-            }
-            set
-            {
-                _selected = value;
+                _dataSource = value;
+
+                if (_dataSource != null)
+                {
+                    Attach();
+                }
+
                 NeedsDisplay = true;
             }
         }
@@ -96,7 +94,7 @@ namespace ViewSizeMac
             var scale = ScaleToActual;
             Draw(dataSource.FoldersWithDrawSize, scale);
 
-            var selected = Selected;
+            var selected = dataSource.Selected;
             if (selected != null)
             {
                 var rect = selected.DrawSize.Scale(scale).ToCGRect();
@@ -116,7 +114,15 @@ namespace ViewSizeMac
         private void Draw(FolderWithDrawSize folderWithDrawSize, ScaleD scaleToActual)
         {
             var rect = folderWithDrawSize.DrawSize.Scale(scaleToActual).ToCGRect();
-            NSColor.Red.Set();
+            if (folderWithDrawSize.IsDescendantOf(DataSource.Selected))
+            {
+                NSColor.Brown.Set();
+            }
+            else
+            {
+                NSColor.Red.Set();
+            }
+
             NSBezierPath.FillRect(rect);
             NSColor.Black.Set();
             NSBezierPath.StrokeRect(rect);
@@ -137,14 +143,7 @@ namespace ViewSizeMac
             var locationInWindow = theEvent.LocationInWindow;
             var pt = ToClientCoordinates(locationInWindow).ToPointD().Scale(ScaleToActual.Invert());
             var folderWithDrawSize = dataSource.Find(pt);
-            if (folderWithDrawSize != null)
-            {
-                MessageBox.ShowMessage(folderWithDrawSize.Folder.Path);
-            }
-            else
-            {
-                MessageBox.ShowMessage("no match");
-            }
+            dataSource.Selected = folderWithDrawSize;
         }
 
         /// <summary>
@@ -158,6 +157,21 @@ namespace ViewSizeMac
             var locationInView = ConvertPointToView(locationInWindow, null);
             var rectInWindow = ConvertRectToView(Bounds, null);
             return new CGPoint(locationInWindow.X - rectInWindow.Left, locationInView.Y);
+        }
+
+        private void Attach()
+        {
+            DataSource.PropertyChanged += DataSource_PropertyChanged;
+        }
+
+        private void Detach()
+        {
+            DataSource.PropertyChanged -= DataSource_PropertyChanged;
+        }
+
+        void DataSource_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            NeedsDisplay = true;
         }
     }
 }

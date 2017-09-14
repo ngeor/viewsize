@@ -45,7 +45,7 @@ namespace ViewSizeWpf
         }
 
         #region IMainView implementation
-        public string SelectedFolder
+        public string Folder
         {
             get { return txtFolder.Text; }
             set { txtFolder.Text = value; }

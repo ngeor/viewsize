@@ -6,13 +6,6 @@ using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
-    public class FolderWithDrawSize
-    {
-        public IFileSystemEntry Folder { get; set; }
-        public RectangleD DrawSize { get; set; }
-        public IList<FolderWithDrawSize> Children { get; set; }
-    }
-
     /// <summary>
     /// Renders a tree map.
     /// </summary>

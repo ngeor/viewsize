@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
 
@@ -8,12 +9,29 @@ namespace CRLFLabs.ViewSize.TreeMap
     /// <summary>
     /// A data source for a TreeMap kind of control.
     /// </summary>
-    public class TreeMapDataSource
+    public class TreeMapDataSource : INotifyPropertyChanged
     {
+        private FolderWithDrawSize _selected;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>
         /// Gets or sets the file system entries with their tree map rectangles.
         /// </summary>
         public IList<FolderWithDrawSize> FoldersWithDrawSize { get; set; }
+
+        public FolderWithDrawSize Selected
+        {
+            get
+            {
+                return _selected;
+            }
+            set
+            {
+                _selected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Selected"));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the drawing bounds.

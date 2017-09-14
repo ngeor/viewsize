@@ -24,5 +24,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PixelArea.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\TreeMapDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\FolderChooserPresenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserPresenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainPresenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\FolderWithDrawSize.cs" />
   </ItemGroup>
 </Project>
