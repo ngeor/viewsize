@@ -7,18 +7,19 @@ using CRLFLabs.ViewSize;
 using Foundation;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
+using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeMac
 {
-    public partial class ViewController : NSViewController
+    public partial class ViewController : NSViewController, IMainView
     {
-        private readonly FolderScanner folderScanner = new FolderScanner();
-        private readonly Renderer renderer = new Renderer();
-        private TreeMapDataSource treeMapDataSource;
+        private readonly MainPresenter _mainPresenter = new MainPresenter();
+        public event EventHandler SelectFolderClick;
+        public event EventHandler ScanClick;
+        public event EventHandler CancelClick;
 
         public ViewController(IntPtr handle) : base(handle)
         {
-            folderScanner.Scanning += ReportProgress;
             TroubleshootNativeCrashes();
         }
 
@@ -41,6 +42,7 @@ namespace ViewSizeMac
             base.ViewDidLoad();
 
             // Do any additional setup after loading the view.
+            _mainPresenter.View = this;
 
             // create and assign the outline delegate.
             // since this does not depend on the datasource,
@@ -49,7 +51,7 @@ namespace ViewSizeMac
             folderOutlineDelegate.SelectionChanged += (sender, e) =>
             {
                 FSEntryModel m = outlineView.ItemAtRow(outlineView.SelectedRow) as FSEntryModel;
-                folderGraph.Selected = treeMapDataSource.Find(m.Path);
+                //folderGraph.Selected = treeMapDataSource.Find(m.Path);
             };
             outlineView.Delegate = folderOutlineDelegate;
         }
@@ -67,62 +69,33 @@ namespace ViewSizeMac
             }
         }
 
+        public string SelectedFolder
+        {
+            get
+            {
+                return txtFolder.StringValue;
+            }
+            set
+            {
+                txtFolder.StringValue = value;
+            }
+        }
+
+        public SizeD TreeMapActualSize => folderGraph.ActualSize.Size;
+
         partial void OnSelectFolder(NSObject sender)
         {
-            var dlg = NSOpenPanel.OpenPanel;
-            dlg.CanChooseFiles = false;
-            dlg.CanChooseDirectories = true;
-            dlg.CanCreateDirectories = false;
-            if (dlg.RunModal() == 1)
-            {
-                txtFolder.StringValue = dlg.Url.Path;
-            }
+            SelectFolderClick(this, EventArgs.Empty);
         }
 
         partial void OnScan(NSObject sender)
         {
-            EnableUI(false);
-            string path = txtFolder.StringValue;
-            RectangleD bounds = folderGraph.Bounds.ToRectangleD();
-            Task.Run(() =>
-            {
-                try
-                {
-                    ScanInBackgroundThread(path, bounds);
-                    InvokeOnMainThread(UpdateViewsOnMainThread);
-                }
-                catch (Exception ex)
-                {
-                    InvokeOnMainThread(ShowExceptionAlert, ex);
-                }
-                finally
-                {
-                    InvokeOnMainThread(() =>
-                    {
-                        EnableUI(true);
-                    });
-                }
-            });
-        }
-
-        private void ScanInBackgroundThread(string path, RectangleD bounds)
-        {
-            folderScanner.Scan(path);
-            treeMapDataSource = renderer.Render(bounds, folderScanner.TopLevelFolders);
-        }
-
-        private void UpdateViewsOnMainThread()
-        {
-            var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
-            var dataSource = new FolderOutlineDataSource(models);
-            outlineView.DataSource = dataSource;
-
-            folderGraph.DataSource = treeMapDataSource;
+            ScanClick(this, EventArgs.Empty);
         }
 
         partial void OnCancelScan(NSObject sender)
         {
-            folderScanner.Cancel();
+            CancelClick(this, EventArgs.Empty);
         }
 
         private void ReportProgress(object sender, FileSystemEventArgs args)
@@ -132,15 +105,6 @@ namespace ViewSizeMac
             //{
             //    lblStatus.StringValue = args.Folder.Path;
             //});
-        }
-
-        private void EnableUI(bool enable)
-        {
-            btnScan.Enabled = enable;
-            btnCancel.Enabled = !enable;
-            btnSelectFolder.Enabled = enable;
-            txtFolder.Enabled = enable;
-            lblStatus.StringValue = $"Finished in {folderScanner.Duration}";
         }
 
         /// <summary>
@@ -160,6 +124,42 @@ namespace ViewSizeMac
         private void ShowExceptionAlert(Exception ex)
         {
             MessageBox.ShowMessage(ex.Message + ex.StackTrace, ex.Message);
+        }
+
+        public string SelectFolder()
+        {
+            var dlg = NSOpenPanel.OpenPanel;
+            dlg.CanChooseFiles = false;
+            dlg.CanChooseDirectories = true;
+            dlg.CanCreateDirectories = false;
+            if (dlg.RunModal() == 1)
+            {
+                return dlg.Url.Path;
+            }
+
+            return null;
+        }
+
+        public void EnableUI(bool enable)
+        {
+            btnScan.Enabled = enable;
+            btnCancel.Enabled = !enable;
+            btnSelectFolder.Enabled = enable;
+            txtFolder.Enabled = enable;
+        }
+
+        public void RunOnGuiThread(Action action) => InvokeOnMainThread(action);
+
+        public void ShowError(Exception ex) => ShowExceptionAlert(ex);
+
+        public void SetResult(FolderScanner folderScanner, TreeMapDataSource treeMapDataSource, string durationLabel)
+        {
+            var models = FSEntryModel.ToModels(folderScanner.TopLevelFolders);
+            var dataSource = new FolderOutlineDataSource(models);
+            outlineView.DataSource = dataSource;
+
+            folderGraph.DataSource = treeMapDataSource;
+            lblStatus.StringValue = durationLabel;
         }
     }
 }
