@@ -18,13 +18,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Conversions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PixelArea.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\TreeMapDataSource.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\FolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserPresenter.cs" />

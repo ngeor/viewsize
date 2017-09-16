@@ -16,21 +16,27 @@ namespace ViewSizeWpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainView
+    public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel
     {
-        private readonly MainPresenter mainPresenter = new MainPresenter();
+        private readonly MainPresenter mainPresenter;
+        private readonly FolderChooserPresenter folderChooserPresenter;
 
         public MainWindow()
         {
             InitializeComponent();
-            mainPresenter.View = this;
+            mainPresenter = new MainPresenter(this);
+            folderChooserPresenter = new FolderChooserPresenter(this, this);
         }
 
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var point = e.GetPosition(treeMap);
-            var folder = treeMap.DataSource?.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
-            treeMap.Selected = folder;
+            var dataSource = treeMap.DataSource;
+            if (dataSource != null)
+            {
+                var point = e.GetPosition(treeMap);
+                var folder = dataSource.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
+                dataSource.Selected = folder;
+            }
         }
 
         private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -41,27 +47,20 @@ namespace ViewSizeWpf
                 return;
             }
 
-            treeMap.Selected = treeMap.DataSource.Find(fileSystemEntry.Path);
+            mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry.Path);
         }
 
-        #region IMainView implementation
-        public string Folder
+        #region IFolderChooserModel
+
+        string IFolderChooserModel.Folder
         {
             get { return txtFolder.Text; }
             set { txtFolder.Text = value; }
         }
 
-        public event EventHandler SelectFolderClick
-        {
-            add
-            {
-                btnSelectFolder.Click += ToRoutedEventHandler(value);
-            }
-            remove
-            {
-                btnSelectFolder.Click -= ToRoutedEventHandler(value);
-            }
-        }
+        #endregion
+
+        #region IFolderChooserView
 
         public string SelectFolder()
         {
@@ -77,30 +76,12 @@ namespace ViewSizeWpf
             return null;
         }
 
-        public event EventHandler ScanClick
+        #endregion
+
+        #region IMainView implementation
+        public string SelectedFolder
         {
-            add
-            {
-                btnScan.Click += ToRoutedEventHandler(value);
-            }
-
-            remove
-            {
-                btnScan.Click -= ToRoutedEventHandler(value);
-            }
-        }
-
-        public event EventHandler CancelClick
-        {
-            add
-            {
-                btnCancel.Click += ToRoutedEventHandler(value);
-            }
-
-            remove
-            {
-                btnCancel.Click -= ToRoutedEventHandler(value);
-            }
+            get { return txtFolder.Text; }
         }
 
         public void EnableUI(bool enable)
@@ -121,19 +102,35 @@ namespace ViewSizeWpf
             MessageBox.Show(ex.Message + ex.StackTrace, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        public void SetResult(FolderScanner folderScanner, TreeMapDataSource treeMapDataSource, string durationLabel)
+        public void SetDurationLabel(string durationLabel) => lblStatus.Content = durationLabel;
+
+        public void SetFolders(IList<IFileSystemEntry> topLevelFolders)
         {
             treeView.DataContext = null;
-            treeView.DataContext = folderScanner;
-            treeMap.DataSource = treeMapDataSource;
+            treeView.DataContext = topLevelFolders;
+        }
 
-            lblStatus.Content = durationLabel;
+        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
+        {
+            treeMap.DataSource = treeMapDataSource;
         }
         #endregion
 
-        private static RoutedEventHandler ToRoutedEventHandler(EventHandler eventHandler)
+        #region WPF Event Handlers
+        private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            return (obj, e) => eventHandler(obj, e);
+            folderChooserPresenter.OnSelectFolder();
         }
+
+        private void btnScan_Click(object sender, RoutedEventArgs e)
+        {
+            mainPresenter.OnBeginScan();
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            mainPresenter.OnCancelScan();
+        }
+        #endregion
     }
 }

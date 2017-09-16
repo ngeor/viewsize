@@ -10,11 +10,11 @@
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
             <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" />
-            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,8,4,0"/>
+            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,8,4,0" Click="btnSelectFolder_Click"/>
         </Grid>
         <Grid DockPanel.Dock="Top">
-            <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" />
-            <Button x:Name="btnCancel" Margin="0,8,88,0" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" IsEnabled="False" />
+            <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="btnScan_Click" />
+            <Button x:Name="btnCancel" Margin="0,8,88,0" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="btnCancel_Click" />
         </Grid>
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBar.ItemsPanel>
@@ -46,7 +46,7 @@
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <local:TreeListView x:Name="treeView" ItemsSource="{Binding Path=TopLevelFolders}" Grid.Column="0" SelectedItemChanged="treeView_SelectedItemChanged">
+            <local:TreeListView x:Name="treeView" ItemsSource="{Binding}" Grid.Column="0" SelectedItemChanged="treeView_SelectedItemChanged">
                 <local:TreeListView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}" />
                 </local:TreeListView.ItemTemplate>

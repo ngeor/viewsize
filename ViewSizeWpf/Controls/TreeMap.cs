@@ -9,13 +9,13 @@ using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 
 namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement
     {
         private TreeMapDataSource _dataSource;
-        private FolderWithDrawSize _selected;
 
         public TreeMapDataSource DataSource
         {
@@ -25,10 +25,32 @@ namespace ViewSizeWpf.Controls
             }
             set
             {
+                Detach(_dataSource);
                 _dataSource = value;
-                _selected = null;
+                Attach(_dataSource);
                 InvalidateVisual();
             }
+        }
+
+        private void Attach(TreeMapDataSource dataSource)
+        {
+            if (dataSource != null)
+            {
+                dataSource.PropertyChanged += DataSourcePropertyChanged;
+            }
+        }
+
+        private void Detach(TreeMapDataSource dataSource)
+        {
+            if (dataSource != null)
+            {
+                dataSource.PropertyChanged -= DataSourcePropertyChanged;
+            }
+        }
+
+        private void DataSourcePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            InvalidateVisual();
         }
 
         #region Rendering
@@ -66,19 +88,6 @@ namespace ViewSizeWpf.Controls
         /// </summary>
         public ScaleD ScaleToActual => new ScaleD(DataSource.Bounds.Size, ActualSize);
 
-        public FolderWithDrawSize Selected
-        {
-            get
-            {
-                return _selected;
-            }
-            set
-            {
-                _selected = value;
-                InvalidateVisual();
-            }
-        }
-
         private void Render(Graphics g)
         {
             // clear background
@@ -93,14 +102,15 @@ namespace ViewSizeWpf.Controls
             ScaleD scale = ScaleToActual;
             Render(g, dataSource.FoldersWithDrawSize, scale);
 
-            if (_selected != null)
+            var selected = dataSource.Selected;
+            if (selected != null)
             {
-                var rect = _selected.DrawSize.Scale(scale).ToRectangleF();
+                var rect = selected.DrawSize.Scale(scale).ToRectangleF();
                 g.DrawRectangle(Pens.White, rect.Left, rect.Top, rect.Width, rect.Height);
             }
         }
 
-        private static void Render(Graphics g, IEnumerable<FolderWithDrawSize> folders, ScaleD scale)
+        private void Render(Graphics g, IEnumerable<FolderWithDrawSize> folders, ScaleD scale)
         {
             foreach (var folderWithSize in folders)
             {
@@ -108,27 +118,31 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private static void Render(Graphics g, FolderWithDrawSize folderWithSize, ScaleD scale)
+        private void Render(Graphics g, FolderWithDrawSize folderWithSize, ScaleD scale)
         {
             // scale rectangle to actual drawing dimensions and convert to GDI
             var rect = folderWithSize.DrawSize.Scale(scale).ToRectangleF();
-            g.FillRectangle(
-                System.Drawing.Brushes.AntiqueWhite, rect);
+            bool isUnderSelected = folderWithSize.IsDescendantOf(DataSource?.Selected);
+            var brush = isUnderSelected ?
+                System.Drawing.Brushes.Azure :
+                System.Drawing.Brushes.AntiqueWhite;
+
+            g.FillRectangle(brush, rect);
 
             // draw ellipse gradient
             using (GraphicsPath graphicsPath = new GraphicsPath())
             {
                 graphicsPath.AddEllipse(rect);
-                using (PathGradientBrush brush = new PathGradientBrush(graphicsPath)
+                using (PathGradientBrush gradientBrush = new PathGradientBrush(graphicsPath)
                 {
                     CenterColor = System.Drawing.Color.White,
                     SurroundColors = new[]
                     {
-                        System.Drawing.Color.AntiqueWhite
+                        isUnderSelected ? System.Drawing.Color.Azure :  System.Drawing.Color.AntiqueWhite
                     }
                 })
                 {
-                    g.FillEllipse(brush, rect);
+                    g.FillEllipse(gradientBrush, rect);
                 }
             }
 
