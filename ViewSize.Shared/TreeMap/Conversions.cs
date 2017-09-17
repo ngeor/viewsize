@@ -5,18 +5,22 @@ using System.Text;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
-    class Conversions
+    struct Conversions
     {
+        public Conversions(PixelArea pixelSize, double byteSize)
+        {
+            PixelSize = pixelSize;
+            ByteSize = byteSize;
+        }
+
         public PixelArea PixelSize
         {
             get;
-            set;
         }
 
         public double ByteSize
         {
             get;
-            set;
         }
 
         public PixelArea ToPixelSize(double byteSize) => PixelSize * byteSize / ByteSize;

@@ -6,10 +6,26 @@ using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
+    class RendererInBounds
+    {
+        private readonly Conversions conversions;
+
+        public RendererInBounds(RectangleD fullBounds, IList<IFileSystemEntry> fileSystemEntries)
+        {
+            // e.g. real total size = 200 bytes
+            var realTotalSize = fileSystemEntries.Sum(f => f.TotalSize);
+
+            // e.g. draw total size = 100 pixels = 20x5
+            var drawTotalSize = fullBounds.Width * fullBounds.Height;
+
+            conversions = new Conversions(new PixelArea(drawTotalSize), realTotalSize);
+        }
+    }
+
     /// <summary>
     /// Renders a tree map.
     /// </summary>
-    class Renderer
+    public class Renderer
     {
         /// <summary>
         /// Renders a tree map of the given file system entries within the given bounds.
@@ -24,11 +40,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             // e.g. draw total size = 100 pixels = 20x5
             var drawTotalSize = fullBounds.Width * fullBounds.Height;
 
-            var conversions = new Conversions
-            {
-                PixelSize = new PixelArea(drawTotalSize),
-                ByteSize = realTotalSize
-            };
+            var conversions = new Conversions(new PixelArea(drawTotalSize), realTotalSize);
 
             var result = new TreeMapDataSource
             {
