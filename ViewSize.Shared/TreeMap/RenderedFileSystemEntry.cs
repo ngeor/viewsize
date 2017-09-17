@@ -3,22 +3,22 @@ using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
-    public class FolderWithDrawSize
+    public class RenderedFileSystemEntry
     {
-        public FolderWithDrawSize(FolderWithDrawSize parent)
+        public RenderedFileSystemEntry(RenderedFileSystemEntry parent)
         {
             Parent = parent;
         }
 
-        public IFileSystemEntry Folder { get; set; }
-        public RectangleD DrawSize { get; set; }
-        public IList<FolderWithDrawSize> Children { get; set; }
-        public FolderWithDrawSize Parent { get; }
+        public IFileSystemEntry FileSystemEntry { get; set; }
+        public RectangleD Bounds { get; set; }
+        public IList<RenderedFileSystemEntry> Children { get; set; }
+        public RenderedFileSystemEntry Parent { get; }
 
         /// <summary>
         /// Checks if this object is a descendant of the given object.
         /// </summary>
-        public bool IsDescendantOf(FolderWithDrawSize folderWithDrawSize)
+        public bool IsDescendantOf(RenderedFileSystemEntry folderWithDrawSize)
         {
             if (folderWithDrawSize == null)
             {

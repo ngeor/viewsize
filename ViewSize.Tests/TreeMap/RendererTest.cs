@@ -12,14 +12,6 @@ namespace ViewSize.Tests.TreeMap
 {
     public class RendererTest
     {
-        private Renderer renderer;
-
-        [SetUp]
-        public void SetUp()
-        {
-            renderer = new Renderer();
-        }
-
         [TestCase(100, 100)]
         [TestCase(200, 100)]
         [TestCase(100, 200)]
@@ -31,11 +23,11 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            var dataSource = renderer.Render(fullBounds, folders);
+            var dataSource = Renderer.Render(fullBounds, folders);
 
             // assert
             Assert.AreEqual(1, dataSource.FoldersWithDrawSize.Count);
-            Assert.AreEqual(new RectangleD(0, 0, width, height), dataSource.FoldersWithDrawSize[0].DrawSize);
+            Assert.AreEqual(new RectangleD(0, 0, width, height), dataSource.FoldersWithDrawSize[0].Bounds);
         }
 
         [Test]
@@ -49,12 +41,12 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            IList<FolderWithDrawSize> calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<RenderedFileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(1, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].DrawSize);
-            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].Children[0].DrawSize);
+            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].Bounds);
+            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].Children[0].Bounds);
         }
 
         [Test]
@@ -72,12 +64,12 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            IList<FolderWithDrawSize> calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<RenderedFileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(2, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 50, 100), calculatedBounds[0].DrawSize, "first rectangle");
-            Assert.AreEqual(new RectangleD(50, 0, 50, 100), calculatedBounds[1].DrawSize, "second rectangle");
+            Assert.AreEqual(new RectangleD(0, 0, 50, 100), calculatedBounds[0].Bounds, "first rectangle");
+            Assert.AreEqual(new RectangleD(50, 0, 50, 100), calculatedBounds[1].Bounds, "second rectangle");
         }
 
         [Test]
@@ -97,14 +89,14 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            IList<FolderWithDrawSize> calculatedBounds = renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<RenderedFileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(4, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 50, 50), calculatedBounds[0].DrawSize, "first rectangle");
-            Assert.AreEqual(new RectangleD(50, 0, 50, 50), calculatedBounds[1].DrawSize, "second rectangle");
-            Assert.AreEqual(new RectangleD(0, 50, 50, 50), calculatedBounds[2].DrawSize, "third rectangle");
-            Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].DrawSize, "fourth rectangle");
+            Assert.AreEqual(new RectangleD(0, 0, 50, 50), calculatedBounds[0].Bounds, "first rectangle");
+            Assert.AreEqual(new RectangleD(50, 0, 50, 50), calculatedBounds[1].Bounds, "second rectangle");
+            Assert.AreEqual(new RectangleD(0, 50, 50, 50), calculatedBounds[2].Bounds, "third rectangle");
+            Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].Bounds, "fourth rectangle");
         }
 
         [Test]
@@ -120,7 +112,7 @@ namespace ViewSize.Tests.TreeMap
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                renderer.Render(new RectangleD(0, 0, 800, 600), fs.TopLevelFolders);
+                Renderer.Render(new RectangleD(0, 0, 800, 600), fs.TopLevelFolders);
             }
 
             stopwatch.Stop();

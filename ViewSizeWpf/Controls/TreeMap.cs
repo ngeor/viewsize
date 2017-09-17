@@ -105,12 +105,12 @@ namespace ViewSizeWpf.Controls
             var selected = dataSource.Selected;
             if (selected != null)
             {
-                var rect = selected.DrawSize.Scale(scale).ToRectangleF();
+                var rect = selected.Bounds.Scale(scale).ToRectangleF();
                 g.DrawRectangle(Pens.White, rect.Left, rect.Top, rect.Width, rect.Height);
             }
         }
 
-        private void Render(Graphics g, IEnumerable<FolderWithDrawSize> folders, ScaleD scale)
+        private void Render(Graphics g, IEnumerable<RenderedFileSystemEntry> folders, ScaleD scale)
         {
             foreach (var folderWithSize in folders)
             {
@@ -118,10 +118,10 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Render(Graphics g, FolderWithDrawSize folderWithSize, ScaleD scale)
+        private void Render(Graphics g, RenderedFileSystemEntry folderWithSize, ScaleD scale)
         {
             // scale rectangle to actual drawing dimensions and convert to GDI
-            var rect = folderWithSize.DrawSize.Scale(scale).ToRectangleF();
+            var rect = folderWithSize.Bounds.Scale(scale).ToRectangleF();
             bool isUnderSelected = folderWithSize.IsDescendantOf(DataSource?.Selected);
             var brush = isUnderSelected ?
                 System.Drawing.Brushes.Azure :

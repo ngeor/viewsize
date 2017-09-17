@@ -11,16 +11,16 @@ namespace CRLFLabs.ViewSize.TreeMap
     /// </summary>
     public class TreeMapDataSource : INotifyPropertyChanged
     {
-        private FolderWithDrawSize _selected;
+        private RenderedFileSystemEntry _selected;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets the file system entries with their tree map rectangles.
         /// </summary>
-        public IList<FolderWithDrawSize> FoldersWithDrawSize { get; set; }
+        public IList<RenderedFileSystemEntry> FoldersWithDrawSize { get; set; }
 
-        public FolderWithDrawSize Selected
+        public RenderedFileSystemEntry Selected
         {
             get
             {
@@ -44,15 +44,15 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <returns>The matching file system entry.</returns>
         /// <param name="pt">Point.</param>
-        public FolderWithDrawSize Find(PointD pt)
+        public RenderedFileSystemEntry Find(PointD pt)
         {
             return Find(pt, FoldersWithDrawSize);
         }
 
-        private FolderWithDrawSize Find(PointD pt, IEnumerable<FolderWithDrawSize> folders)
+        private RenderedFileSystemEntry Find(PointD pt, IEnumerable<RenderedFileSystemEntry> folders)
         {
             // find the first folder that contains these coordinates
-            var match = folders.FirstOrDefault(f => f.DrawSize.Contains(pt));
+            var match = folders.FirstOrDefault(f => f.Bounds.Contains(pt));
 
             // try to find a more specific match in its children, otherwise return the match
             return match == null ? null : (Find(pt, match.Children) ?? match);
@@ -63,18 +63,18 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <returns>The matching file system entry.</returns>
         /// <param name="path">The path to find.</param>
-        public FolderWithDrawSize Find(string path)
+        public RenderedFileSystemEntry Find(string path)
         {
             // TODO optimize this
             return Find(path, FoldersWithDrawSize);
         }
 
-        private FolderWithDrawSize Find(string path, IEnumerable<FolderWithDrawSize> folders)
+        private RenderedFileSystemEntry Find(string path, IEnumerable<RenderedFileSystemEntry> folders)
         {
             // TODO optimize this
             foreach (var f in folders)
             {
-                if (f.Folder.Path == path)
+                if (f.FileSystemEntry.Path == path)
                 {
                     return f;
                 }

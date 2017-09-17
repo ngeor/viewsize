@@ -39,9 +39,8 @@ namespace CRLFLabs.ViewSize.Mvp
                 {
                     _folderScanner.Scan(path);
 
-                    var renderer = new Renderer();
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    _treeMapDataSource = renderer.Render(bounds, _folderScanner.TopLevelFolders);
+                    _treeMapDataSource = Renderer.Render(bounds, _folderScanner.TopLevelFolders);
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
