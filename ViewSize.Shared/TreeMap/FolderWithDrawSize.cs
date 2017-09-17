@@ -5,9 +5,15 @@ namespace CRLFLabs.ViewSize.TreeMap
 {
     public class FolderWithDrawSize
     {
+        public FolderWithDrawSize(FolderWithDrawSize parent)
+        {
+            Parent = parent;
+        }
+
         public IFileSystemEntry Folder { get; set; }
         public RectangleD DrawSize { get; set; }
         public IList<FolderWithDrawSize> Children { get; set; }
+        public FolderWithDrawSize Parent { get; }
 
         /// <summary>
         /// Checks if this object is a descendant of the given object.
@@ -19,19 +25,9 @@ namespace CRLFLabs.ViewSize.TreeMap
                 return false;
             }
 
-            return folderWithDrawSize.ContainsDescendant(this);
-        }
-
-        public bool ContainsDescendant(FolderWithDrawSize folderWithDrawSize)
-        {
-            if (this == folderWithDrawSize)
+            for (var n = this; n != null; n = n.Parent)
             {
-                return true;
-            }
-
-            foreach (var child in Children)
-            {
-                if (child.ContainsDescendant(folderWithDrawSize))
+                if (n == folderWithDrawSize)
                 {
                     return true;
                 }

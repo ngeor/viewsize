@@ -36,12 +36,12 @@ namespace CRLFLabs.ViewSize.TreeMap
                 FoldersWithDrawSize = new List<FolderWithDrawSize>()
             };
 
-            Render(fullBounds, fileSystemEntries, conversions, result.FoldersWithDrawSize);
+            Render(fullBounds, fileSystemEntries, conversions, result.FoldersWithDrawSize, null);
 
             return result;
         }
 
-        private void Render(RectangleD bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions, IList<FolderWithDrawSize> result)
+        private void Render(RectangleD bounds, IList<IFileSystemEntry> fileSystemEntries, Conversions conversions, IList<FolderWithDrawSize> result, FolderWithDrawSize parent)
         {
             bool drawVertically = bounds.Width > bounds.Height;
 
@@ -59,7 +59,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                 entries.RemoveFirst();
 
                 // add to the current streak
-                streakCandidate.AddLast(new FolderWithDrawSize
+                streakCandidate.AddLast(new FolderWithDrawSize(parent)
                 {
                     Folder = entry
                 });
@@ -103,7 +103,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     // continue in remaining bounds
                     var newList = entries.ToList();
                     entries.Clear();
-                    Render(bounds.Subtract(drawStreakSize), newList, conversions, result);
+                    Render(bounds.Subtract(drawStreakSize), newList, conversions, result, parent);
                 }
                 else
                 {
@@ -178,7 +178,7 @@ namespace CRLFLabs.ViewSize.TreeMap
 
                 // subtree
                 s.Children = new List<FolderWithDrawSize>();
-                Render(s.DrawSize, s.Folder.Children, conversions, s.Children);
+                Render(s.DrawSize, s.Folder.Children, conversions, s.Children, s);
             }
         }
 
