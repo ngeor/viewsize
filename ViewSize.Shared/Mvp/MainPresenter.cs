@@ -2,13 +2,13 @@
 using CRLFLabs.ViewSize.TreeMap;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
-
     /// <summary>
     /// Main presenter.
     /// </summary>
@@ -17,12 +17,30 @@ namespace CRLFLabs.ViewSize.Mvp
         private readonly FolderScanner _folderScanner = new FolderScanner();
         private TreeMapDataSource _treeMapDataSource;
 
+        /// <summary>
+        /// Creates an instance of this class.
+        /// </summary>
+        /// <param name="view">The view.</param>
         public MainPresenter(IMainView view)
         {
             View = view;    
         }
 
         private IMainView View { get; }
+
+        private TreeMapDataSource TreeMapDataSource
+        {
+            get
+            {
+                return _treeMapDataSource;
+            }
+            set
+            {
+                Detach(_treeMapDataSource);
+                _treeMapDataSource = value;
+                Attach(_treeMapDataSource);
+            }
+        }
 
         public void OnBeginScan()
         {
@@ -40,12 +58,12 @@ namespace CRLFLabs.ViewSize.Mvp
                     _folderScanner.Scan(path);
 
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    _treeMapDataSource = Renderer.Render(bounds, _folderScanner.TopLevelFolders);
+                    TreeMapDataSource = Renderer.Render(bounds, _folderScanner.TopLevelFolders);
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
                         View.SetFolders(_folderScanner.TopLevelFolders);
-                        View.SetTreeMapDataSource(_treeMapDataSource);
+                        View.SetTreeMapDataSource(TreeMapDataSource);
                         View.SetDurationLabel($"Finished scanning in {_folderScanner.Duration}, total time: {stopwatch.Elapsed}");
                     });
                 }
@@ -72,6 +90,27 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             var folderWithDrawSize = _treeMapDataSource?.Find(path);
             _treeMapDataSource.Selected = folderWithDrawSize;
+        }
+
+        private void Attach(TreeMapDataSource treeMapDataSource)
+        {
+            if (treeMapDataSource != null)
+            {
+                treeMapDataSource.PropertyChanged += TreeMapDataSource_PropertyChanged;
+            }
+        }
+
+        private void Detach(TreeMapDataSource treeMapDataSource)
+        {
+            if (treeMapDataSource != null)
+            {
+                treeMapDataSource.PropertyChanged -= TreeMapDataSource_PropertyChanged;
+            }
+        }
+
+        private void TreeMapDataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            View.SetSelectedTreeViewItem(TreeMapDataSource.Selected?.FileSystemEntry?.Path);
         }
     }
 }

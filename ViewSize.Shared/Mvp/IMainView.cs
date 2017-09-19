@@ -20,5 +20,6 @@ namespace CRLFLabs.ViewSize.Mvp
         void SetFolders(IList<IFileSystemEntry> topLevelFolders);
         void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource);
         void SetDurationLabel(string durationLabel);
+        void SetSelectedTreeViewItem(string path);
     }
 }

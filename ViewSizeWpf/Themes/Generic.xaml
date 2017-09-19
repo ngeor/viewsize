@@ -84,6 +84,10 @@
                         <!--Apply this style to all 'TreeViewItem's.-->
                         <Style TargetType="TreeViewItem">
                             <Setter Property="Template" Value="{StaticResource TreeListViewItem}"/>
+
+                            <!-- allows for setting selection programmatically -->
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         </Style>
                         <!--Apply this style to all 'TreeListViewExpander's.-->
                         <Style TargetType="local:TreeListViewExpander">

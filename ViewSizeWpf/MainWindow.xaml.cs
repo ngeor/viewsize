@@ -4,6 +4,7 @@ using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.TreeMap;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -41,7 +42,7 @@ namespace ViewSizeWpf
 
         private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntryModel;
             if (fileSystemEntry == null)
             {
                 return;
@@ -107,13 +108,39 @@ namespace ViewSizeWpf
         public void SetFolders(IList<IFileSystemEntry> topLevelFolders)
         {
             treeView.DataContext = null;
-            treeView.DataContext = topLevelFolders;
+            treeView.DataContext = FileSystemEntryModel.Convert(topLevelFolders);
         }
 
         public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
         {
             treeMap.DataSource = treeMapDataSource;
         }
+
+        public void SetSelectedTreeViewItem(string path)
+        {
+            IList<FileSystemEntryModel> dataSource = treeView.DataContext as IList<FileSystemEntryModel>;
+            if (dataSource == null)
+            {
+                return;
+            }
+            
+            if (path == null)
+            {
+                // TODO deselect
+                return;
+            }
+
+            var model = FileSystemEntryModel.Find(dataSource, path);
+            if (model != null)
+            {
+                model.IsSelected = true;
+                for (var n = model.Parent; n != null; n = n.Parent)
+                {
+                    n.IsExpanded = true;
+                }
+            }
+        }
+
         #endregion
 
         #region WPF Event Handlers
