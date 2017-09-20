@@ -102,7 +102,7 @@ namespace ViewSizeMac
 
         public void SetFolders(IList<IFileSystemEntry> topLevelFolders)
         {
-            var models = FSEntryModel.ToModels(topLevelFolders);
+            var models = FSEntryModel.ToModels(topLevelFolders, parent: null);
             var dataSource = new FolderOutlineDataSource(models);
             outlineView.DataSource = dataSource;
         }
@@ -110,6 +110,26 @@ namespace ViewSizeMac
         public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource) => folderGraph.DataSource = treeMapDataSource;
 
         public void SetDurationLabel(string durationLabel) => lblStatus.StringValue = durationLabel;
+
+        public void SetSelectedTreeViewItem(string path)
+        {
+            FolderOutlineDataSource dataSource = outlineView.DataSource as FolderOutlineDataSource;
+            if (dataSource == null)
+            {
+                return;
+            }
+
+            FSEntryModel entry = dataSource.Find(path);
+
+            foreach (var ancestor in entry.Ancestors())
+            {
+                outlineView.ExpandItem(ancestor, false);
+            }
+
+            var row = outlineView.RowForItem(entry);
+            outlineView.SelectRow(row, false);
+            outlineView.ScrollRowToVisible(row);
+        }
 
         #endregion
 

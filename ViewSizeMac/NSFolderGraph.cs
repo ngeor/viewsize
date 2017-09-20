@@ -10,6 +10,9 @@ using Foundation;
 
 namespace ViewSizeMac
 {
+    /// <summary>
+    /// Custom control that renders a tree map graph.
+    /// </summary>
     [Register("NSFolderGraph")]
     public class NSFolderGraph : NSControl
     {
@@ -76,14 +79,14 @@ namespace ViewSizeMac
         public RectangleD ActualSize => Bounds.ToRectangleD();
         private ScaleD ScaleToActual => DataSource == null ? default(ScaleD) : new ScaleD(DataSource.Bounds.Size, ActualSize.Size);
 
-        public override void DrawRect(CoreGraphics.CGRect dirtyRect)
+        public override void DrawRect(CGRect dirtyRect)
         {
             // clear rect
             NSColor.White.Set();
             NSBezierPath.FillRect(dirtyRect);
 
             NSColor.Blue.Set();
-            NSBezierPath.FillRect(new CoreGraphics.CGRect(0, 0, 10, 10));
+            NSBezierPath.FillRect(new CGRect(0, 0, 10, 10));
 
             var dataSource = DataSource;
             if (dataSource == null)
@@ -97,24 +100,24 @@ namespace ViewSizeMac
             var selected = dataSource.Selected;
             if (selected != null)
             {
-                var rect = selected.DrawSize.Scale(scale).ToCGRect();
+                var rect = selected.Bounds.Scale(scale).ToCGRect();
                 NSColor.White.Set();
                 NSBezierPath.StrokeRect(rect);
             }
         }
 
-        private void Draw(IEnumerable<FolderWithDrawSize> foldersWithDrawSize, ScaleD scaleToActual)
+        private void Draw(IEnumerable<RenderedFileSystemEntry> renderedFileSystemEntries, ScaleD scaleToActual)
         {
-            foreach (var folderWithDrawSize in foldersWithDrawSize)
+            foreach (var renderedFileSystemEntry in renderedFileSystemEntries)
             {
-                Draw(folderWithDrawSize, scaleToActual);
+                Draw(renderedFileSystemEntry, scaleToActual);
             }
         }
 
-        private void Draw(FolderWithDrawSize folderWithDrawSize, ScaleD scaleToActual)
+        private void Draw(RenderedFileSystemEntry renderedFileSystemEntry, ScaleD scaleToActual)
         {
-            var rect = folderWithDrawSize.DrawSize.Scale(scaleToActual).ToCGRect();
-            if (folderWithDrawSize.IsDescendantOf(DataSource.Selected))
+            var rect = renderedFileSystemEntry.Bounds.Scale(scaleToActual).ToCGRect();
+            if (renderedFileSystemEntry.IsDescendantOf(DataSource.Selected))
             {
                 NSColor.Brown.Set();
             }
@@ -128,7 +131,7 @@ namespace ViewSizeMac
             NSBezierPath.StrokeRect(rect);
 
             // recursion
-            Draw(folderWithDrawSize.Children, scaleToActual);
+            Draw(renderedFileSystemEntry.Children, scaleToActual);
         }
 
         public override void MouseUp(NSEvent theEvent)
@@ -171,6 +174,7 @@ namespace ViewSizeMac
 
         void DataSource_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            // gets called when the selection of the treemap data model changes
             NeedsDisplay = true;
         }
     }

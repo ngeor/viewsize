@@ -30,6 +30,21 @@ namespace ViewSizeMac
             return ListOf(item).Any();
         }
 
+        public FSEntryModel Find(string path)
+        {
+            // TODO optimize this
+            foreach (var f in TopLevelFolders)
+            {
+                var result = f.Find(path);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
         private IList<FSEntryModel> ListOf(NSObject item)
         {
             if (item == null)
