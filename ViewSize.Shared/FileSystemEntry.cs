@@ -1,97 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CRLFLabs.ViewSize
 {
     public interface IFileSystemEntry
     {
-        string Path { get; }
-        long TotalSize { get; }
-        long OwnSize { get; }
-        IList<IFileSystemEntry> Children { get; }
-        double Percentage { get; }
-        string DisplayText { get; }
-        string DisplaySize { get; }
+        string Path { get; set; }
+        long TotalSize { get; set; }
+        long OwnSize { get; set; }
+        double Percentage { get; set; }
+        string DisplayText { get; set; }
+        string DisplaySize { get; set; }
+        IFileSystemEntry Parent { get; set; }
+        IList<IFileSystemEntry> Children { get; set; }
     }
 
-    /// <summary>
-    /// Represents a file or folder.
-    /// </summary>
-    public class FileSystemEntry : IFileSystemEntry
+    public static class FileSystemEntryExtensions
     {
-        public FileSystemEntry(FolderScanner folderScanner, string path)
+        public static IFileSystemEntry Find(this IFileSystemEntry fileSystemEntry, string path)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            // TODO optimize this
+            if (fileSystemEntry.Path == path)
             {
-                throw new ArgumentException("Path cannot be empty", nameof(path));
+                return fileSystemEntry;
             }
 
-            if (folderScanner == null)
+            foreach (var child in fileSystemEntry.Children)
             {
-                throw new ArgumentNullException(nameof(folderScanner));
+                var result = child.Find(path);
+                if (result != null)
+                {
+                    return result;
+                }
             }
 
-            Path = path;
-            FolderScanner = folderScanner;
+            return null;
         }
 
-        public string Path { get; }
-        public long OwnSize { get; private set; }
-        public long TotalSize { get; private set; }
-        public IList<IFileSystemEntry> Children { get; private set; }
-        public double Percentage => (double)TotalSize / FolderScanner.TotalSize;
-        private bool IsRoot => FolderScanner.IsRoot(this);
-
-        public string DisplayText => IsRoot ? Path : System.IO.Path.GetFileName(Path);
-        public string DisplaySize => FileUtils.FormatBytes(TotalSize) + $" ({Percentage:P2})";
-
-        private FolderScanner FolderScanner { get; }
-
-        public void Calculate()
+        public static IEnumerable<IFileSystemEntry> Ancestors(this IFileSystemEntry fileSystemEntry)
         {
-            if (FolderScanner.CancelRequested)
+            if (fileSystemEntry.Parent == null)
             {
-                return;
+                return Enumerable.Empty<IFileSystemEntry>();
             }
-
-            FolderScanner.FireScanning(this);
-
-            // my file size (should be zero for directories)
-            OwnSize = FileUtils.FileLength(Path);
-
-            // calculate children recursively
-            Children = CalculateChildren().Select(c => (IFileSystemEntry)c).ToList();
+            else
+            {
+                return fileSystemEntry.Parent.Ancestors().Concat(Enumerable.Repeat(fileSystemEntry.Parent, 1));
+            }
         }
 
-        private List<FileSystemEntry> CalculateChildren()
-        {
-            var result = FileUtils.EnumerateFileSystemEntries(Path).Select(p => new FileSystemEntry(FolderScanner, p)).ToList();
-            foreach (var child in result)
-            {
-                // recursion is done here
-                child.Calculate();
-            }
-
-            // now that children are done, we can calculate total size
-            TotalSize = OwnSize + result.Select(c => c.TotalSize).Sum();
-            result.Sort((x, y) =>
-            {
-                if (x.TotalSize > y.TotalSize)
-                {
-                    return -1;
-                }
-                else if (x.TotalSize < y.TotalSize)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return x.Path.CompareTo(y.Path);
-                }
-            });
-
-            return result;
-        }
     }
 }

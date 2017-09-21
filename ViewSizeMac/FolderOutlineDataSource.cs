@@ -3,6 +3,7 @@ using AppKit;
 using Foundation;
 using System.Linq;
 using System.Collections.Generic;
+using CRLFLabs.ViewSize;
 
 namespace ViewSizeMac
 {
@@ -38,7 +39,7 @@ namespace ViewSizeMac
                 var result = f.Find(path);
                 if (result != null)
                 {
-                    return result;
+                    return (FSEntryModel)result; // TODO: avoid explict cast
                 }
             }
 
@@ -53,7 +54,8 @@ namespace ViewSizeMac
             }
             else
             {
-                return ((FSEntryModel)item).Children;
+                // TODO: avoid explicit cast
+                return ((FSEntryModel)item).Children.Cast<FSEntryModel>().ToList();
             }
         }
     }

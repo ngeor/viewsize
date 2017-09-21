@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CRLFLabs.ViewSize
@@ -8,12 +9,12 @@ namespace CRLFLabs.ViewSize
     /// Scans a folder recursively and gathers information.
     /// This is the main API that should be used.
     /// </summary>
-    public class FolderScanner
+    public class FolderScanner<T> where T : IFileSystemEntry, new()
     {
         /// <summary>
         /// Holds the list of top level folders that will be scanned.
         /// </summary>
-        private readonly List<IFileSystemEntry> topLevelFolders = new List<IFileSystemEntry>();
+        private readonly IList<T> topLevelFolders = new List<T>();
 
         /// <summary>
         /// Holds the time when scanning started.
@@ -33,7 +34,7 @@ namespace CRLFLabs.ViewSize
         /// <summary>
         /// Gets the list of top level folders that will be scanned.
         /// </summary>
-        public IList<IFileSystemEntry> TopLevelFolders => topLevelFolders;
+        public IList<T> TopLevelFolders => topLevelFolders;
 
         /// <summary>
         /// Gets the total size, in bytes, of the scanned items.
@@ -82,10 +83,18 @@ namespace CRLFLabs.ViewSize
             try
             {
                 TopLevelFolders.Clear();
-                var root = new FileSystemEntry(this, path);
+                T root = Create(path, null);
                 TopLevelFolders.Add(root);
-                root.Calculate();
+                Calculate(root);
+
+                // calculate the total size
                 TotalSize = topLevelFolders.Select(f => f.TotalSize).Sum();
+
+                // apply properties that depend on that
+                foreach (var child in topLevelFolders)
+                {
+                    ApplyProperties(child);
+                }
             }
             finally
             {
@@ -94,18 +103,80 @@ namespace CRLFLabs.ViewSize
             }
         }
 
-        /// <summary>
-        /// Checks if the given folder is top level.
-        /// </summary>
-        internal bool IsRoot(FileSystemEntry folder)
+        private T Create(string path, IFileSystemEntry parent)
         {
-            return folder != null && TopLevelFolders.Contains(folder);
+            return new T
+            {
+                Path = path,
+                Parent = parent
+            };
+        }
+
+        private void Calculate(T fileSystemEntry)
+        {
+            if (CancelRequested)
+            {
+                return;
+            }
+
+            FireScanning(fileSystemEntry);
+
+            // my file size (should be zero for directories)
+            fileSystemEntry.OwnSize = FileUtils.FileLength(fileSystemEntry.Path);
+
+            // calculate children recursively
+            fileSystemEntry.Children = CalculateChildren(fileSystemEntry);
+        }
+
+        private List<IFileSystemEntry> CalculateChildren(T fileSystemEntry)
+        {
+            var result = FileUtils.EnumerateFileSystemEntries(fileSystemEntry.Path)
+                                  .Select(p => Create(p, fileSystemEntry))
+                                  .ToList();
+            foreach (var child in result)
+            {
+                // recursion is done here
+                Calculate(child);
+            }
+
+            // now that children are done, we can calculate total size
+            fileSystemEntry.TotalSize = fileSystemEntry.OwnSize + result.Select(c => c.TotalSize).Sum();
+            result.Sort((x, y) =>
+            {
+                if (x.TotalSize > y.TotalSize)
+                {
+                    return -1;
+                }
+                else if (x.TotalSize < y.TotalSize)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return x.Path.CompareTo(y.Path);
+                }
+            });
+
+            return result.Cast<IFileSystemEntry>().ToList();
+        }
+
+        private void ApplyProperties(IFileSystemEntry fileSystemEntry)
+        {
+            fileSystemEntry.Percentage = (double)fileSystemEntry.TotalSize / TotalSize;
+            fileSystemEntry.DisplayText = fileSystemEntry.Parent == null ?
+                                      fileSystemEntry.Path : Path.GetFileName(fileSystemEntry.Path);
+            fileSystemEntry.DisplaySize = FileUtils.FormatBytes(fileSystemEntry.TotalSize) + $" ({fileSystemEntry.Percentage:P2})";
+
+            foreach (var child in fileSystemEntry.Children)
+            {
+                ApplyProperties(child);
+            }
         }
 
         #region Events
         public event EventHandler<FileSystemEventArgs> Scanning;
 
-        internal void FireScanning(FileSystemEntry folder)
+        internal void FireScanning(IFileSystemEntry folder)
         {
             Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }

@@ -6,27 +6,29 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
     /// <summary>
     /// Main presenter.
     /// </summary>
-    public class MainPresenter : IMainPresenter
+    public class MainPresenter<T> : IMainPresenter
+        where T : IFileSystemEntry, new()
     {
-        private readonly FolderScanner _folderScanner = new FolderScanner();
+        private readonly FolderScanner<T> _folderScanner = new FolderScanner<T>();
         private TreeMapDataSource _treeMapDataSource;
 
         /// <summary>
         /// Creates an instance of this class.
         /// </summary>
         /// <param name="view">The view.</param>
-        public MainPresenter(IMainView view)
+        public MainPresenter(IMainView<T> view)
         {
             View = view;    
         }
 
-        private IMainView View { get; }
+        private IMainView<T> View { get; }
 
         private TreeMapDataSource TreeMapDataSource
         {
@@ -58,7 +60,9 @@ namespace CRLFLabs.ViewSize.Mvp
                     _folderScanner.Scan(path);
 
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    TreeMapDataSource = Renderer.Render(bounds, _folderScanner.TopLevelFolders);
+                    TreeMapDataSource = Renderer.Render(
+                        bounds,
+                        _folderScanner.TopLevelFolders.Cast<IFileSystemEntry>().ToList()); // TODO: can we avoid the cast?
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {

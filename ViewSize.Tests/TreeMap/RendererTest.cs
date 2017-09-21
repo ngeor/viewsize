@@ -99,6 +99,18 @@ namespace ViewSize.Tests.TreeMap
             Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].Bounds, "fourth rectangle");
         }
 
+        class FileSystemEntry : IFileSystemEntry
+        {
+            public string Path { get; set; }
+            public long TotalSize { get; set; }
+            public long OwnSize { get; set; }
+            public double Percentage { get; set; }
+            public string DisplayText { get; set; }
+            public string DisplaySize { get; set; }
+            public IFileSystemEntry Parent { get; set; }
+            public IList<IFileSystemEntry> Children { get; set; }
+        }
+
         [Test]
         [Category("Performance")]
         public void TestPerformance()
@@ -106,13 +118,15 @@ namespace ViewSize.Tests.TreeMap
             const string path = @"C:\\Users\\ngeor\\Projects\\crlflabs";
             const int iterations = 100;
 
-            FolderScanner fs = new FolderScanner();
+            FolderScanner<FileSystemEntry> fs = new FolderScanner<FileSystemEntry>();
             fs.Scan(path);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                Renderer.Render(new RectangleD(0, 0, 800, 600), fs.TopLevelFolders);
+                Renderer.Render(
+                    new RectangleD(0, 0, 800, 600),
+                    fs.TopLevelFolders.Cast<IFileSystemEntry>().ToList());
             }
 
             stopwatch.Stop();

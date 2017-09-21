@@ -11,9 +11,9 @@ using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeMac
 {
-    public partial class ViewController : NSViewController, IMainView, IFolderChooserView, IFolderChooserModel
+    public partial class ViewController : NSViewController, IMainView<FSEntryModel>, IFolderChooserView, IFolderChooserModel
     {
-        private MainPresenter _mainPresenter;
+        private MainPresenter<FSEntryModel> _mainPresenter;
         private FolderChooserPresenter _folderChooserPresenter;
 
         public ViewController(IntPtr handle) : base(handle)
@@ -51,14 +51,14 @@ namespace ViewSizeMac
             folderOutlineDelegate.SelectionChanged += (sender, e) =>
             {
                 FSEntryModel m = outlineView.ItemAtRow(outlineView.SelectedRow) as FSEntryModel;
-                _mainPresenter.OnTreeViewSelectionChanged(m.Path);
+                _mainPresenter.OnTreeViewSelectionChanged(m?.Path);
             };
             outlineView.Delegate = folderOutlineDelegate;
         }
 
         private void CreatePresenters()
         {
-            _mainPresenter = new MainPresenter(this);
+            _mainPresenter = new MainPresenter<FSEntryModel>(this);
             _folderChooserPresenter = new FolderChooserPresenter(this, this);
         }
 
@@ -86,7 +86,7 @@ namespace ViewSizeMac
         #region IMainView
 
         public SizeD TreeMapActualSize => folderGraph.ActualSize.Size;
-        string IMainView.SelectedFolder => txtFolder.StringValue;
+        string IMainView<FSEntryModel>.SelectedFolder => txtFolder.StringValue;
 
         public void EnableUI(bool enable)
         {
@@ -100,10 +100,9 @@ namespace ViewSizeMac
 
         public void ShowError(Exception ex) => ShowExceptionAlert(ex);
 
-        public void SetFolders(IList<IFileSystemEntry> topLevelFolders)
+        public void SetFolders(IList<FSEntryModel> topLevelFolders)
         {
-            var models = FSEntryModel.ToModels(topLevelFolders, parent: null);
-            var dataSource = new FolderOutlineDataSource(models);
+            var dataSource = new FolderOutlineDataSource(topLevelFolders);
             outlineView.DataSource = dataSource;
         }
 
@@ -120,8 +119,13 @@ namespace ViewSizeMac
             }
 
             FSEntryModel entry = dataSource.Find(path);
+            if (entry == null)
+            {
+                outlineView.DeselectAll(this);
+                return;
+            }
 
-            foreach (var ancestor in entry.Ancestors())
+            foreach (FSEntryModel ancestor in entry.Ancestors()) // TODO: avoid sneaky explicit cast here
             {
                 outlineView.ExpandItem(ancestor, false);
             }
