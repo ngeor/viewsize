@@ -11,10 +11,10 @@ namespace CRLFLabs.ViewSize.TreeMap
     {
         private readonly Renderer renderer;
         private readonly bool drawVertically;
-        private readonly IList<FileSystemEntry> fileSystemEntries;
+        private readonly IReadOnlyList<FileSystemEntry> fileSystemEntries;
         private readonly RectangleD bounds;
 
-        public PartialRenderer(Renderer renderer, RectangleD bounds, IList<FileSystemEntry> fileSystemEntries)
+        public PartialRenderer(Renderer renderer, RectangleD bounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
         {
             this.renderer = renderer;
             this.fileSystemEntries = fileSystemEntries;
@@ -22,7 +22,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             drawVertically = bounds.Width > bounds.Height;
         }
 
-        public IList<FileSystemEntry> Render(FileSystemEntry parent)
+        public IReadOnlyList<FileSystemEntry> Render(FileSystemEntry parent)
         {
             var streakCandidate = new LinkedList<FileSystemEntry>();
 

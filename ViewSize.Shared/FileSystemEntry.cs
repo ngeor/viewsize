@@ -8,8 +8,7 @@ namespace CRLFLabs.ViewSize
 {
     public interface IFileSystemEntryContainer
     {
-        // TODO: should be enumerable or icollection
-        IList<FileSystemEntry> Children { get; }
+        IReadOnlyList<FileSystemEntry> Children { get; }
         IFileSystemEntryContainer Parent { get; }
     }
 
@@ -30,7 +29,7 @@ namespace CRLFLabs.ViewSize
 
         // relationships
         public IFileSystemEntryContainer Parent { get; set; }
-        public IList<FileSystemEntry> Children { get; set; }
+        public IReadOnlyList<FileSystemEntry> Children { get; set; }
 
         // UI
         public string DisplayText { get; set; }

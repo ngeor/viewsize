@@ -41,7 +41,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(entry);
 
             // act
-            IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
+            var calculatedBounds = Renderer.Render(fullBounds, folders).Children;
 
             // assert
             Assert.AreEqual(1, calculatedBounds.Count);
@@ -62,7 +62,7 @@ namespace ViewSize.Tests.TreeMap
             };
 
             // act
-            IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
+            var calculatedBounds = Renderer.Render(fullBounds, folders).Children;
 
             // assert
             Assert.AreEqual(2, calculatedBounds.Count);
@@ -85,7 +85,7 @@ namespace ViewSize.Tests.TreeMap
             };
 
             // act
-            IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
+            var calculatedBounds = Renderer.Render(fullBounds, folders).Children;
 
             // assert
             Assert.AreEqual(4, calculatedBounds.Count);
@@ -118,7 +118,7 @@ namespace ViewSize.Tests.TreeMap
             Assert.Less(stopwatch.Elapsed, TimeSpan.FromSeconds(1));
         }
 
-        private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IList<FileSystemEntry> children = null)
+        private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IReadOnlyList<FileSystemEntry> children = null)
         {
             return new FileSystemEntry("")
             {

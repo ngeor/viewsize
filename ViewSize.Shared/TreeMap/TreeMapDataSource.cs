@@ -12,14 +12,14 @@ namespace CRLFLabs.ViewSize.TreeMap
     public class TreeMapDataSource : INotifyPropertyChanged, IFileSystemEntryContainer
     {
         private FileSystemEntry _selected;
-        private IList<FileSystemEntry> _children = new List<FileSystemEntry>();
+        private IReadOnlyList<FileSystemEntry> _children = new List<FileSystemEntry>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets the file system entries with their tree map rectangles.
         /// </summary>
-        public IList<FileSystemEntry> Children
+        public IReadOnlyList<FileSystemEntry> Children
         {
             get
             {

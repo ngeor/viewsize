@@ -14,7 +14,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         private readonly long totalSizeInBytes;
         private readonly double totalSizeInPixels;
 
-        private Renderer(RectangleD fullBounds, IList<FileSystemEntry> fileSystemEntries)
+        private Renderer(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
         {
             // e.g. real total size = 200 bytes
             totalSizeInBytes = fileSystemEntries.Sum(f => f.TotalSize);
@@ -28,7 +28,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <param name="fullBounds">The bounds within to render.</param>
         /// <param name="fileSystemEntries">The file system entries.</param>
-        public static TreeMapDataSource Render(RectangleD fullBounds, IList<FileSystemEntry> fileSystemEntries)
+        public static TreeMapDataSource Render(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
         {
             var originalRenderer = new Renderer(fullBounds, fileSystemEntries);
             var partialRenderer = new PartialRenderer(originalRenderer, fullBounds, fileSystemEntries);
@@ -43,7 +43,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             return result;
         }
 
-        public IList<FileSystemEntry> Render(FileSystemEntry parent)
+        public IReadOnlyList<FileSystemEntry> Render(FileSystemEntry parent)
         {
             var partialRenderer = new PartialRenderer(this, parent.Bounds, parent.Children);
             return partialRenderer.Render(parent);

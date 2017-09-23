@@ -102,7 +102,7 @@ namespace ViewSizeMac
 
         public void ShowError(string message) => MessageBox.ShowMessage(message);
 
-        public void SetFolders(IList<FileSystemEntry> topLevelFolders)
+        public void SetFolders(IReadOnlyList<FileSystemEntry> topLevelFolders)
         {
             var dataSource = new FolderOutlineDataSource(topLevelFolders);
             outlineView.DataSource = dataSource;

@@ -59,7 +59,7 @@ namespace CRLFLabs.ViewSize
         /// Scans the given path.
         /// </summary>
         /// <param name="paths">The paths to scan.</param>
-        public IList<FileSystemEntry> Scan(params string[] paths)
+        public IReadOnlyList<FileSystemEntry> Scan(params string[] paths)
         {
             if (scanning)
             {
