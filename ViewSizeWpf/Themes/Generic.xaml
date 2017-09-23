@@ -32,6 +32,8 @@
                 <!--Change the foreground color-->
                 <Setter Property="Foreground" 
                     Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                <!-- Automatically scroll selected item into the view -->
+                <Setter Property="local:TreeListView.BringIntoViewWhenSelected" Value="True" />
             </Trigger>
             <!--Trigger used to change the color based on selection-->
             <MultiTrigger>

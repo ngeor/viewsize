@@ -67,7 +67,53 @@ namespace ViewSizeWpf.Controls
             DependencyProperty.Register("Columns", typeof(GridViewColumnCollection),
             typeof(TreeListView),
             new UIPropertyMetadata(null));
+
+        /// <summary>
+        /// This dependency property enables selected items to be scrolled into visible view automatically.
+        /// </summary>
+        public static readonly DependencyProperty BringIntoViewWhenSelectedProperty =
+            DependencyProperty.RegisterAttached("BringIntoViewWhenSelected", typeof(bool),
+                typeof(TreeListView), new UIPropertyMetadata(false, OnBringIntoViewWhenSelected));
         #endregion
+
+        /// <summary>
+        /// Called when the property <c>BringIntoViewWhenSelected</c> changes.
+        /// </summary>
+        private static void OnBringIntoViewWhenSelected(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        {
+            TreeViewItem item = depObj as TreeViewItem;
+            if (item == null)
+            {
+                return;
+            }
+
+            if (e.NewValue is bool == false)
+            {
+                return;
+            }
+
+            if ((bool)e.NewValue)
+            {
+                // scroll the item into the view
+                item.BringIntoView();
+            }
+        }
+
+        /// <summary>
+        /// Getter of the <c>BringIntoViewWhenSelected</c> property.
+        /// </summary>
+        public static bool GetBringIntoViewWhenSelected(TreeViewItem treeViewItem)
+        {
+            return (bool)treeViewItem.GetValue(BringIntoViewWhenSelectedProperty);
+        }
+
+        /// <summary>
+        /// Setter of the <c>BringIntoViewWhenSelected</c> property.
+        /// </summary>
+        public static void SetBringIntoViewWhenSelected(TreeViewItem treeViewItem, bool value)
+        {
+            treeViewItem.SetValue(BringIntoViewWhenSelectedProperty, value);
+        }
     }
 
     /// <summary>
