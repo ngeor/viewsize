@@ -12,16 +12,6 @@ namespace CRLFLabs.ViewSize
     public class FolderScanner : IFileSystemEntryContainer
     {
         /// <summary>
-        /// Holds the time when scanning started.
-        /// </summary>
-        private DateTime startScan;
-
-        /// <summary>
-        /// Holds the time when scanning finished.
-        /// </summary>
-        private DateTime stopScan;
-
-        /// <summary>
         /// Holds a value indicating whether scanning is in progress.
         /// </summary>
         private bool scanning;
@@ -40,12 +30,6 @@ namespace CRLFLabs.ViewSize
             get;
             private set;
         }
-
-        /// <summary>
-        /// Gets the duration of the scan.
-        /// If the scan is in progress, this is the duration so far.
-        /// </summary>
-        public TimeSpan Duration => scanning ? DateTime.UtcNow.Subtract(startScan) : stopScan.Subtract(startScan);
 
         public IReadOnlyList<FileSystemEntry> Children => throw new NotImplementedException();
 
@@ -71,7 +55,6 @@ namespace CRLFLabs.ViewSize
             }
 
             scanning = true;
-            startScan = DateTime.UtcNow;
             TotalSize = 0;
 
             try
@@ -95,7 +78,6 @@ namespace CRLFLabs.ViewSize
             }
             finally
             {
-                stopScan = DateTime.UtcNow;
                 scanning = false;
             }
         }
@@ -107,22 +89,34 @@ namespace CRLFLabs.ViewSize
                 return;
             }
 
-            FireScanning(entry);
-
-            // my file size (should be zero for directories)
-            entry.OwnSize = FileUtils.FileLength(entry.Path);
-
             entry.DisplayText = entry.IsTopLevel ? entry.Path : Path.GetFileName(entry.Path);
 
             // calculate children recursively
             entry.Children = CalculateChildren(entry);
         }
 
-        private List<FileSystemEntry> CalculateChildren(FileSystemEntry fileSystemEntry)
+        private List<FileSystemEntry> CalculateChildren(FileSystemEntry entry)
         {
-            var result = FileUtils.EnumerateFileSystemEntries(fileSystemEntry.Path)
-                                  .Select(path => new FileSystemEntry(path, fileSystemEntry))
-                                  .ToList();
+            var paths = FileUtils.EnumerateFileSystemEntries(entry.Path);
+            entry.IsDirectory = paths != null;
+            if (!entry.IsDirectory)
+            {
+                // just a regular file, not a directory
+                // my file size (should be zero for directories)
+                entry.OwnSize = FileUtils.FileLength(entry.Path);
+                entry.TotalSize = entry.OwnSize;
+                return new List<FileSystemEntry>();
+            }
+
+            // only fire for directories because otherwise it's too slow
+            FireScanning(entry);
+
+            // a directory after all
+            var result = (
+                from path in paths
+                select new FileSystemEntry(path, entry)
+            ).ToList();
+
             foreach (var child in result)
             {
                 // recursion is done here
@@ -130,7 +124,7 @@ namespace CRLFLabs.ViewSize
             }
 
             // now that children are done, we can calculate total size
-            fileSystemEntry.TotalSize = fileSystemEntry.OwnSize + result.Select(c => c.TotalSize).Sum();
+            entry.TotalSize = result.Select(c => c.TotalSize).Sum();
             result.Sort((x, y) =>
             {
                 if (x.TotalSize > y.TotalSize)
@@ -175,8 +169,16 @@ namespace CRLFLabs.ViewSize
         #region Events
         public event EventHandler<FileSystemEventArgs> Scanning;
 
+        public bool ShouldFireScanningEvent { get; set; } = false;
+
         internal void FireScanning(FileSystemEntry folder)
         {
+            if (!ShouldFireScanningEvent)
+            {
+                return;
+            }
+
+            ShouldFireScanningEvent = false;
             Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }
         #endregion

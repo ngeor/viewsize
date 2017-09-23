@@ -35,13 +35,22 @@ namespace CRLFLabs.ViewSize
             }
         }
 
+        /// <summary>
+        /// Enumerates file system entries in the given path.
+        /// </summary>
+        /// <param name="path">The path to look into.</param>
+        /// <returns>
+        /// If the path represents a directory, the contents are returned.
+        /// If the path is not a directory, <c>null</c> will be returned.
+        /// This is bad practice but it serves to differentiate between a directory and non-directory.
+        /// </returns>
         public static IEnumerable<string> EnumerateFileSystemEntries(string path)
         {
             try
             {
                 if (!IsDirectory(path))
                 {
-                    return Enumerable.Empty<string>();
+                    return null;
                 }
                 else
                 {
@@ -50,7 +59,7 @@ namespace CRLFLabs.ViewSize
             }
             catch (UnauthorizedAccessException)
             {
-                return Enumerable.Empty<string>();
+                return null;
             }
         }
 

@@ -8,19 +8,16 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Main view.
     /// </summary>
-    public interface IMainView
+    public interface IMainView : IView
     {
         string SelectedFolder { get; }
         SizeD TreeMapActualSize { get; }
 
         void EnableUI(bool enable);
-        void RunOnGuiThread(Action action);
-
-        void ShowError(string message);
-        void ShowError(Exception ex);
 
         void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource);
         void SetDurationLabel(string durationLabel);
         void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry);
+        void SetScanningItem(string path);
     }
 }

@@ -12,14 +12,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\PointD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\ScaleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntryContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IFileSystemEntryContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />

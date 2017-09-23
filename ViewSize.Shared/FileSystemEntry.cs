@@ -6,12 +6,6 @@ using System.Linq;
 
 namespace CRLFLabs.ViewSize
 {
-    public interface IFileSystemEntryContainer
-    {
-        IReadOnlyList<FileSystemEntry> Children { get; }
-        IFileSystemEntryContainer Parent { get; }
-    }
-
     public partial class FileSystemEntry : IFileSystemEntryContainer
     {
         private IFileSystemEntryContainer _parent;
@@ -35,6 +29,7 @@ namespace CRLFLabs.ViewSize
         // core properties
         public string Path { get; }
         public long OwnSize { get; set; }
+        public bool IsDirectory { get; set; }
 
         // computed
         public long TotalSize { get; set; }
@@ -129,19 +124,6 @@ namespace CRLFLabs.ViewSize
             {
                 return parent.Ancestors().Concat(Enumerable.Repeat(parent, 1));
             }
-        }
-    }
-
-    public static class FileSystemEntryContainerExtensions
-    { 
-        public static IFileSystemEntryContainer RootContainer(this IFileSystemEntryContainer container)
-        {
-            if (container.Parent == null)
-            {
-                return container;
-            }
-
-            return container.Parent.RootContainer();
         }
     }
 }

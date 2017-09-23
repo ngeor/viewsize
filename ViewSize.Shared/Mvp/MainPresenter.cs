@@ -17,6 +17,7 @@ namespace CRLFLabs.ViewSize.Mvp
     {
         private readonly FolderScanner _folderScanner = new FolderScanner();
         private TreeMapDataSource _treeMapDataSource;
+        private bool _isScanning;
 
         /// <summary>
         /// Creates an instance of this class.
@@ -24,7 +25,8 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <param name="view">The view.</param>
         public MainPresenter(IMainView view)
         {
-            View = view;    
+            View = view;
+            _folderScanner.Scanning += _folderScanner_Scanning;
         }
 
         private IMainView View { get; }
@@ -52,12 +54,29 @@ namespace CRLFLabs.ViewSize.Mvp
                 return;
             }
 
+            _isScanning = true;
             View.EnableUI(false);
             var treeMapSize = View.TreeMapActualSize;
             var treeMapWidth = treeMapSize.Width;
             var treeMapHeight = treeMapSize.Height;
 
             Stopwatch stopwatch = Stopwatch.StartNew();
+
+            // progress task
+            Task.Run(async () =>
+            {
+                while (_isScanning)
+                {
+                    View.RunOnGuiThread(() =>
+                    {
+                        View.SetDurationLabel(stopwatch.Elapsed.ToString("mm\\:ss"));
+                    });
+
+                    await Task.Delay(1000);
+                }
+            });
+
+            // main task
             Task.Run(() =>
             {
                 try
@@ -72,7 +91,6 @@ namespace CRLFLabs.ViewSize.Mvp
                     View.RunOnGuiThread(() =>
                     {
                         View.SetTreeMapDataSource(TreeMapDataSource);
-                        View.SetDurationLabel($"Finished scanning in {_folderScanner.Duration}, total time: {stopwatch.Elapsed}");
                     });
                 }
                 catch (Exception ex)
@@ -81,6 +99,7 @@ namespace CRLFLabs.ViewSize.Mvp
                 }
                 finally
                 {
+                    _isScanning = false;
                     View.RunOnGuiThread(() =>
                     {
                         View.EnableUI(true);
@@ -118,6 +137,15 @@ namespace CRLFLabs.ViewSize.Mvp
         private void TreeMapDataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             View.SetSelectedTreeViewItem(TreeMapDataSource.Selected);
+        }
+
+        private void _folderScanner_Scanning(object sender, FileSystemEventArgs e)
+        {
+            View.RunOnGuiThread(() =>
+            {
+                View.SetScanningItem(e.FileSystemEntry.Path);
+                _folderScanner.ShouldFireScanningEvent = true;
+            });
         }
     }
 }

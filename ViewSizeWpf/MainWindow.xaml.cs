@@ -57,6 +57,17 @@ namespace ViewSizeWpf
 
         #endregion
 
+        #region IView implementation
+        public void RunOnGuiThread(Action action) => Dispatcher.Invoke(action);
+
+        public void ShowError(Exception ex) => ShowError(ex.Message + ex.StackTrace);
+
+        public void ShowError(string message)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        #endregion
+
         #region IMainView implementation
         public string SelectedFolder
         {
@@ -74,16 +85,8 @@ namespace ViewSizeWpf
 
         public SizeD TreeMapActualSize => treeMap.ActualSize;
 
-        public void RunOnGuiThread(Action action) => Dispatcher.Invoke(action);
-
-        public void ShowError(Exception ex) => ShowError(ex.Message + ex.StackTrace);
-
-        public void ShowError(string message)
-        {
-            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        public void SetDurationLabel(string durationLabel) => lblStatus.Content = durationLabel;
+        public void SetScanningItem(string path) => lblStatus.Content = path;
+        public void SetDurationLabel(string durationLabel) => lblDuration.Content = durationLabel;
 
         public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
         {
