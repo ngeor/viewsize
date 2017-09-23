@@ -9,13 +9,8 @@ namespace CRLFLabs.ViewSize
     /// Scans a folder recursively and gathers information.
     /// This is the main API that should be used.
     /// </summary>
-    public class FolderScanner<T> where T : IFileSystemEntry, new()
+    public class FolderScanner<T> where T : class, IFileSystemEntry<T>, new()
     {
-        /// <summary>
-        /// Holds the list of top level folders that will be scanned.
-        /// </summary>
-        private readonly IList<T> topLevelFolders = new List<T>();
-
         /// <summary>
         /// Holds the time when scanning started.
         /// </summary>
@@ -30,11 +25,6 @@ namespace CRLFLabs.ViewSize
         /// Holds a value indicating whether scanning is in progress.
         /// </summary>
         private bool scanning;
-
-        /// <summary>
-        /// Gets the list of top level folders that will be scanned.
-        /// </summary>
-        public IList<T> TopLevelFolders => topLevelFolders;
 
         /// <summary>
         /// Gets the total size, in bytes, of the scanned items.
@@ -69,7 +59,7 @@ namespace CRLFLabs.ViewSize
         /// Scans the given path.
         /// </summary>
         /// <param name="path">The path to scan.</param>
-        public void Scan(string path)
+        public IList<T> Scan(string path)
         {
             if (scanning)
             {
@@ -82,19 +72,21 @@ namespace CRLFLabs.ViewSize
 
             try
             {
-                TopLevelFolders.Clear();
+                var result = new List<T>();
                 T root = Create(path, null);
-                TopLevelFolders.Add(root);
+                result.Add(root);
                 Calculate(root);
 
                 // calculate the total size
-                TotalSize = topLevelFolders.Select(f => f.TotalSize).Sum();
+                TotalSize = result.Select(f => f.TotalSize).Sum();
 
                 // apply properties that depend on that
-                foreach (var child in topLevelFolders)
+                foreach (var child in result)
                 {
                     ApplyProperties(child);
                 }
+
+                return result;
             }
             finally
             {
@@ -103,7 +95,7 @@ namespace CRLFLabs.ViewSize
             }
         }
 
-        private T Create(string path, IFileSystemEntry parent)
+        private T Create(string path, T parent)
         {
             return new T
             {
@@ -128,7 +120,7 @@ namespace CRLFLabs.ViewSize
             fileSystemEntry.Children = CalculateChildren(fileSystemEntry);
         }
 
-        private List<IFileSystemEntry> CalculateChildren(T fileSystemEntry)
+        private List<T> CalculateChildren(T fileSystemEntry)
         {
             var result = FileUtils.EnumerateFileSystemEntries(fileSystemEntry.Path)
                                   .Select(p => Create(p, fileSystemEntry))
@@ -157,10 +149,10 @@ namespace CRLFLabs.ViewSize
                 }
             });
 
-            return result.Cast<IFileSystemEntry>().ToList();
+            return result;
         }
 
-        private void ApplyProperties(IFileSystemEntry fileSystemEntry)
+        private void ApplyProperties(T fileSystemEntry)
         {
             fileSystemEntry.Percentage = (double)fileSystemEntry.TotalSize / TotalSize;
             fileSystemEntry.DisplayText = fileSystemEntry.Parent == null ?
@@ -174,11 +166,11 @@ namespace CRLFLabs.ViewSize
         }
 
         #region Events
-        public event EventHandler<FileSystemEventArgs> Scanning;
+        public event EventHandler<FileSystemEventArgs<T>> Scanning;
 
-        internal void FireScanning(IFileSystemEntry folder)
+        internal void FireScanning(T folder)
         {
-            Scanning?.Invoke(this, new FileSystemEventArgs(folder));
+            Scanning?.Invoke(this, new FileSystemEventArgs<T>(folder));
         }
         #endregion
     }

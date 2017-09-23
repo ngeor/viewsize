@@ -29,6 +29,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TreeMap\RenderedFileSystemEntry.cs" />
   </ItemGroup>
 </Project>

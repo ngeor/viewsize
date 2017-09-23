@@ -9,7 +9,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// Main view.
     /// </summary>
     public interface IMainView<T>
-        where T : IFileSystemEntry, new()
+        where T : class, IFileSystemEntry<T>, new()
     {
         string SelectedFolder { get; }
         SizeD TreeMapActualSize { get; }
@@ -21,7 +21,7 @@ namespace CRLFLabs.ViewSize.Mvp
         void ShowError(Exception ex);
 
         void SetFolders(IList<T> topLevelFolders);
-        void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource);
+        void SetTreeMapDataSource(TreeMapDataSource<T> treeMapDataSource);
         void SetDurationLabel(string durationLabel);
         void SetSelectedTreeViewItem(string path);
     }

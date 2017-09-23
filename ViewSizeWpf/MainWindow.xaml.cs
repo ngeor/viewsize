@@ -91,7 +91,7 @@ namespace ViewSizeWpf
             treeView.DataContext = topLevelFolders;
         }
 
-        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
+        public void SetTreeMapDataSource(TreeMapDataSource<FileSystemEntryModel> treeMapDataSource)
         {
             treeMap.DataSource = treeMapDataSource;
         }
@@ -110,13 +110,12 @@ namespace ViewSizeWpf
                 return;
             }
 
-            var model = dataSource.Find(path) as FileSystemEntryModel; // TODO remove cast
+            var model = dataSource.Find(path);
             if (model != null)
             {
                 model.IsSelected = true;
 
-                // TODO remove cast
-                for (FileSystemEntryModel n = (FileSystemEntryModel)model.Parent; n != null; n = (FileSystemEntryModel)n.Parent)
+                for (var n = model.Parent; n != null; n = n.Parent)
                 {
                     n.IsExpanded = true;
                 }

@@ -1,11 +1,12 @@
 ﻿using CRLFLabs.ViewSize;
+using CRLFLabs.ViewSize.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
 namespace ViewSizeWpf
 {
-    public class FileSystemEntryModel : INotifyPropertyChanged, IFileSystemEntry
+    public class FileSystemEntryModel : INotifyPropertyChanged, IFileSystemEntry<FileSystemEntryModel>
     {
         private bool isExpanded;
         private bool isSelected;
@@ -48,8 +49,9 @@ namespace ViewSizeWpf
         public double Percentage { get; set; }
         public string DisplayText { get; set; }
         public string DisplaySize { get; set; }
-        public IFileSystemEntry Parent { get; set; }
-        public IList<IFileSystemEntry> Children { get; set; }
+        public FileSystemEntryModel Parent { get; set; }
+        public IList<FileSystemEntryModel> Children { get; set; }
+        public RectangleD Bounds { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

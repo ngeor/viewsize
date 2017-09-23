@@ -10,14 +10,15 @@ using CRLFLabs.ViewSize.TreeMap;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using CRLFLabs.ViewSize;
 
 namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement
     {
-        private TreeMapDataSource _dataSource;
+        private TreeMapDataSource<FileSystemEntryModel> _dataSource;
 
-        public TreeMapDataSource DataSource
+        public TreeMapDataSource<FileSystemEntryModel> DataSource
         {
             get
             {
@@ -32,7 +33,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Attach(TreeMapDataSource dataSource)
+        private void Attach(TreeMapDataSource<FileSystemEntryModel> dataSource)
         {
             if (dataSource != null)
             {
@@ -40,7 +41,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Detach(TreeMapDataSource dataSource)
+        private void Detach(TreeMapDataSource<FileSystemEntryModel> dataSource)
         {
             if (dataSource != null)
             {
@@ -110,7 +111,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Render(Graphics g, IEnumerable<RenderedFileSystemEntry> folders, ScaleD scale)
+        private void Render(Graphics g, IEnumerable<FileSystemEntryModel> folders, ScaleD scale)
         {
             foreach (var folderWithSize in folders)
             {
@@ -118,7 +119,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Render(Graphics g, RenderedFileSystemEntry folderWithSize, ScaleD scale)
+        private void Render(Graphics g, FileSystemEntryModel folderWithSize, ScaleD scale)
         {
             // scale rectangle to actual drawing dimensions and convert to GDI
             var rect = folderWithSize.Bounds.Scale(scale).ToRectangleF();

@@ -2,17 +2,17 @@
 
 namespace CRLFLabs.ViewSize
 {
-    public class FileSystemEventArgs : EventArgs
+    public class FileSystemEventArgs<T> : EventArgs
+        where T : class, IFileSystemEntry<T>, new()
     {
-        public FileSystemEventArgs(IFileSystemEntry fileSystemEntry)
+        public FileSystemEventArgs(T fileSystemEntry)
         {
             FileSystemEntry = fileSystemEntry;
         }
 
-        public IFileSystemEntry FileSystemEntry
+        public T FileSystemEntry
         {
             get;
-            private set;
         }
     }
 }

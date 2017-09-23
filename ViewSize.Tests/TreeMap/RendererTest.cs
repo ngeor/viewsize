@@ -23,7 +23,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            var dataSource = Renderer.Render(fullBounds, folders);
+            var dataSource = Renderer<FileSystemEntry>.Render(fullBounds, folders);
 
             // assert
             Assert.AreEqual(1, dataSource.FoldersWithDrawSize.Count);
@@ -41,7 +41,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            IList<RenderedFileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FileSystemEntry> calculatedBounds = Renderer<FileSystemEntry>.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(1, calculatedBounds.Count);
@@ -64,7 +64,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            IList<RenderedFileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FileSystemEntry> calculatedBounds = Renderer<FileSystemEntry>.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(2, calculatedBounds.Count);
@@ -89,7 +89,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            IList<RenderedFileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FileSystemEntry> calculatedBounds = Renderer<FileSystemEntry>.Render(fullBounds, folders).FoldersWithDrawSize;
 
             // assert
             Assert.AreEqual(4, calculatedBounds.Count);
@@ -107,14 +107,14 @@ namespace ViewSize.Tests.TreeMap
             const int iterations = 100;
 
             FolderScanner<FileSystemEntry> fs = new FolderScanner<FileSystemEntry>();
-            fs.Scan(path);
+            var topLevelFolders = fs.Scan(path);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                Renderer.Render(
+                Renderer<FileSystemEntry>.Render(
                     new RectangleD(0, 0, 800, 600),
-                    fs.TopLevelFolders.Cast<IFileSystemEntry>().ToList());
+                    topLevelFolders);
             }
 
             stopwatch.Stop();
@@ -122,13 +122,13 @@ namespace ViewSize.Tests.TreeMap
             Assert.Less(stopwatch.Elapsed, TimeSpan.FromSeconds(1));
         }
 
-        private static Mock<IFileSystemEntry> CreateFileSystemEntryMock(long totalSize = 1024, IList<IFileSystemEntry> children = null)
+        private static Mock<FileSystemEntry> CreateFileSystemEntryMock(long totalSize = 1024, IList<FileSystemEntry> children = null)
         {
-            return FluentMoq.Create<IFileSystemEntry>(
+            return FluentMoq.Create<FileSystemEntry>(
                 x =>
                     {
                         x.SetupGet(f => f.Children)
-                            .Returns(children ?? Lists.Empty<IFileSystemEntry>());
+                            .Returns(children ?? Lists.Empty<FileSystemEntry>());
                         x.SetupGet(f => f.TotalSize)
                             .Returns(children != null ? children.Sum(c => c.TotalSize) : totalSize);
                     }
