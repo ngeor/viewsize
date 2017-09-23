@@ -17,38 +17,16 @@ namespace ViewSizeWpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel
+    public partial class MainWindow : Window, IMainView<FileSystemEntryModel>, IFolderChooserView, IFolderChooserModel
     {
-        private readonly MainPresenter mainPresenter;
+        private readonly MainPresenter<FileSystemEntryModel> mainPresenter;
         private readonly FolderChooserPresenter folderChooserPresenter;
 
         public MainWindow()
         {
             InitializeComponent();
-            mainPresenter = new MainPresenter(this);
+            mainPresenter = new MainPresenter<FileSystemEntryModel>(this);
             folderChooserPresenter = new FolderChooserPresenter(this, this);
-        }
-
-        private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            var dataSource = treeMap.DataSource;
-            if (dataSource != null)
-            {
-                var point = e.GetPosition(treeMap);
-                var folder = dataSource.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
-                dataSource.Selected = folder;
-            }
-        }
-
-        private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            var fileSystemEntry = treeView.SelectedItem as FileSystemEntryModel;
-            if (fileSystemEntry == null)
-            {
-                return;
-            }
-
-            mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry.Path);
         }
 
         #region IFolderChooserModel
@@ -98,17 +76,19 @@ namespace ViewSizeWpf
 
         public void RunOnGuiThread(Action action) => Dispatcher.Invoke(action);
 
-        public void ShowError(Exception ex)
+        public void ShowError(Exception ex) => ShowError(ex.Message + ex.StackTrace);
+
+        public void ShowError(string message)
         {
-            MessageBox.Show(ex.Message + ex.StackTrace, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public void SetDurationLabel(string durationLabel) => lblStatus.Content = durationLabel;
 
-        public void SetFolders(IList<IFileSystemEntry> topLevelFolders)
+        public void SetFolders(IList<FileSystemEntryModel> topLevelFolders)
         {
             treeView.DataContext = null;
-            treeView.DataContext = FileSystemEntryModel.Convert(topLevelFolders);
+            treeView.DataContext = topLevelFolders;
         }
 
         public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
@@ -130,11 +110,13 @@ namespace ViewSizeWpf
                 return;
             }
 
-            var model = FileSystemEntryModel.Find(dataSource, path);
+            var model = dataSource.Find(path) as FileSystemEntryModel; // TODO remove cast
             if (model != null)
             {
                 model.IsSelected = true;
-                for (var n = model.Parent; n != null; n = n.Parent)
+
+                // TODO remove cast
+                for (FileSystemEntryModel n = (FileSystemEntryModel)model.Parent; n != null; n = (FileSystemEntryModel)n.Parent)
                 {
                     n.IsExpanded = true;
                 }
@@ -158,6 +140,29 @@ namespace ViewSizeWpf
         {
             mainPresenter.OnCancelScan();
         }
+
+        private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var dataSource = treeMap.DataSource;
+            if (dataSource != null)
+            {
+                var point = e.GetPosition(treeMap);
+                var folder = dataSource.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
+                dataSource.Selected = folder;
+            }
+        }
+
+        private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntryModel;
+            if (fileSystemEntry == null)
+            {
+                return;
+            }
+
+            mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry.Path);
+        }
+
         #endregion
     }
 }

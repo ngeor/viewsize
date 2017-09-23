@@ -5,22 +5,10 @@ using System.Linq;
 
 namespace ViewSizeWpf
 {
-    public class FileSystemEntryModel : INotifyPropertyChanged
+    public class FileSystemEntryModel : INotifyPropertyChanged, IFileSystemEntry
     {
         private bool isExpanded;
         private bool isSelected;
-
-        public FileSystemEntryModel(IFileSystemEntry entry, FileSystemEntryModel parent = null)
-        {
-            Path = entry.Path;
-            TotalSize = entry.TotalSize;
-            OwnSize = entry.OwnSize;
-            Percentage = entry.Percentage;
-            DisplayText = entry.DisplayText;
-            DisplaySize = entry.DisplaySize;
-            Children = Convert(entry.Children, this);
-            Parent = parent;
-        }
 
         public bool IsExpanded
         {
@@ -54,47 +42,15 @@ namespace ViewSizeWpf
             }
         }
 
-        public FileSystemEntryModel Parent { get; }
-
-        public string Path { get; }
-
-        public long TotalSize { get; }
-
-        public long OwnSize { get; }
-
-        public IList<FileSystemEntryModel> Children { get; }
-
-        public double Percentage { get; }
-
-        public string DisplayText { get; }
-
-        public string DisplaySize { get; }
+        public string Path { get; set; }
+        public long TotalSize { get; set; }
+        public long OwnSize { get; set; }
+        public double Percentage { get; set; }
+        public string DisplayText { get; set; }
+        public string DisplaySize { get; set; }
+        public IFileSystemEntry Parent { get; set; }
+        public IList<IFileSystemEntry> Children { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public static IList<FileSystemEntryModel> Convert(IEnumerable<IFileSystemEntry> fileSystemEntries, FileSystemEntryModel parent = null)
-        {
-            return new List<FileSystemEntryModel>(fileSystemEntries.Select(e => new FileSystemEntryModel(e, parent)));
-        }
-
-        // TODO optimize
-        public static FileSystemEntryModel Find(IList<FileSystemEntryModel> folders, string path)
-        {
-            foreach (var f in folders)
-            {
-                if (f.Path == path)
-                {
-                    return f;
-                }
-
-                var r = Find(f.Children, path);
-                if (r != null)
-                {
-                    return r;
-                }
-            }
-
-            return null;
-        }
     }
 }

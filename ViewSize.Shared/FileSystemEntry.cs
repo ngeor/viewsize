@@ -27,16 +27,18 @@ namespace CRLFLabs.ViewSize
                 return fileSystemEntry;
             }
 
-            foreach (var child in fileSystemEntry.Children)
-            {
-                var result = child.Find(path);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
+            return fileSystemEntry.Children.Find(path);
+        }
 
-            return null;
+        public static IFileSystemEntry Find(this IEnumerable<IFileSystemEntry> fileSystemEntries, string path)
+        {
+            // TODO optimize this
+            var q = from entry in fileSystemEntries
+                    let match = entry.Find(path)
+                    where match != null
+                    select match;
+
+            return q.FirstOrDefault();
         }
 
         public static IEnumerable<IFileSystemEntry> Ancestors(this IFileSystemEntry fileSystemEntry)
