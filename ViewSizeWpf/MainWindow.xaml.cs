@@ -85,25 +85,14 @@ namespace ViewSizeWpf
 
         public void SetDurationLabel(string durationLabel) => lblStatus.Content = durationLabel;
 
-        public void SetFolders(IList<FileSystemEntry> topLevelFolders)
-        {
-            treeView.DataContext = null;
-            treeView.DataContext = topLevelFolders;
-        }
-
         public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
         {
             treeMap.DataSource = treeMapDataSource;
+            treeView.DataContext = treeMapDataSource;
         }
 
         public void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry)
         {
-            IList<FileSystemEntry> dataSource = treeView.DataContext as IList<FileSystemEntry>;
-            if (dataSource == null)
-            {
-                return;
-            }
-            
             if (selectedFileSystemEntry == null)
             {
                 // TODO deselect

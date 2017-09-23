@@ -19,7 +19,6 @@ namespace CRLFLabs.ViewSize.Mvp
         void ShowError(string message);
         void ShowError(Exception ex);
 
-        void SetFolders(IReadOnlyList<FileSystemEntry> topLevelFolders);
         void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource);
         void SetDurationLabel(string durationLabel);
         void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry);

@@ -71,7 +71,6 @@ namespace CRLFLabs.ViewSize.Mvp
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
-                        View.SetFolders(TreeMapDataSource.Children);
                         View.SetTreeMapDataSource(TreeMapDataSource);
                         View.SetDurationLabel($"Finished scanning in {_folderScanner.Duration}, total time: {stopwatch.Elapsed}");
                     });

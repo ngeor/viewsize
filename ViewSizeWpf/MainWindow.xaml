@@ -46,7 +46,7 @@
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <local:TreeListView x:Name="treeView" ItemsSource="{Binding}" Grid.Column="0" SelectedItemChanged="treeView_SelectedItemChanged">
+            <local:TreeListView x:Name="treeView" ItemsSource="{Binding Children}" Grid.Column="0" SelectedItemChanged="treeView_SelectedItemChanged">
                 <local:TreeListView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}" />
                 </local:TreeListView.ItemTemplate>
