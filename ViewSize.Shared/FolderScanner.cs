@@ -9,7 +9,7 @@ namespace CRLFLabs.ViewSize
     /// Scans a folder recursively and gathers information.
     /// This is the main API that should be used.
     /// </summary>
-    public class FolderScanner
+    public class FolderScanner : IFileSystemEntryContainer
     {
         /// <summary>
         /// Holds the time when scanning started.
@@ -47,6 +47,10 @@ namespace CRLFLabs.ViewSize
         /// </summary>
         public TimeSpan Duration => scanning ? DateTime.UtcNow.Subtract(startScan) : stopScan.Subtract(startScan);
 
+        public IReadOnlyList<FileSystemEntry> Children => throw new NotImplementedException();
+
+        public IFileSystemEntryContainer Parent => null;
+
         /// <summary>
         /// Requests to terminate scanning.
         /// </summary>
@@ -75,19 +79,17 @@ namespace CRLFLabs.ViewSize
                 var result = new List<FileSystemEntry>();
                 foreach (var path in paths)
                 {
-                    var root = Create(path, null);
+                    var root = new FileSystemEntry(path, this);
                     result.Add(root);
                     Calculate(root);
                 }
 
                 // calculate the total size
+                // necessary for percentages etc
                 TotalSize = result.Select(f => f.TotalSize).Sum();
 
                 // apply properties that depend on that
-                foreach (var child in result)
-                {
-                    ApplyProperties(child);
-                }
+                SetPropertiesAfterScanOnChildren(result);
 
                 return result;
             }
@@ -98,34 +100,28 @@ namespace CRLFLabs.ViewSize
             }
         }
 
-        private FileSystemEntry Create(string path, FileSystemEntry parent)
-        {
-            return new FileSystemEntry(path)
-            {
-                Parent = parent
-            };
-        }
-
-        private void Calculate(FileSystemEntry fileSystemEntry)
+        private void Calculate(FileSystemEntry entry)
         {
             if (CancelRequested)
             {
                 return;
             }
 
-            FireScanning(fileSystemEntry);
+            FireScanning(entry);
 
             // my file size (should be zero for directories)
-            fileSystemEntry.OwnSize = FileUtils.FileLength(fileSystemEntry.Path);
+            entry.OwnSize = FileUtils.FileLength(entry.Path);
+
+            entry.DisplayText = entry.IsTopLevel ? entry.Path : Path.GetFileName(entry.Path);
 
             // calculate children recursively
-            fileSystemEntry.Children = CalculateChildren(fileSystemEntry);
+            entry.Children = CalculateChildren(entry);
         }
 
         private List<FileSystemEntry> CalculateChildren(FileSystemEntry fileSystemEntry)
         {
             var result = FileUtils.EnumerateFileSystemEntries(fileSystemEntry.Path)
-                                  .Select(p => Create(p, fileSystemEntry))
+                                  .Select(path => new FileSystemEntry(path, fileSystemEntry))
                                   .ToList();
             foreach (var child in result)
             {
@@ -154,18 +150,27 @@ namespace CRLFLabs.ViewSize
             return result;
         }
 
-        private void ApplyProperties(FileSystemEntry fileSystemEntry)
+        #region Setting properties after scan is complete
+        private void SetPropertiesAfterScanRecursively(FileSystemEntry entry)
         {
-            fileSystemEntry.Percentage = (double)fileSystemEntry.TotalSize / TotalSize;
-            fileSystemEntry.DisplayText = fileSystemEntry.Parent == null ?
-                                      fileSystemEntry.Path : Path.GetFileName(fileSystemEntry.Path);
-            fileSystemEntry.DisplaySize = FileUtils.FormatBytes(fileSystemEntry.TotalSize) + $" ({fileSystemEntry.Percentage:P2})";
+            SetPropertiesAfterScan(entry);
+            SetPropertiesAfterScanOnChildren(entry.Children);
+        }
 
-            foreach (var child in fileSystemEntry.Children)
+        private void SetPropertiesAfterScanOnChildren(IEnumerable<FileSystemEntry> entries)
+        {
+            foreach (var child in entries)
             {
-                ApplyProperties(child);
+                SetPropertiesAfterScanRecursively(child);
             }
         }
+
+        private void SetPropertiesAfterScan(FileSystemEntry entry)
+        {
+            entry.Percentage = (double)entry.TotalSize / TotalSize;
+            entry.DisplaySize = FileUtils.FormatBytes(entry.TotalSize) + $" ({entry.Percentage:P2})";
+        }
+        #endregion
 
         #region Events
         public event EventHandler<FileSystemEventArgs> Scanning;

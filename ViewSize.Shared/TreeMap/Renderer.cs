@@ -34,12 +34,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             var partialRenderer = new PartialRenderer(originalRenderer, fullBounds, fileSystemEntries);
             var list = partialRenderer.Render(parent: null);
 
-            var result = new TreeMapDataSource
-            {
-                Bounds = fullBounds,
-                Children = list
-            };
-
+            var result = new TreeMapDataSource(list, fullBounds);
             return result;
         }
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using CRLFLabs.ViewSize;
+using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
+using Moq;
 using NUnit.Framework;
 
 namespace ViewSize.Tests
@@ -13,7 +15,7 @@ namespace ViewSize.Tests
         public void Ancestors_Root_ShouldBeEmpty()
         {
             // arrange
-            var entry = new FileSystemEntry("entry");
+            var entry = new FileSystemEntry("entry", Mock.Of<IFileSystemEntryContainer>());
 
             // act
             var ancestors = entry.Ancestors();
@@ -26,11 +28,8 @@ namespace ViewSize.Tests
         public void Ancestors_SingleAncestor_ShouldHaveOne()
         {
             // arrange
-            var parent = new FileSystemEntry("parent");
-            var entry = new FileSystemEntry("child")
-            {
-                Parent = parent
-            };
+            var parent = new FileSystemEntry("parent", Mock.Of<IFileSystemEntryContainer>());
+            var entry = new FileSystemEntry("child", parent);
 
             // act
             var ancestors = entry.Ancestors();
@@ -43,11 +42,8 @@ namespace ViewSize.Tests
         public void Ancestor_UnderTreeMapDataSource_ShouldBeEmpty()
         {
             // arrange
-            var parent = new TreeMapDataSource();
-            var entry = new FileSystemEntry("entry")
-            {
-                Parent = parent
-            };
+            var parent = new TreeMapDataSource(Enumerable.Empty<FileSystemEntry>(), default(RectangleD));
+            var entry = new FileSystemEntry("entry", parent);
 
             // act
             var ancestors = entry.Ancestors();
@@ -60,15 +56,9 @@ namespace ViewSize.Tests
         public void Ancestors_TwoAncestors_ShouldHaveNearestLast()
         {
             // arrange
-            var grandParent = new FileSystemEntry("grand parent");
-            var parent = new FileSystemEntry("parent")
-            {
-                Parent = grandParent
-            };
-            var entry = new FileSystemEntry("child")
-            {
-                Parent = parent
-            };
+            var grandParent = new FileSystemEntry("grand parent", Mock.Of<IFileSystemEntryContainer>());
+            var parent = new FileSystemEntry("parent", grandParent);
+            var entry = new FileSystemEntry("child", parent);
 
             // act
             var ancestors = entry.Ancestors();

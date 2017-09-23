@@ -120,7 +120,7 @@ namespace ViewSize.Tests.TreeMap
 
         private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IReadOnlyList<FileSystemEntry> children = null)
         {
-            return new FileSystemEntry("")
+            return new FileSystemEntry("", Mock.Of<IFileSystemEntryContainer>())
             {
                 TotalSize = children != null ? children.Sum(c => c.TotalSize) : totalSize,
                 Children = children ?? Lists.Empty<FileSystemEntry>()

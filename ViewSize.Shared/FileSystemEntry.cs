@@ -14,9 +14,22 @@ namespace CRLFLabs.ViewSize
 
     public partial class FileSystemEntry : IFileSystemEntryContainer
     {
-        public FileSystemEntry(string path)
+        private IFileSystemEntryContainer _parent;
+
+        public FileSystemEntry(string path, IFileSystemEntryContainer parent)
         {
-            Path = path;    
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            if (parent == null)
+            {
+                throw new ArgumentNullException(nameof(parent));
+            }
+
+            Path = path;
+            _parent = parent;
         }
 
         // core properties
@@ -28,8 +41,35 @@ namespace CRLFLabs.ViewSize
         public double Percentage { get; set; }
 
         // relationships
-        public IFileSystemEntryContainer Parent { get; set; }
+        public IFileSystemEntryContainer Parent
+        {
+            get => _parent;
+
+            internal set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                if (!IsTopLevel)
+                {
+                    throw new InvalidOperationException("Can only reparent top-level entries");
+                }
+
+                if (value is FileSystemEntry)
+                {
+                    throw new InvalidOperationException("New parent cannot be FileSystemEntry");
+                }
+
+                _parent = value;
+            }
+        }
+
+        // TODO delete setter
         public IReadOnlyList<FileSystemEntry> Children { get; set; }
+
+        public bool IsTopLevel => !(Parent is FileSystemEntry);
 
         // UI
         public string DisplayText { get; set; }
@@ -67,7 +107,7 @@ namespace CRLFLabs.ViewSize
         // TODO: is it possible to use Ancestors in all cases?
         public IEnumerable<FileSystemEntry> AncestorsNearestFirst()
         {
-            FileSystemEntry parent = Parent as FileSystemEntry;
+            var parent = Parent as FileSystemEntry;
             if (parent == null)
             {
                 return Enumerable.Empty<FileSystemEntry>();
@@ -80,7 +120,7 @@ namespace CRLFLabs.ViewSize
 
         public IEnumerable<FileSystemEntry> Ancestors()
         {
-            FileSystemEntry parent = Parent as FileSystemEntry;
+            var parent = Parent as FileSystemEntry;
             if (parent == null)
             {
                 return Enumerable.Empty<FileSystemEntry>();

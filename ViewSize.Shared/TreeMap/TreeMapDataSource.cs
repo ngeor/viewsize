@@ -12,31 +12,17 @@ namespace CRLFLabs.ViewSize.TreeMap
     public class TreeMapDataSource : INotifyPropertyChanged, IFileSystemEntryContainer
     {
         private FileSystemEntry _selected;
-        private IReadOnlyList<FileSystemEntry> _children = new List<FileSystemEntry>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public TreeMapDataSource(IEnumerable<FileSystemEntry> topLevelEntries, RectangleD bounds)
+        {
+            Children = topLevelEntries.Select(SetParent).ToList();
+            Bounds = bounds;
+        }
 
         /// <summary>
-        /// Gets or sets the file system entries with their tree map rectangles.
+        /// Gets the file system entries with their tree map rectangles.
         /// </summary>
-        public IReadOnlyList<FileSystemEntry> Children
-        {
-            get
-            {
-                return _children;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    throw new NullReferenceException();
-                }
-
-                DetachChildren();
-                _children = value;
-                AttachChildren();
-            }
-        }
+        public IReadOnlyList<FileSystemEntry> Children { get; }
 
         public IFileSystemEntryContainer Parent
         {
@@ -64,10 +50,10 @@ namespace CRLFLabs.ViewSize.TreeMap
         }
 
         /// <summary>
-        /// Gets or sets the drawing bounds.
+        /// Gets the drawing bounds.
         /// This can be used to scale the drawing in the control.
         /// </summary>
-        public RectangleD Bounds { get; set; }
+        public RectangleD Bounds { get; }
 
         /// <summary>
         /// Finds the file system entry that exists within these coordinates.
@@ -89,20 +75,12 @@ namespace CRLFLabs.ViewSize.TreeMap
             return match == null ? null : (Find(pt, match.Children) ?? match);
         }
 
-        private void DetachChildren()
+        private FileSystemEntry SetParent(FileSystemEntry entry)
         {
-            foreach (var root in _children)
-            {
-                root.Parent = null;
-            }
+            entry.Parent = this;
+            return entry;
         }
 
-        private void AttachChildren()
-        {
-            foreach (var root in _children)
-            {
-                root.Parent = this;
-            }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

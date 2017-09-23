@@ -60,6 +60,7 @@
     <Compile Include="Mvp\FolderChooserPresenterTest.cs" />
     <Compile Include="Mvp\MainPresenterTest.cs" />
     <Compile Include="FileSystemEntryTest.cs" />
+    <Compile Include="TreeMap\TreeMapDataSourceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
