@@ -58,7 +58,7 @@ namespace CRLFLabs.ViewSize
         /// <summary>
         /// Scans the given path.
         /// </summary>
-        /// <param name="path">The path to scan.</param>
+        /// <param name="paths">The paths to scan.</param>
         public IList<FileSystemEntry> Scan(params string[] paths)
         {
             if (scanning)
@@ -100,9 +100,8 @@ namespace CRLFLabs.ViewSize
 
         private FileSystemEntry Create(string path, FileSystemEntry parent)
         {
-            return new FileSystemEntry
+            return new FileSystemEntry(path)
             {
-                Path = path,
                 Parent = parent
             };
         }

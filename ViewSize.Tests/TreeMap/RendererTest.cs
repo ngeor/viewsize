@@ -19,8 +19,8 @@ namespace ViewSize.Tests.TreeMap
         {
             // arrange
             RectangleD fullBounds = new RectangleD(0, 0, width, height);
-            var mockFileSystemEntry = CreateFileSystemEntryMock();
-            var folders = Lists.Of(mockFileSystemEntry.Object);
+            var entry = CreateFileSystemEntry();
+            var folders = Lists.Of(entry);
 
             // act
             var dataSource = Renderer.Render(fullBounds, folders);
@@ -35,10 +35,10 @@ namespace ViewSize.Tests.TreeMap
         {
             // arrange
             RectangleD fullBounds = new RectangleD(0, 0, 100, 100);
-            var mockFileSystemEntry = CreateFileSystemEntryMock(
-                children: Lists.Of(CreateFileSystemEntryMock()).ToListOfInstances()
+            var entry = CreateFileSystemEntry(
+                children: Lists.Of(CreateFileSystemEntry())
             );
-            var folders = Lists.Of(mockFileSystemEntry.Object);
+            var folders = Lists.Of(entry);
 
             // act
             IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
@@ -55,13 +55,11 @@ namespace ViewSize.Tests.TreeMap
             // arrange
             RectangleD fullBounds = new RectangleD(0, 0, 100, 100);
 
-            var mockFileSystemEntries = new[]
+            var folders = new[]
             {
-                CreateFileSystemEntryMock(),
-                CreateFileSystemEntryMock()
+                CreateFileSystemEntry(),
+                CreateFileSystemEntry()
             };
-
-            var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
             IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
@@ -78,15 +76,13 @@ namespace ViewSize.Tests.TreeMap
             // arrange
             RectangleD fullBounds = new RectangleD(0, 0, 100, 100);
 
-            var mockFileSystemEntries = new[]
+            var folders = new[]
             {
-                CreateFileSystemEntryMock(),
-                CreateFileSystemEntryMock(),
-                CreateFileSystemEntryMock(),
-                CreateFileSystemEntryMock()
+                CreateFileSystemEntry(),
+                CreateFileSystemEntry(),
+                CreateFileSystemEntry(),
+                CreateFileSystemEntry()
             };
-
-            var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
             IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
@@ -122,17 +118,13 @@ namespace ViewSize.Tests.TreeMap
             Assert.Less(stopwatch.Elapsed, TimeSpan.FromSeconds(1));
         }
 
-        private static Mock<FileSystemEntry> CreateFileSystemEntryMock(long totalSize = 1024, IList<FileSystemEntry> children = null)
+        private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IList<FileSystemEntry> children = null)
         {
-            return FluentMoq.Create<FileSystemEntry>(
-                x =>
-                    {
-                        x.SetupGet(f => f.Children)
-                            .Returns(children ?? Lists.Empty<FileSystemEntry>());
-                        x.SetupGet(f => f.TotalSize)
-                            .Returns(children != null ? children.Sum(c => c.TotalSize) : totalSize);
-                    }
-            );
+            return new FileSystemEntry("")
+            {
+                TotalSize = children != null ? children.Sum(c => c.TotalSize) : totalSize,
+                Children = children ?? Lists.Empty<FileSystemEntry>()
+            };
         }
     }
 }

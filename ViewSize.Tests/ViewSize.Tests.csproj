@@ -59,6 +59,7 @@
     <Compile Include="Lists.cs" />
     <Compile Include="Mvp\FolderChooserPresenterTest.cs" />
     <Compile Include="Mvp\MainPresenterTest.cs" />
+    <Compile Include="FileSystemEntryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

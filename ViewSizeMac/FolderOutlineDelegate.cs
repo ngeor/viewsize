@@ -1,5 +1,6 @@
 ﻿using System;
 using AppKit;
+using CRLFLabs.ViewSize;
 using Foundation;
 
 namespace ViewSizeMac
@@ -25,7 +26,7 @@ namespace ViewSizeMac
 			}
 
 			// Cast item
-            var folder = item as FSEntryModel;
+            var folder = item as FileSystemEntry;
 
 			// Setup view based on the column selected
 			switch (tableColumn.Title)

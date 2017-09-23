@@ -82,11 +82,11 @@
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderOutlineDataSource.cs" />
-    <Compile Include="FSEntryModel.cs" />
     <Compile Include="FolderOutlineDelegate.cs" />
     <Compile Include="NSFolderGraph.cs" />
     <Compile Include="DrawingConversions.cs" />
     <Compile Include="MessageBox.cs" />
+    <Compile Include="FileSystemEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />

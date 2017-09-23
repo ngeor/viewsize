@@ -11,9 +11,9 @@ using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeMac
 {
-    public partial class ViewController : NSViewController, IMainView<FSEntryModel>, IFolderChooserView, IFolderChooserModel
+    public partial class ViewController : NSViewController, IMainView, IFolderChooserView, IFolderChooserModel
     {
-        private MainPresenter<FSEntryModel> _mainPresenter;
+        private MainPresenter _mainPresenter;
         private FolderChooserPresenter _folderChooserPresenter;
 
         public ViewController(IntPtr handle) : base(handle)
@@ -50,15 +50,15 @@ namespace ViewSizeMac
             var folderOutlineDelegate = new FolderOutlineDelegate();
             folderOutlineDelegate.SelectionChanged += (sender, e) =>
             {
-                FSEntryModel m = outlineView.ItemAtRow(outlineView.SelectedRow) as FSEntryModel;
-                _mainPresenter.OnTreeViewSelectionChanged(m?.Path);
+                var m = outlineView.ItemAtRow(outlineView.SelectedRow) as FileSystemEntry;
+                _mainPresenter.OnTreeViewSelectionChanged(m);
             };
             outlineView.Delegate = folderOutlineDelegate;
         }
 
         private void CreatePresenters()
         {
-            _mainPresenter = new MainPresenter<FSEntryModel>(this);
+            _mainPresenter = new MainPresenter(this);
             _folderChooserPresenter = new FolderChooserPresenter(this, this);
         }
 
@@ -86,7 +86,7 @@ namespace ViewSizeMac
         #region IMainView
 
         public SizeD TreeMapActualSize => folderGraph.ActualSize.Size;
-        string IMainView<FSEntryModel>.SelectedFolder => txtFolder.StringValue;
+        string IMainView.SelectedFolder => txtFolder.StringValue;
 
         public void EnableUI(bool enable)
         {
@@ -102,7 +102,7 @@ namespace ViewSizeMac
 
         public void ShowError(string message) => MessageBox.ShowMessage(message);
 
-        public void SetFolders(IList<FSEntryModel> topLevelFolders)
+        public void SetFolders(IList<FileSystemEntry> topLevelFolders)
         {
             var dataSource = new FolderOutlineDataSource(topLevelFolders);
             outlineView.DataSource = dataSource;
@@ -112,7 +112,7 @@ namespace ViewSizeMac
 
         public void SetDurationLabel(string durationLabel) => lblStatus.StringValue = durationLabel;
 
-        public void SetSelectedTreeViewItem(string path)
+        public void SetSelectedTreeViewItem(FileSystemEntry selection)
         {
             FolderOutlineDataSource dataSource = outlineView.DataSource as FolderOutlineDataSource;
             if (dataSource == null)
@@ -120,19 +120,18 @@ namespace ViewSizeMac
                 return;
             }
 
-            FSEntryModel entry = dataSource.Find(path);
-            if (entry == null)
+            if (selection == null)
             {
                 outlineView.DeselectAll(this);
                 return;
             }
 
-            foreach (FSEntryModel ancestor in entry.Ancestors()) // TODO: avoid sneaky explicit cast here
+            foreach (var ancestor in selection.Ancestors())
             {
                 outlineView.ExpandItem(ancestor, false);
             }
 
-            var row = outlineView.RowForItem(entry);
+            var row = outlineView.RowForItem(selection);
             outlineView.SelectRow(row, false);
             outlineView.ScrollRowToVisible(row);
         }

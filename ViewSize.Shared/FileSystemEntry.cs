@@ -8,23 +8,29 @@ namespace CRLFLabs.ViewSize
 {
     public interface IFileSystemEntryContainer
     {
+        // TODO: should be enumerable or icollection
         IList<FileSystemEntry> Children { get; }
         IFileSystemEntryContainer Parent { get; }
     }
 
     public partial class FileSystemEntry : IFileSystemEntryContainer
     {
+        public FileSystemEntry(string path)
+        {
+            Path = path;    
+        }
+
         // core properties
-        public string Path { get; set; }
+        public string Path { get; }
         public long OwnSize { get; set; }
 
         // computed
-        public virtual long TotalSize { get; set; }
+        public long TotalSize { get; set; }
         public double Percentage { get; set; }
 
         // relationships
-        public virtual IFileSystemEntryContainer Parent { get; set; }
-        public virtual IList<FileSystemEntry> Children { get; set; }
+        public IFileSystemEntryContainer Parent { get; set; }
+        public IList<FileSystemEntry> Children { get; set; }
 
         // UI
         public string DisplayText { get; set; }
@@ -32,6 +38,11 @@ namespace CRLFLabs.ViewSize
 
         // TreeMap
         public RectangleD Bounds { get; set; }
+
+        public override string ToString()
+        {
+            return $"[FileSystemEntry: Path={Path}]";
+        }
 
         /// <summary>
         /// Checks if this object is a descendant of the given object.
@@ -54,6 +65,7 @@ namespace CRLFLabs.ViewSize
             return false;
         }
 
+        // TODO: is it possible to use Ancestors in all cases?
         public IEnumerable<FileSystemEntry> AncestorsNearestFirst()
         {
             FileSystemEntry parent = Parent as FileSystemEntry;
@@ -64,6 +76,19 @@ namespace CRLFLabs.ViewSize
             else
             {
                 return Enumerable.Repeat(parent, 1).Concat(parent.AncestorsNearestFirst());
+            }
+        }
+
+        public IEnumerable<FileSystemEntry> Ancestors()
+        {
+            FileSystemEntry parent = Parent as FileSystemEntry;
+            if (parent == null)
+            {
+                return Enumerable.Empty<FileSystemEntry>();
+            }
+            else
+            {
+                return parent.Ancestors().Concat(Enumerable.Repeat(parent, 1));
             }
         }
     }

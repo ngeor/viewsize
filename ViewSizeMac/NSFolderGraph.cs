@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using AppKit;
 using CoreGraphics;
+using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using Foundation;
@@ -95,7 +96,7 @@ namespace ViewSizeMac
             }
 
             var scale = ScaleToActual;
-            Draw(dataSource.FoldersWithDrawSize, scale);
+            Draw(dataSource.Children, scale);
 
             var selected = dataSource.Selected;
             if (selected != null)
@@ -106,7 +107,7 @@ namespace ViewSizeMac
             }
         }
 
-        private void Draw(IEnumerable<RenderedFileSystemEntry> renderedFileSystemEntries, ScaleD scaleToActual)
+        private void Draw(IEnumerable<FileSystemEntry> renderedFileSystemEntries, ScaleD scaleToActual)
         {
             foreach (var renderedFileSystemEntry in renderedFileSystemEntries)
             {
@@ -114,7 +115,7 @@ namespace ViewSizeMac
             }
         }
 
-        private void Draw(RenderedFileSystemEntry renderedFileSystemEntry, ScaleD scaleToActual)
+        private void Draw(FileSystemEntry renderedFileSystemEntry, ScaleD scaleToActual)
         {
             var rect = renderedFileSystemEntry.Bounds.Scale(scaleToActual).ToCGRect();
             if (renderedFileSystemEntry.IsDescendantOf(DataSource.Selected))
