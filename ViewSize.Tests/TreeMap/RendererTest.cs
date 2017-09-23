@@ -23,11 +23,11 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            var dataSource = Renderer<FileSystemEntry>.Render(fullBounds, folders);
+            var dataSource = Renderer.Render(fullBounds, folders);
 
             // assert
-            Assert.AreEqual(1, dataSource.FoldersWithDrawSize.Count);
-            Assert.AreEqual(new RectangleD(0, 0, width, height), dataSource.FoldersWithDrawSize[0].Bounds);
+            Assert.AreEqual(1, dataSource.Children.Count);
+            Assert.AreEqual(new RectangleD(0, 0, width, height), dataSource.Children[0].Bounds);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(mockFileSystemEntry.Object);
 
             // act
-            IList<FileSystemEntry> calculatedBounds = Renderer<FileSystemEntry>.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
 
             // assert
             Assert.AreEqual(1, calculatedBounds.Count);
@@ -64,7 +64,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            IList<FileSystemEntry> calculatedBounds = Renderer<FileSystemEntry>.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
 
             // assert
             Assert.AreEqual(2, calculatedBounds.Count);
@@ -89,7 +89,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = mockFileSystemEntries.ToListOfInstances();
 
             // act
-            IList<FileSystemEntry> calculatedBounds = Renderer<FileSystemEntry>.Render(fullBounds, folders).FoldersWithDrawSize;
+            IList<FileSystemEntry> calculatedBounds = Renderer.Render(fullBounds, folders).Children;
 
             // assert
             Assert.AreEqual(4, calculatedBounds.Count);
@@ -106,13 +106,13 @@ namespace ViewSize.Tests.TreeMap
             const string path = @"C:\\Users\\ngeor\\Projects\\crlflabs";
             const int iterations = 100;
 
-            FolderScanner<FileSystemEntry> fs = new FolderScanner<FileSystemEntry>();
+            FolderScanner fs = new FolderScanner();
             var topLevelFolders = fs.Scan(path);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                Renderer<FileSystemEntry>.Render(
+                Renderer.Render(
                     new RectangleD(0, 0, 800, 600),
                     topLevelFolders);
             }

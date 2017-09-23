@@ -16,9 +16,9 @@ namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement
     {
-        private TreeMapDataSource<FileSystemEntryModel> _dataSource;
+        private TreeMapDataSource _dataSource;
 
-        public TreeMapDataSource<FileSystemEntryModel> DataSource
+        public TreeMapDataSource DataSource
         {
             get
             {
@@ -33,7 +33,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Attach(TreeMapDataSource<FileSystemEntryModel> dataSource)
+        private void Attach(TreeMapDataSource dataSource)
         {
             if (dataSource != null)
             {
@@ -41,7 +41,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Detach(TreeMapDataSource<FileSystemEntryModel> dataSource)
+        private void Detach(TreeMapDataSource dataSource)
         {
             if (dataSource != null)
             {
@@ -101,7 +101,7 @@ namespace ViewSizeWpf.Controls
             }
 
             ScaleD scale = ScaleToActual;
-            Render(g, dataSource.FoldersWithDrawSize, scale);
+            Render(g, dataSource.Children, scale);
 
             var selected = dataSource.Selected;
             if (selected != null)
@@ -111,7 +111,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Render(Graphics g, IEnumerable<FileSystemEntryModel> folders, ScaleD scale)
+        private void Render(Graphics g, IEnumerable<FileSystemEntry> folders, ScaleD scale)
         {
             foreach (var folderWithSize in folders)
             {
@@ -119,7 +119,7 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Render(Graphics g, FileSystemEntryModel folderWithSize, ScaleD scale)
+        private void Render(Graphics g, FileSystemEntry folderWithSize, ScaleD scale)
         {
             // scale rectangle to actual drawing dimensions and convert to GDI
             var rect = folderWithSize.Bounds.Scale(scale).ToRectangleF();

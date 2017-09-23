@@ -13,24 +13,23 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Main presenter.
     /// </summary>
-    public class MainPresenter<T> : IMainPresenter<T>
-        where T : class, IFileSystemEntry<T>, new()
+    public class MainPresenter : IMainPresenter
     {
-        private readonly FolderScanner<T> _folderScanner = new FolderScanner<T>();
-        private TreeMapDataSource<T> _treeMapDataSource;
+        private readonly FolderScanner _folderScanner = new FolderScanner();
+        private TreeMapDataSource _treeMapDataSource;
 
         /// <summary>
         /// Creates an instance of this class.
         /// </summary>
         /// <param name="view">The view.</param>
-        public MainPresenter(IMainView<T> view)
+        public MainPresenter(IMainView view)
         {
             View = view;    
         }
 
-        private IMainView<T> View { get; }
+        private IMainView View { get; }
 
-        private TreeMapDataSource<T> TreeMapDataSource
+        private TreeMapDataSource TreeMapDataSource
         {
             get
             {
@@ -66,13 +65,13 @@ namespace CRLFLabs.ViewSize.Mvp
                     var topLevelFolders = _folderScanner.Scan(path);
 
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    TreeMapDataSource = Renderer<T>.Render(
+                    TreeMapDataSource = Renderer.Render(
                         bounds,
                         topLevelFolders);
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
-                        View.SetFolders(TreeMapDataSource.FoldersWithDrawSize);
+                        View.SetFolders(TreeMapDataSource.Children);
                         View.SetTreeMapDataSource(TreeMapDataSource);
                         View.SetDurationLabel($"Finished scanning in {_folderScanner.Duration}, total time: {stopwatch.Elapsed}");
                     });
@@ -96,12 +95,12 @@ namespace CRLFLabs.ViewSize.Mvp
             _folderScanner.Cancel();
         }
 
-        public void OnTreeViewSelectionChanged(T selection)
+        public void OnTreeViewSelectionChanged(FileSystemEntry selection)
         {
             _treeMapDataSource.Selected = selection;
         }
 
-        private void Attach(TreeMapDataSource<T> treeMapDataSource)
+        private void Attach(TreeMapDataSource treeMapDataSource)
         {
             if (treeMapDataSource != null)
             {
@@ -109,7 +108,7 @@ namespace CRLFLabs.ViewSize.Mvp
             }
         }
 
-        private void Detach(TreeMapDataSource<T> treeMapDataSource)
+        private void Detach(TreeMapDataSource treeMapDataSource)
         {
             if (treeMapDataSource != null)
             {

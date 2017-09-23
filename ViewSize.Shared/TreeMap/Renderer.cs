@@ -9,13 +9,12 @@ namespace CRLFLabs.ViewSize.TreeMap
     /// <summary>
     /// Renders a tree map.
     /// </summary>
-    public class Renderer<T>
-        where T : class, IFileSystemEntry<T>
+    public class Renderer
     {
         private readonly long totalSizeInBytes;
         private readonly double totalSizeInPixels;
 
-        private Renderer(RectangleD fullBounds, IList<T> fileSystemEntries)
+        private Renderer(RectangleD fullBounds, IList<FileSystemEntry> fileSystemEntries)
         {
             // e.g. real total size = 200 bytes
             totalSizeInBytes = fileSystemEntries.Sum(f => f.TotalSize);
@@ -29,24 +28,24 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <param name="fullBounds">The bounds within to render.</param>
         /// <param name="fileSystemEntries">The file system entries.</param>
-        public static TreeMapDataSource<T> Render(RectangleD fullBounds, IList<T> fileSystemEntries)
+        public static TreeMapDataSource Render(RectangleD fullBounds, IList<FileSystemEntry> fileSystemEntries)
         {
-            var originalRenderer = new Renderer<T>(fullBounds, fileSystemEntries);
-            var partialRenderer = new PartialRenderer<T>(originalRenderer, fullBounds, fileSystemEntries);
+            var originalRenderer = new Renderer(fullBounds, fileSystemEntries);
+            var partialRenderer = new PartialRenderer(originalRenderer, fullBounds, fileSystemEntries);
             var list = partialRenderer.Render(parent: null);
 
-            var result = new TreeMapDataSource<T>
+            var result = new TreeMapDataSource
             {
                 Bounds = fullBounds,
-                FoldersWithDrawSize = list
+                Children = list
             };
 
             return result;
         }
 
-        public IList<T> Render(T parent)
+        public IList<FileSystemEntry> Render(FileSystemEntry parent)
         {
-            var partialRenderer = new PartialRenderer<T>(this, parent.Bounds, parent.Children);
+            var partialRenderer = new PartialRenderer(this, parent.Bounds, parent.Children);
             return partialRenderer.Render(parent);
         }
 

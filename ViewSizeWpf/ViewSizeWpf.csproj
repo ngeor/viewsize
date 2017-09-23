@@ -70,7 +70,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DrawingConversions.cs" />
-    <Compile Include="FileSystemEntryModel.cs" />
+    <Compile Include="FileSystemEntry.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

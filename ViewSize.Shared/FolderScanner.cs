@@ -9,7 +9,7 @@ namespace CRLFLabs.ViewSize
     /// Scans a folder recursively and gathers information.
     /// This is the main API that should be used.
     /// </summary>
-    public class FolderScanner<T> where T : class, IFileSystemEntry<T>, new()
+    public class FolderScanner
     {
         /// <summary>
         /// Holds the time when scanning started.
@@ -29,7 +29,7 @@ namespace CRLFLabs.ViewSize
         /// <summary>
         /// Gets the total size, in bytes, of the scanned items.
         /// </summary>
-        public long TotalSize { get; private set; }
+        private long TotalSize { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the user has requested to cancel the scan.
@@ -59,7 +59,7 @@ namespace CRLFLabs.ViewSize
         /// Scans the given path.
         /// </summary>
         /// <param name="path">The path to scan.</param>
-        public IList<T> Scan(string path)
+        public IList<FileSystemEntry> Scan(params string[] paths)
         {
             if (scanning)
             {
@@ -72,10 +72,13 @@ namespace CRLFLabs.ViewSize
 
             try
             {
-                var result = new List<T>();
-                T root = Create(path, null);
-                result.Add(root);
-                Calculate(root);
+                var result = new List<FileSystemEntry>();
+                foreach (var path in paths)
+                {
+                    var root = Create(path, null);
+                    result.Add(root);
+                    Calculate(root);
+                }
 
                 // calculate the total size
                 TotalSize = result.Select(f => f.TotalSize).Sum();
@@ -95,16 +98,16 @@ namespace CRLFLabs.ViewSize
             }
         }
 
-        private T Create(string path, T parent)
+        private FileSystemEntry Create(string path, FileSystemEntry parent)
         {
-            return new T
+            return new FileSystemEntry
             {
                 Path = path,
                 Parent = parent
             };
         }
 
-        private void Calculate(T fileSystemEntry)
+        private void Calculate(FileSystemEntry fileSystemEntry)
         {
             if (CancelRequested)
             {
@@ -120,7 +123,7 @@ namespace CRLFLabs.ViewSize
             fileSystemEntry.Children = CalculateChildren(fileSystemEntry);
         }
 
-        private List<T> CalculateChildren(T fileSystemEntry)
+        private List<FileSystemEntry> CalculateChildren(FileSystemEntry fileSystemEntry)
         {
             var result = FileUtils.EnumerateFileSystemEntries(fileSystemEntry.Path)
                                   .Select(p => Create(p, fileSystemEntry))
@@ -152,7 +155,7 @@ namespace CRLFLabs.ViewSize
             return result;
         }
 
-        private void ApplyProperties(T fileSystemEntry)
+        private void ApplyProperties(FileSystemEntry fileSystemEntry)
         {
             fileSystemEntry.Percentage = (double)fileSystemEntry.TotalSize / TotalSize;
             fileSystemEntry.DisplayText = fileSystemEntry.Parent == null ?
@@ -166,11 +169,11 @@ namespace CRLFLabs.ViewSize
         }
 
         #region Events
-        public event EventHandler<FileSystemEventArgs<T>> Scanning;
+        public event EventHandler<FileSystemEventArgs> Scanning;
 
-        internal void FireScanning(T folder)
+        internal void FireScanning(FileSystemEntry folder)
         {
-            Scanning?.Invoke(this, new FileSystemEventArgs<T>(folder));
+            Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }
         #endregion
     }

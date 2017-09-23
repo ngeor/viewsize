@@ -7,15 +7,14 @@ using System.Text;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
-    class PartialRenderer<T>
-        where T : class, IFileSystemEntry<T>
+    class PartialRenderer
     {
-        private readonly Renderer<T> renderer;
+        private readonly Renderer renderer;
         private readonly bool drawVertically;
-        private readonly IList<T> fileSystemEntries;
+        private readonly IList<FileSystemEntry> fileSystemEntries;
         private readonly RectangleD bounds;
 
-        public PartialRenderer(Renderer<T> renderer, RectangleD bounds, IList<T> fileSystemEntries)
+        public PartialRenderer(Renderer renderer, RectangleD bounds, IList<FileSystemEntry> fileSystemEntries)
         {
             this.renderer = renderer;
             this.fileSystemEntries = fileSystemEntries;
@@ -23,16 +22,16 @@ namespace CRLFLabs.ViewSize.TreeMap
             drawVertically = bounds.Width > bounds.Height;
         }
 
-        public IList<T> Render(T parent)
+        public IList<FileSystemEntry> Render(FileSystemEntry parent)
         {
-            var streakCandidate = new LinkedList<T>();
+            var streakCandidate = new LinkedList<FileSystemEntry>();
 
             double previousAspect = -1;
 
             // copy entries
             // TODO: try to implement without copying into entries
-            var remainingEntries = new LinkedList<T>(fileSystemEntries.Where(f => f.TotalSize > 0));
-            var result = new List<T>();
+            var remainingEntries = new LinkedList<FileSystemEntry>(fileSystemEntries.Where(f => f.TotalSize > 0));
+            var result = new List<FileSystemEntry>();
             while (remainingEntries.Any())
             {
                 // remove first entry
@@ -81,7 +80,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     var newList = remainingEntries.ToList();
                     remainingEntries.Clear(); // so that we'll exit the while loop
 
-                    var r = new PartialRenderer<T>(renderer, bounds.Subtract(streakBounds), newList);
+                    var r = new PartialRenderer(renderer, bounds.Subtract(streakBounds), newList);
 
                     // add the rest
                     result.AddRange(r.Render(parent));
@@ -103,7 +102,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             return result;
         }
 
-        private void Stack(LinkedList<T> streak)
+        private void Stack(LinkedList<FileSystemEntry> streak)
         {
             bool isFirst = true;
             OriginD lastOrigin = default(OriginD);
@@ -129,7 +128,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        private IEnumerable<T> DrawStreak(LinkedList<T> streak, RectangleD streakBounds)
+        private IEnumerable<FileSystemEntry> DrawStreak(LinkedList<FileSystemEntry> streak, RectangleD streakBounds)
         {
             Stack(streak);
 

@@ -8,14 +8,14 @@ namespace ViewSize.Tests.Mvp
     [TestFixture]
     public class MainPresenterTest
     {
-        private MainPresenter<FileSystemEntry> _presenter;
-        private Mock<IMainView<FileSystemEntry>> _viewMock;
+        private MainPresenter _presenter;
+        private Mock<IMainView> _viewMock;
 
         [SetUp]
         public void SetUp()
         {
-            _viewMock = new Mock<IMainView<FileSystemEntry>>();
-            _presenter = new MainPresenter<FileSystemEntry>(_viewMock.Object);
+            _viewMock = new Mock<IMainView>();
+            _presenter = new MainPresenter(_viewMock.Object);
         }
 
         [Test]

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace ViewSizeWpf
+namespace CRLFLabs.ViewSize
 {
-    public class FileSystemEntryModel : INotifyPropertyChanged, IFileSystemEntry<FileSystemEntryModel>
+    partial class FileSystemEntry : INotifyPropertyChanged
     {
         private bool isExpanded;
         private bool isSelected;
@@ -42,16 +42,6 @@ namespace ViewSizeWpf
                 }
             }
         }
-
-        public string Path { get; set; }
-        public long TotalSize { get; set; }
-        public long OwnSize { get; set; }
-        public double Percentage { get; set; }
-        public string DisplayText { get; set; }
-        public string DisplaySize { get; set; }
-        public FileSystemEntryModel Parent { get; set; }
-        public IList<FileSystemEntryModel> Children { get; set; }
-        public RectangleD Bounds { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

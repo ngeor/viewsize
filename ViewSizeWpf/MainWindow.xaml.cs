@@ -17,15 +17,15 @@ namespace ViewSizeWpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainView<FileSystemEntryModel>, IFolderChooserView, IFolderChooserModel
+    public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel
     {
-        private readonly MainPresenter<FileSystemEntryModel> mainPresenter;
+        private readonly MainPresenter mainPresenter;
         private readonly FolderChooserPresenter folderChooserPresenter;
 
         public MainWindow()
         {
             InitializeComponent();
-            mainPresenter = new MainPresenter<FileSystemEntryModel>(this);
+            mainPresenter = new MainPresenter(this);
             folderChooserPresenter = new FolderChooserPresenter(this, this);
         }
 
@@ -85,20 +85,20 @@ namespace ViewSizeWpf
 
         public void SetDurationLabel(string durationLabel) => lblStatus.Content = durationLabel;
 
-        public void SetFolders(IList<FileSystemEntryModel> topLevelFolders)
+        public void SetFolders(IList<FileSystemEntry> topLevelFolders)
         {
             treeView.DataContext = null;
             treeView.DataContext = topLevelFolders;
         }
 
-        public void SetTreeMapDataSource(TreeMapDataSource<FileSystemEntryModel> treeMapDataSource)
+        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
         {
             treeMap.DataSource = treeMapDataSource;
         }
 
-        public void SetSelectedTreeViewItem(FileSystemEntryModel selectedFileSystemEntry)
+        public void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry)
         {
-            IList<FileSystemEntryModel> dataSource = treeView.DataContext as IList<FileSystemEntryModel>;
+            IList<FileSystemEntry> dataSource = treeView.DataContext as IList<FileSystemEntry>;
             if (dataSource == null)
             {
                 return;
@@ -111,9 +111,9 @@ namespace ViewSizeWpf
             }
 
             selectedFileSystemEntry.IsSelected = true;
-            for (var n = selectedFileSystemEntry.Parent; n != null; n = n.Parent)
+            foreach (var ancestor in selectedFileSystemEntry.AncestorsNearestFirst())
             {
-                n.IsExpanded = true;
+                ancestor.IsExpanded = true;
             }
         }
 
@@ -148,7 +148,7 @@ namespace ViewSizeWpf
 
         private void treeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var fileSystemEntry = treeView.SelectedItem as FileSystemEntryModel;
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
             if (fileSystemEntry == null)
             {
                 return;

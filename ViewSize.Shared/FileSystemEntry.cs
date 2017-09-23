@@ -6,55 +6,44 @@ using System.Linq;
 
 namespace CRLFLabs.ViewSize
 {
-    public interface IFileSystemEntry<T> where T : IFileSystemEntry<T>
+    public interface IFileSystemEntryContainer
     {
-        // core properties
-        string Path { get; set; }
-        long OwnSize { get; set; }
-
-        // computed
-        long TotalSize { get; set; }
-        double Percentage { get; set; }
-
-        // relationships
-        T Parent { get; set; }
-        IList<T> Children { get; set; }
-
-        // UI
-        string DisplayText { get; set; }
-        string DisplaySize { get; set; }
-
-        // TreeMap
-        RectangleD Bounds { get; set; }
+        IList<FileSystemEntry> Children { get; }
+        IFileSystemEntryContainer Parent { get; }
     }
 
-    public static class FileSystemEntryExtensions
+    public partial class FileSystemEntry : IFileSystemEntryContainer
     {
-        public static IEnumerable<T> Ancestors<T>(this T fileSystemEntry)
-            where T : IFileSystemEntry<T>
-        {
-            if (fileSystemEntry.Parent == null)
-            {
-                return Enumerable.Empty<T>();
-            }
-            else
-            {
-                return fileSystemEntry.Parent.Ancestors().Concat(Enumerable.Repeat(fileSystemEntry.Parent, 1));
-            }
-        }
+        // core properties
+        public string Path { get; set; }
+        public long OwnSize { get; set; }
+
+        // computed
+        public virtual long TotalSize { get; set; }
+        public double Percentage { get; set; }
+
+        // relationships
+        public virtual IFileSystemEntryContainer Parent { get; set; }
+        public virtual IList<FileSystemEntry> Children { get; set; }
+
+        // UI
+        public string DisplayText { get; set; }
+        public string DisplaySize { get; set; }
+
+        // TreeMap
+        public RectangleD Bounds { get; set; }
 
         /// <summary>
         /// Checks if this object is a descendant of the given object.
         /// </summary>
-        public static bool IsDescendantOf<T>(this T folderWithDrawSize, T otherFolder)
-            where T : class, IFileSystemEntry<T>, new()
+        public bool IsDescendantOf(FileSystemEntry otherFolder)
         {
             if (otherFolder == null)
             {
                 return false;
             }
 
-            for (var n = folderWithDrawSize; n != null; n = n.Parent)
+            for (IFileSystemEntryContainer n = this; n != null; n = n.Parent)
             {
                 if (n == otherFolder)
                 {
@@ -63,6 +52,32 @@ namespace CRLFLabs.ViewSize
             }
 
             return false;
+        }
+
+        public IEnumerable<FileSystemEntry> AncestorsNearestFirst()
+        {
+            FileSystemEntry parent = Parent as FileSystemEntry;
+            if (parent == null)
+            {
+                return Enumerable.Empty<FileSystemEntry>();
+            }
+            else
+            {
+                return Enumerable.Repeat(parent, 1).Concat(parent.AncestorsNearestFirst());
+            }
+        }
+    }
+
+    public static class FileSystemEntryContainerExtensions
+    { 
+        public static IFileSystemEntryContainer RootContainer(this IFileSystemEntryContainer container)
+        {
+            if (container.Parent == null)
+            {
+                return container;
+            }
+
+            return container.Parent.RootContainer();
         }
     }
 }

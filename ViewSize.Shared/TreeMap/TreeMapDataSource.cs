@@ -9,19 +9,48 @@ namespace CRLFLabs.ViewSize.TreeMap
     /// <summary>
     /// A data source for a TreeMap kind of control.
     /// </summary>
-    public class TreeMapDataSource<T> : INotifyPropertyChanged
-        where T : class, IFileSystemEntry<T>
+    public class TreeMapDataSource : INotifyPropertyChanged, IFileSystemEntryContainer
     {
-        private T _selected;
+        private FileSystemEntry _selected;
+        private IList<FileSystemEntry> _children = new List<FileSystemEntry>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets the file system entries with their tree map rectangles.
         /// </summary>
-        public IList<T> FoldersWithDrawSize { get; set; }
+        public IList<FileSystemEntry> Children
+        {
+            get
+            {
+                return _children;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new NullReferenceException();
+                }
 
-        public T Selected
+                DetachChildren();
+                _children = value;
+                AttachChildren();
+            }
+        }
+
+        public IFileSystemEntryContainer Parent
+        {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        public FileSystemEntry Selected
         {
             get
             {
@@ -45,18 +74,35 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <returns>The matching file system entry.</returns>
         /// <param name="pt">Point.</param>
-        public T Find(PointD pt)
+        public FileSystemEntry Find(PointD pt)
         {
-            return Find(pt, FoldersWithDrawSize);
+            // TODO optimize this function
+            return Find(pt, Children);
         }
 
-        private T Find(PointD pt, IEnumerable<T> folders)
+        private FileSystemEntry Find(PointD pt, IEnumerable<FileSystemEntry> folders)
         {
             // find the first folder that contains these coordinates
             var match = folders.FirstOrDefault(f => f.Bounds.Contains(pt));
 
             // try to find a more specific match in its children, otherwise return the match
             return match == null ? null : (Find(pt, match.Children) ?? match);
+        }
+
+        private void DetachChildren()
+        {
+            foreach (var root in _children)
+            {
+                root.Parent = null;
+            }
+        }
+
+        private void AttachChildren()
+        {
+            foreach (var root in _children)
+            {
+                root.Parent = this;
+            }
         }
     }
 }
