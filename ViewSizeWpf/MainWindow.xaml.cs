@@ -96,7 +96,7 @@ namespace ViewSizeWpf
             treeMap.DataSource = treeMapDataSource;
         }
 
-        public void SetSelectedTreeViewItem(string path)
+        public void SetSelectedTreeViewItem(FileSystemEntryModel selectedFileSystemEntry)
         {
             IList<FileSystemEntryModel> dataSource = treeView.DataContext as IList<FileSystemEntryModel>;
             if (dataSource == null)
@@ -104,21 +104,16 @@ namespace ViewSizeWpf
                 return;
             }
             
-            if (path == null)
+            if (selectedFileSystemEntry == null)
             {
                 // TODO deselect
                 return;
             }
 
-            var model = dataSource.Find(path);
-            if (model != null)
+            selectedFileSystemEntry.IsSelected = true;
+            for (var n = selectedFileSystemEntry.Parent; n != null; n = n.Parent)
             {
-                model.IsSelected = true;
-
-                for (var n = model.Parent; n != null; n = n.Parent)
-                {
-                    n.IsExpanded = true;
-                }
+                n.IsExpanded = true;
             }
         }
 
@@ -159,7 +154,7 @@ namespace ViewSizeWpf
                 return;
             }
 
-            mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry.Path);
+            mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry);
         }
 
         #endregion

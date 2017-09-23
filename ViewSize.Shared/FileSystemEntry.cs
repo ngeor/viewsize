@@ -8,13 +8,12 @@ namespace CRLFLabs.ViewSize
 {
     public interface IFileSystemEntry<T> where T : IFileSystemEntry<T>
     {
+        // core properties
         string Path { get; set; }
         long OwnSize { get; set; }
 
-        // TODO: can be computed
+        // computed
         long TotalSize { get; set; }
-
-        // TODO: can be computed
         double Percentage { get; set; }
 
         // relationships
@@ -31,30 +30,6 @@ namespace CRLFLabs.ViewSize
 
     public static class FileSystemEntryExtensions
     {
-        public static T Find<T>(this T fileSystemEntry, string path)
-            where T : IFileSystemEntry<T>
-        {
-            // TODO optimize this
-            if (fileSystemEntry.Path == path)
-            {
-                return fileSystemEntry;
-            }
-
-            return fileSystemEntry.Children.Find(path);
-        }
-
-        public static T Find<T>(this IList<T> fileSystemEntries, string path)
-            where T : IFileSystemEntry<T>
-        {
-            // TODO optimize this
-            var q = from entry in fileSystemEntries
-                    let match = entry.Find(path)
-                    where match != null
-                    select match;
-
-            return q.FirstOrDefault();
-        }
-
         public static IEnumerable<T> Ancestors<T>(this T fileSystemEntry)
             where T : IFileSystemEntry<T>
         {

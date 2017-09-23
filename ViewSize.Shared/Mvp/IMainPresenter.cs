@@ -1,6 +1,7 @@
 ﻿namespace CRLFLabs.ViewSize.Mvp
 {
-    public interface IMainPresenter
+    public interface IMainPresenter<T>
+        where T : class, IFileSystemEntry<T>
     {
         /// <summary>
         /// Occurs when the user wants to start the folder scan.
@@ -15,7 +16,7 @@
         /// <summary>
         /// Occurs when the user has selected a file system entry on the tree view.
         /// </summary>
-        /// <param name="path">The path of the selected file system entry.</param>
-        void OnTreeViewSelectionChanged(string path);
+        /// <param name="selection">The selected file system entry.</param>
+        void OnTreeViewSelectionChanged(T selection);
     }
 }

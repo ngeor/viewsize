@@ -58,16 +58,5 @@ namespace CRLFLabs.ViewSize.TreeMap
             // try to find a more specific match in its children, otherwise return the match
             return match == null ? null : (Find(pt, match.Children) ?? match);
         }
-
-        /// <summary>
-        /// Finds the folder entry of the given path.
-        /// </summary>
-        /// <returns>The matching file system entry.</returns>
-        /// <param name="path">The path to find.</param>
-        public T Find(string path)
-        {
-            // TODO optimize this
-            return FoldersWithDrawSize.Find(path);
-        }
     }
 }

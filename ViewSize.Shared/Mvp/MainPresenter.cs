@@ -13,7 +13,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Main presenter.
     /// </summary>
-    public class MainPresenter<T> : IMainPresenter
+    public class MainPresenter<T> : IMainPresenter<T>
         where T : class, IFileSystemEntry<T>, new()
     {
         private readonly FolderScanner<T> _folderScanner = new FolderScanner<T>();
@@ -96,10 +96,9 @@ namespace CRLFLabs.ViewSize.Mvp
             _folderScanner.Cancel();
         }
 
-        public void OnTreeViewSelectionChanged(string path)
+        public void OnTreeViewSelectionChanged(T selection)
         {
-            var folderWithDrawSize = _treeMapDataSource?.Find(path);
-            _treeMapDataSource.Selected = folderWithDrawSize;
+            _treeMapDataSource.Selected = selection;
         }
 
         private void Attach(TreeMapDataSource<T> treeMapDataSource)
@@ -120,7 +119,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void TreeMapDataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            View.SetSelectedTreeViewItem(TreeMapDataSource.Selected?.Path);
+            View.SetSelectedTreeViewItem(TreeMapDataSource.Selected);
         }
     }
 }
