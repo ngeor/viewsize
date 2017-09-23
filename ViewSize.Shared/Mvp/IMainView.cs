@@ -16,6 +16,8 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void EnableUI(bool enable);
         void RunOnGuiThread(Action action);
+
+        void ShowError(string message);
         void ShowError(Exception ex);
 
         void SetFolders(IList<T> topLevelFolders);

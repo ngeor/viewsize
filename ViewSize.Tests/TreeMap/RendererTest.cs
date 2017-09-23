@@ -99,18 +99,6 @@ namespace ViewSize.Tests.TreeMap
             Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].Bounds, "fourth rectangle");
         }
 
-        class FileSystemEntry : IFileSystemEntry
-        {
-            public string Path { get; set; }
-            public long TotalSize { get; set; }
-            public long OwnSize { get; set; }
-            public double Percentage { get; set; }
-            public string DisplayText { get; set; }
-            public string DisplaySize { get; set; }
-            public IFileSystemEntry Parent { get; set; }
-            public IList<IFileSystemEntry> Children { get; set; }
-        }
-
         [Test]
         [Category("Performance")]
         public void TestPerformance()

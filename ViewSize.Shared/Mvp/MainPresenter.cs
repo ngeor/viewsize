@@ -46,8 +46,14 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public void OnBeginScan()
         {
-            View.EnableUI(false);
             string path = View.SelectedFolder;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                View.ShowError("No folder selected!");
+                return;
+            }
+
+            View.EnableUI(false);
             var treeMapSize = View.TreeMapActualSize;
             var treeMapWidth = treeMapSize.Width;
             var treeMapHeight = treeMapSize.Height;

@@ -100,6 +100,8 @@ namespace ViewSizeMac
 
         public void ShowError(Exception ex) => ShowExceptionAlert(ex);
 
+        public void ShowError(string message) => MessageBox.ShowMessage(message);
+
         public void SetFolders(IList<FSEntryModel> topLevelFolders)
         {
             var dataSource = new FolderOutlineDataSource(topLevelFolders);

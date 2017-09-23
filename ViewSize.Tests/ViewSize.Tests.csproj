@@ -57,6 +57,9 @@
     <Compile Include="TreeMap\RendererTest.cs" />
     <Compile Include="FluentMoq.cs" />
     <Compile Include="Lists.cs" />
+    <Compile Include="Mvp\FolderChooserPresenterTest.cs" />
+    <Compile Include="Mvp\MainPresenterTest.cs" />
+    <Compile Include="FileSystemEntry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -66,6 +69,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Mvp\" />
+  </ItemGroup>
   <Import Project="..\ViewSize.Shared\ViewSize.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
