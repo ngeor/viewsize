@@ -125,25 +125,31 @@ namespace ViewSizeWpf.Controls
             var rect = folderWithSize.Bounds.Scale(scale).ToRectangleF();
             bool isUnderSelected = folderWithSize.IsDescendantOf(DataSource?.Selected);
             var brush = isUnderSelected ?
-                System.Drawing.Brushes.Azure :
-                System.Drawing.Brushes.AntiqueWhite;
+                System.Drawing.Brushes.Blue :
+                System.Drawing.Brushes.Gray;
 
             g.FillRectangle(brush, rect);
 
             // draw ellipse gradient
-            using (GraphicsPath graphicsPath = new GraphicsPath())
+            // the following condition is for performance optimization
+            // TODO: use common rendering code/abstraction for wpf/cocoa
+            // TODO: why certain font folders appear to be larger than their contents?
+            if (rect.Width >= 5 && rect.Height >= 5 && !folderWithSize.Children.Any())
             {
-                graphicsPath.AddEllipse(rect);
-                using (PathGradientBrush gradientBrush = new PathGradientBrush(graphicsPath)
+                using (GraphicsPath graphicsPath = new GraphicsPath())
                 {
-                    CenterColor = System.Drawing.Color.White,
-                    SurroundColors = new[]
+                    graphicsPath.AddEllipse(rect);
+                    using (PathGradientBrush gradientBrush = new PathGradientBrush(graphicsPath)
                     {
-                        isUnderSelected ? System.Drawing.Color.Azure :  System.Drawing.Color.AntiqueWhite
+                        CenterColor = isUnderSelected ? System.Drawing.Color.Cyan : System.Drawing.Color.LightGray,
+                        SurroundColors = new[]
+                        {
+                        isUnderSelected ? System.Drawing.Color.Blue :  System.Drawing.Color.Gray
                     }
-                })
-                {
-                    g.FillEllipse(gradientBrush, rect);
+                    })
+                    {
+                        g.FillEllipse(gradientBrush, rect);
+                    }
                 }
             }
 
