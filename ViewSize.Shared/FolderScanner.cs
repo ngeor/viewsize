@@ -169,16 +169,8 @@ namespace CRLFLabs.ViewSize
         #region Events
         public event EventHandler<FileSystemEventArgs> Scanning;
 
-        public bool ShouldFireScanningEvent { get; set; } = false;
-
         internal void FireScanning(FileSystemEntry folder)
         {
-            if (!ShouldFireScanningEvent)
-            {
-                return;
-            }
-
-            ShouldFireScanningEvent = false;
             Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }
         #endregion

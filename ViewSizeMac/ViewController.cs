@@ -94,6 +94,14 @@ namespace ViewSizeMac
             btnCancel.Enabled = !enable;
             btnSelectFolder.Enabled = enable;
             txtFolder.Enabled = enable;
+            if (enable)
+            {
+                pbScan.StopAnimation(this);
+            }
+            else
+            {
+                pbScan.StartAnimation(this);
+            }
         }
 
         public void RunOnGuiThread(Action action) => InvokeOnMainThread(action);
@@ -102,15 +110,16 @@ namespace ViewSizeMac
 
         public void ShowError(string message) => MessageBox.ShowMessage(message);
 
-        public void SetFolders(IReadOnlyList<FileSystemEntry> topLevelFolders)
+        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
         {
-            var dataSource = new FolderOutlineDataSource(topLevelFolders);
+            var dataSource = new FolderOutlineDataSource(treeMapDataSource.Children);
             outlineView.DataSource = dataSource;
+            folderGraph.DataSource = treeMapDataSource;
         }
 
-        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource) => folderGraph.DataSource = treeMapDataSource;
+        public void SetScanningItem(string path) => lblStatus.StringValue = path;
 
-        public void SetDurationLabel(string durationLabel) => lblStatus.StringValue = durationLabel;
+        public void SetDurationLabel(string durationLabel) => lblDuration.StringValue = durationLabel;
 
         public void SetSelectedTreeViewItem(FileSystemEntry selection)
         {
@@ -171,15 +180,6 @@ namespace ViewSizeMac
         }
 
         #endregion
-
-        private void ReportProgress(object sender, FileSystemEventArgs args)
-        {
-            // TODO: this is too slow for every file and folder there is.
-            //InvokeOnMainThread(() =>
-            //{
-            //    lblStatus.StringValue = args.Folder.Path;
-            //});
-        }
 
         private void ShowExceptionAlert(Exception ex)
         {

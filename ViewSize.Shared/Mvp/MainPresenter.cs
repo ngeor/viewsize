@@ -26,7 +26,7 @@ namespace CRLFLabs.ViewSize.Mvp
         public MainPresenter(IMainView view)
         {
             View = view;
-            _folderScanner.Scanning += _folderScanner_Scanning;
+            _folderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
         }
 
         private IMainView View { get; }
@@ -144,7 +144,6 @@ namespace CRLFLabs.ViewSize.Mvp
             View.RunOnGuiThread(() =>
             {
                 View.SetScanningItem(e.FileSystemEntry.Path);
-                _folderScanner.ShouldFireScanningEvent = true;
             });
         }
     }
