@@ -149,6 +149,12 @@ namespace ViewSizeWpf
             mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry);
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            folderChooserPresenter.SaveSettings();
+            mainPresenter.SaveSettings();
+        }
+
         #endregion
     }
 }

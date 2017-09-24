@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ViewSizeWpf.Controls"
         mc:Ignorable="d"
-        Title="ViewSize" Height="480" Width="640">
+        Title="ViewSize" Height="600" Width="800" Closing="Window_Closing">
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
@@ -55,7 +55,7 @@
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}" />
                 </local:TreeListView.ItemTemplate>
                 <local:TreeListView.Columns>
-                    <GridViewColumn Header="Name" Width="300">
+                    <GridViewColumn Header="Name" Width="240">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -65,7 +65,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Size" Width="150">
+                    <GridViewColumn Header="Size" Width="120">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding DisplaySize}"/>

@@ -14,6 +14,10 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             View = view;
             Model = model;
+
+            SettingsManager settingsManager = new SettingsManager();
+            Settings settings = settingsManager.Load();
+            Model.Folder = settings.SelectedFolder;
         }
 
         public void OnSelectFolder()
@@ -23,6 +27,16 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 Model.Folder = folder;
             }
+        }
+
+        public void SaveSettings()
+        {
+            // TODO : new is glue
+            // TODO : each presenter now will save settings one by one, which is bad
+            SettingsManager settingsManager = new SettingsManager();
+            Settings settings = settingsManager.Load();
+            settings.SelectedFolder = Model.Folder;
+            settingsManager.Save(settings);
         }
     }
 }

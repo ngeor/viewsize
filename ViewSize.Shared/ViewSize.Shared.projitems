@@ -22,8 +22,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)IFileSystemEntryContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\TreeMapDataSource.cs" />

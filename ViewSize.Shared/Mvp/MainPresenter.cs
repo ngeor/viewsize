@@ -1,12 +1,9 @@
 ﻿using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -116,6 +113,11 @@ namespace CRLFLabs.ViewSize.Mvp
         public void OnTreeViewSelectionChanged(FileSystemEntry selection)
         {
             _treeMapDataSource.Selected = selection;
+        }
+
+        public void SaveSettings()
+        {
+
         }
 
         private void Attach(TreeMapDataSource treeMapDataSource)
