@@ -69,7 +69,7 @@ namespace ViewSizeMac
             }
         }
 
-
+        #region Drawing
         /// <summary>
         /// Gets a value indicating whether this <see cref="T:ViewSizeMac.NSFolderGraph"/> is flipped.
         /// A flipped control has the y coordinates originating on the top and increasing towards the bottom.
@@ -77,8 +77,27 @@ namespace ViewSizeMac
         /// <value><c>true</c> if it is flipped; otherwise, <c>false</c>.</value>
         public override bool IsFlipped => true;
 
-        public RectangleD ActualSize => Bounds.ToRectangleD();
-        private ScaleD ScaleToActual => DataSource == null ? default(ScaleD) : new ScaleD(DataSource.Bounds.Size, ActualSize.Size);
+        /// <summary>
+        /// Gets the drawing bounds.
+        /// </summary>
+        /// <value>The drawing bounds.</value>
+        public RectangleD BoundsD => Bounds.ToRectangleD();
+
+        /// <summary>
+        /// Gets a scale that adjusts datasource coordinates to actual drawing coordinates.
+        /// </summary>
+        /// <value>The scale to draw.</value>
+        private ScaleD DrawScale => DataSource == null ?
+            default(ScaleD) : new ScaleD(DataSource.Bounds.Size, BoundsD.Size);
+
+        /// <summary>
+        /// Calculates the drawing bounds of the given file system entry.
+        /// </summary>
+        /// <returns>The drawing bounds of the given entry.</returns>
+        /// <param name="entry">The file system entry.</param>
+        /// <param name="drawScale">The drawing scale.</param>
+        private CGRect CalculateCGRect(FileSystemEntry entry, ScaleD drawScale)
+            => entry.Bounds.Scale(drawScale).ToCGRect();
 
         public override void DrawRect(CGRect dirtyRect)
         {
@@ -86,54 +105,61 @@ namespace ViewSizeMac
             NSColor.White.Set();
             NSBezierPath.FillRect(dirtyRect);
 
-            NSColor.Blue.Set();
-            NSBezierPath.FillRect(new CGRect(0, 0, 10, 10));
-
             var dataSource = DataSource;
             if (dataSource == null)
             {
                 return;
             }
 
-            var scale = ScaleToActual;
-            Draw(dataSource.Children, scale);
+            var drawScale = DrawScale;
+            Draw(dataSource.Children, drawScale);
 
             var selected = dataSource.Selected;
             if (selected != null)
             {
-                var rect = selected.Bounds.Scale(scale).ToCGRect();
+                var rect = CalculateCGRect(selected, drawScale);
                 NSColor.White.Set();
                 NSBezierPath.StrokeRect(rect);
             }
         }
 
-        private void Draw(IEnumerable<FileSystemEntry> renderedFileSystemEntries, ScaleD scaleToActual)
+        private void Draw(IEnumerable<FileSystemEntry> entries, ScaleD drawScale)
         {
-            foreach (var renderedFileSystemEntry in renderedFileSystemEntries)
+            foreach (var entry in entries)
             {
-                Draw(renderedFileSystemEntry, scaleToActual);
+                Draw(entry, drawScale);
             }
         }
 
-        private void Draw(FileSystemEntry renderedFileSystemEntry, ScaleD scaleToActual)
+        private void Draw(FileSystemEntry entry, ScaleD drawScale)
         {
-            var rect = renderedFileSystemEntry.Bounds.Scale(scaleToActual).ToCGRect();
-            if (renderedFileSystemEntry.IsDescendantOf(DataSource.Selected))
-            {
-                NSColor.Brown.Set();
-            }
-            else
-            {
-                NSColor.Red.Set();
-            }
-
-            NSBezierPath.FillRect(rect);
-            NSColor.Black.Set();
-            NSBezierPath.StrokeRect(rect);
+            var rect = CalculateCGRect(entry, drawScale);
+            DrawFill(entry, rect);
+            DrawOutline(entry, rect);
 
             // recursion
-            Draw(renderedFileSystemEntry.Children, scaleToActual);
+            Draw(entry.Children, drawScale);
         }
+
+        private void DrawFill(FileSystemEntry entry, CGRect rect)
+        {
+            bool isSelected = entry.IsDescendantOf(DataSource.Selected);
+            NSColor fillColor = isSelected ? NSColor.Blue : NSColor.Gray;
+            NSColor lightColor = isSelected ? NSColor.Cyan : NSColor.LightGray;
+            fillColor.Set();
+            NSBezierPath.FillRect(rect);
+
+            NSGradient gradient = new NSGradient(lightColor, fillColor);
+            CGPoint middle = new CGPoint(0, 0);
+            gradient.DrawInRect(rect, middle);
+        }
+
+        private void DrawOutline(FileSystemEntry entry, CGRect rect)
+        {
+            NSColor.Black.Set();
+            NSBezierPath.StrokeRect(rect);
+        }
+        #endregion
 
         public override void MouseUp(NSEvent theEvent)
         {
@@ -145,7 +171,7 @@ namespace ViewSizeMac
             }
 
             var locationInWindow = theEvent.LocationInWindow;
-            var pt = ToClientCoordinates(locationInWindow).ToPointD().Scale(ScaleToActual.Invert());
+            var pt = ToClientCoordinates(locationInWindow).ToPointD().Scale(DrawScale.Invert());
             var folderWithDrawSize = dataSource.Find(pt);
             dataSource.Selected = folderWithDrawSize;
         }

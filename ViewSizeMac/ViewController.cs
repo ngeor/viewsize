@@ -85,7 +85,7 @@ namespace ViewSizeMac
 
         #region IMainView
 
-        public SizeD TreeMapActualSize => folderGraph.ActualSize.Size;
+        public SizeD TreeMapActualSize => folderGraph.BoundsD.Size;
         string IMainView.SelectedFolder => txtFolder.StringValue;
 
         public void EnableUI(bool enable)
