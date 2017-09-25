@@ -8,10 +8,11 @@ using Foundation;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using CRLFLabs.ViewSize.Mvp;
+using CRLFLabs.ViewSize.Settings;
 
 namespace ViewSizeMac
 {
-    public partial class ViewController : NSViewController, IMainView, IFolderChooserView, IFolderChooserModel
+    public partial class ViewController : NSViewController, IMainView, IFolderChooserView
     {
         private MainPresenter _mainPresenter;
         private FolderChooserPresenter _folderChooserPresenter;
@@ -59,7 +60,11 @@ namespace ViewSizeMac
         private void CreatePresenters()
         {
             _mainPresenter = new MainPresenter(this);
-            _folderChooserPresenter = new FolderChooserPresenter(this, this);
+            _folderChooserPresenter = new FolderChooserPresenter(
+                this,
+                new FolderChooserModel(txtFolder),
+                SettingsManager.Instance
+            );
         }
 
         public override NSObject RepresentedObject
@@ -161,22 +166,6 @@ namespace ViewSizeMac
             }
 
             return null;
-        }
-
-        #endregion
-
-        #region IFolderChooserModel
-
-        string IFolderChooserModel.Folder
-        {
-            get
-            {
-                return txtFolder.StringValue;
-            }
-            set
-            {
-                txtFolder.StringValue = value;
-            }
         }
 
         #endregion

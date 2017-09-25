@@ -115,11 +115,6 @@ namespace CRLFLabs.ViewSize.Mvp
             _treeMapDataSource.Selected = selection;
         }
 
-        public void SaveSettings()
-        {
-
-        }
-
         private void Attach(TreeMapDataSource treeMapDataSource)
         {
             if (treeMapDataSource != null)

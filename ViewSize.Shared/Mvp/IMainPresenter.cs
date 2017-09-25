@@ -1,6 +1,6 @@
 ﻿namespace CRLFLabs.ViewSize.Mvp
 {
-    public interface IMainPresenter : IPresenter
+    public interface IMainPresenter
     {
         /// <summary>
         /// Occurs when the user wants to start the folder scan.

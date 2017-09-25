@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -9,16 +12,18 @@ namespace CRLFLabs.ViewSize.Mvp
     {
         private IFolderChooserView View { get; }
         private IFolderChooserModel Model { get; }
+        private ISettingsManager SettingsManager { get; }
 
-        public FolderChooserPresenter(IFolderChooserView view, IFolderChooserModel model)
+        public FolderChooserPresenter(IFolderChooserView view, IFolderChooserModel model, ISettingsManager settingsManager)
         {
             View = view;
             Model = model;
+            SettingsManager = settingsManager;
 
-            SettingsManager settingsManager = new SettingsManager();
-            Settings settings = settingsManager.Load();
-            Model.Folder = settings.SelectedFolder;
+            Model.Folder = SettingsManager.Settings.SelectedFolder;
+            Model.PropertyChanged += Model_PropertyChanged;
         }
+
 
         public void OnSelectFolder()
         {
@@ -29,14 +34,9 @@ namespace CRLFLabs.ViewSize.Mvp
             }
         }
 
-        public void SaveSettings()
+        void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // TODO : new is glue
-            // TODO : each presenter now will save settings one by one, which is bad
-            SettingsManager settingsManager = new SettingsManager();
-            Settings settings = settingsManager.Load();
-            settings.SelectedFolder = Model.Folder;
-            settingsManager.Save(settings);
+            SettingsManager.Settings.SelectedFolder = Model.Folder;
         }
     }
 }
