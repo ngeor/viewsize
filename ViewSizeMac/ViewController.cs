@@ -60,9 +60,11 @@ namespace ViewSizeMac
 
         private void CreatePresenters()
         {
+            var fileUtils = new FileUtils();
             _mainPresenter = new MainPresenter(
                 this,
-                new FolderScanner(new FileUtils())
+                new FolderScanner(fileUtils),
+                fileUtils
             );
             _folderChooserPresenter = new FolderChooserPresenter(
                 this,

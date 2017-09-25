@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -12,7 +13,6 @@ namespace CRLFLabs.ViewSize.Mvp
     /// </summary>
     public class MainPresenter : IMainPresenter
     {
-        private readonly IFolderScanner _folderScanner;
         private TreeMapDataSource _treeMapDataSource;
         private bool _isScanning;
 
@@ -20,14 +20,17 @@ namespace CRLFLabs.ViewSize.Mvp
         /// Creates an instance of this class.
         /// </summary>
         /// <param name="view">The view.</param>
-        public MainPresenter(IMainView view, IFolderScanner folderScanner)
+        public MainPresenter(IMainView view, IFolderScanner folderScanner, IFileUtils fileUtils)
         {
+            FileUtils = fileUtils;
             View = view;
-            _folderScanner = folderScanner;
-            _folderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
+            FolderScanner = folderScanner;
+            FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
         }
 
+        private IFolderScanner FolderScanner { get; }
         private IMainView View { get; }
+        private IFileUtils FileUtils { get; }
 
         private TreeMapDataSource TreeMapDataSource
         {
@@ -49,6 +52,12 @@ namespace CRLFLabs.ViewSize.Mvp
             if (string.IsNullOrWhiteSpace(path))
             {
                 View.ShowError("No folder selected!");
+                return;
+            }
+
+            if (!FileUtils.IsDirectory(path))
+            {
+                View.ShowError($"Folder '{path}' does not exist!");
                 return;
             }
 
@@ -79,7 +88,7 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 try
                 {
-                    var topLevelFolders = _folderScanner.Scan(path);
+                    var topLevelFolders = FolderScanner.Scan(path);
 
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
                     TreeMapDataSource = Renderer.Render(
@@ -108,7 +117,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public void OnCancelScan()
         {
-            _folderScanner.Cancel();
+            FolderScanner.Cancel();
         }
 
         public void OnTreeViewSelectionChanged(FileSystemEntry selection)
