@@ -1,4 +1,4 @@
-﻿namespace CRLFLabs.ViewSize
+﻿namespace CRLFLabs.ViewSize.IO
 {
     public static class FileSystemEntryContainerExtensions
     { 

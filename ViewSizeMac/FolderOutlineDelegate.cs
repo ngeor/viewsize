@@ -1,6 +1,7 @@
 ﻿using System;
 using AppKit;
 using CRLFLabs.ViewSize;
+using CRLFLabs.ViewSize.IO;
 using Foundation;
 
 namespace ViewSizeMac

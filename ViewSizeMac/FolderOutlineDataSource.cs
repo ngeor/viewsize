@@ -4,6 +4,7 @@ using Foundation;
 using System.Linq;
 using System.Collections.Generic;
 using CRLFLabs.ViewSize;
+using CRLFLabs.ViewSize.IO;
 
 namespace ViewSizeMac
 {

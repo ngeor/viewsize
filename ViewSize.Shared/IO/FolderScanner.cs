@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CRLFLabs.ViewSize.IO;
 
-namespace CRLFLabs.ViewSize
+namespace CRLFLabs.ViewSize.IO
 {
     /// <summary>
     /// Scans a folder recursively and gathers information.

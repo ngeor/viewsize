@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {

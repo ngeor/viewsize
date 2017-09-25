@@ -6,6 +6,7 @@ using AppKit;
 using CoreGraphics;
 using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.TreeMap;
 using Foundation;
 
@@ -135,7 +136,7 @@ namespace ViewSizeMac
         {
             var rect = CalculateCGRect(entry, drawScale);
             DrawFill(entry, rect);
-            DrawOutline(entry, rect);
+            DrawOutline(rect);
 
             // recursion
             Draw(entry.Children, drawScale);
@@ -154,7 +155,7 @@ namespace ViewSizeMac
             gradient.DrawInRect(rect, middle);
         }
 
-        private void DrawOutline(FileSystemEntry entry, CGRect rect)
+        private void DrawOutline(CGRect rect)
         {
             NSColor.Black.Set();
             NSBezierPath.StrokeRect(rect);

@@ -1,4 +1,6 @@
-﻿namespace CRLFLabs.ViewSize.Mvp
+﻿using CRLFLabs.ViewSize.IO;
+
+namespace CRLFLabs.ViewSize.Mvp
 {
     public interface IMainPresenter
     {

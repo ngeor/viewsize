@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {

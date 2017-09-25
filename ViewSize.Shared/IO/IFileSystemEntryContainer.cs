@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CRLFLabs.ViewSize
+namespace CRLFLabs.ViewSize.IO
 {
     public interface IFileSystemEntryContainer
     {

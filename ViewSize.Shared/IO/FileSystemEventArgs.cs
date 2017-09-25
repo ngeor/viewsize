@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CRLFLabs.ViewSize
+namespace CRLFLabs.ViewSize.IO
 {
     public class FileSystemEventArgs : EventArgs
     {

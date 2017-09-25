@@ -1,10 +1,9 @@
 ﻿using CRLFLabs.ViewSize.Drawing;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-namespace CRLFLabs.ViewSize
+namespace CRLFLabs.ViewSize.IO
 {
     public partial class FileSystemEntry : IFileSystemEntryContainer
     {
