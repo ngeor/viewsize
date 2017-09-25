@@ -38,6 +38,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Settings\Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingsManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\IFileUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IFolderScanner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

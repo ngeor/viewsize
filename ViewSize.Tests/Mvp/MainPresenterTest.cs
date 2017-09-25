@@ -1,4 +1,5 @@
 ﻿using System;
+using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Mvp;
 using Moq;
 using NUnit.Framework;
@@ -10,12 +11,16 @@ namespace ViewSize.Tests.Mvp
     {
         private MainPresenter _presenter;
         private Mock<IMainView> _viewMock;
+        private Mock<IFolderScanner> _folderScannerMock;
 
         [SetUp]
         public void SetUp()
         {
             _viewMock = new Mock<IMainView>();
-            _presenter = new MainPresenter(_viewMock.Object);
+            _folderScannerMock = new Mock<IFolderScanner>();
+            _presenter = new MainPresenter(
+                _viewMock.Object,
+                _folderScannerMock.Object);
         }
 
         [Test]

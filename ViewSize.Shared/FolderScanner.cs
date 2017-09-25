@@ -10,12 +10,19 @@ namespace CRLFLabs.ViewSize
     /// Scans a folder recursively and gathers information.
     /// This is the main API that should be used.
     /// </summary>
-    public class FolderScanner : IFileSystemEntryContainer
+    public class FolderScanner : IFolderScanner, IFileSystemEntryContainer
     {
         /// <summary>
         /// Holds a value indicating whether scanning is in progress.
         /// </summary>
         private bool scanning;
+
+        public FolderScanner(IFileUtils fileUtils)
+        {
+            FileUtils = fileUtils;
+        }
+
+        private IFileUtils FileUtils { get; }
 
         /// <summary>
         /// Gets the total size, in bytes, of the scanned items.

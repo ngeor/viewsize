@@ -7,6 +7,7 @@ using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
 using System.Diagnostics;
 using System;
+using CRLFLabs.ViewSize.IO;
 
 namespace ViewSize.Tests.TreeMap
 {
@@ -102,7 +103,7 @@ namespace ViewSize.Tests.TreeMap
             const string path = @"C:\\Users\\ngeor\\Projects\\crlflabs";
             const int iterations = 100;
 
-            FolderScanner fs = new FolderScanner();
+            FolderScanner fs = new FolderScanner(new FileUtils());
             var topLevelFolders = fs.Scan(path);
 
             Stopwatch stopwatch = Stopwatch.StartNew();

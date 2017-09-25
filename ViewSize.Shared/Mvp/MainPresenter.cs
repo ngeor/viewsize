@@ -12,7 +12,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// </summary>
     public class MainPresenter : IMainPresenter
     {
-        private readonly FolderScanner _folderScanner = new FolderScanner();
+        private readonly IFolderScanner _folderScanner;
         private TreeMapDataSource _treeMapDataSource;
         private bool _isScanning;
 
@@ -20,9 +20,10 @@ namespace CRLFLabs.ViewSize.Mvp
         /// Creates an instance of this class.
         /// </summary>
         /// <param name="view">The view.</param>
-        public MainPresenter(IMainView view)
+        public MainPresenter(IMainView view, IFolderScanner folderScanner)
         {
             View = view;
+            _folderScanner = folderScanner;
             _folderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
         }
 

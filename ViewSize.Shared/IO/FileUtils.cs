@@ -1,13 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace CRLFLabs.ViewSize.IO
 {
-    static class FileUtils
+    /// <summary>
+    /// File utilities.
+    /// </summary>
+    public class FileUtils : IFileUtils
     {
-        public static bool IsDirectory(string path)
+        /// <summary>
+        /// Checks if the given path is a directory.
+        /// </summary>
+        /// <returns><c>true</c>, if the path is a directory, <c>false</c> otherwise.</returns>
+        /// <param name="path">The path to check.</param>
+        /// <remarks>
+        /// This should ignore symlinks, reparse points, paths that have too long names,
+        /// and paths that the user cannot access.
+        /// </remarks>
+        public bool IsDirectory(string path)
         {
             try
             {
@@ -44,7 +55,7 @@ namespace CRLFLabs.ViewSize.IO
         /// If the path is not a directory, <c>null</c> will be returned.
         /// This is bad practice but it serves to differentiate between a directory and non-directory.
         /// </returns>
-        public static IEnumerable<string> EnumerateFileSystemEntries(string path)
+        public IEnumerable<string> EnumerateFileSystemEntries(string path)
         {
             try
             {
@@ -63,7 +74,7 @@ namespace CRLFLabs.ViewSize.IO
             }
         }
 
-        public static long FileLength(string path)
+        public long FileLength(string path)
         {
             try
             {
@@ -76,7 +87,7 @@ namespace CRLFLabs.ViewSize.IO
             }
         }
 
-        public static string FormatBytes(double size)
+        public string FormatBytes(double size)
         {
             string[] suffixes = new string[]
             {

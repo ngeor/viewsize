@@ -9,6 +9,7 @@ using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.Settings;
+using CRLFLabs.ViewSize.IO;
 
 namespace ViewSizeMac
 {
@@ -59,7 +60,10 @@ namespace ViewSizeMac
 
         private void CreatePresenters()
         {
-            _mainPresenter = new MainPresenter(this);
+            _mainPresenter = new MainPresenter(
+                this,
+                new FolderScanner(new FileUtils())
+            );
             _folderChooserPresenter = new FolderChooserPresenter(
                 this,
                 new FolderChooserModel(txtFolder),
