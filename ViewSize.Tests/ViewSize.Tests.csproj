@@ -59,8 +59,9 @@
     <Compile Include="Lists.cs" />
     <Compile Include="Mvp\FolderChooserPresenterTest.cs" />
     <Compile Include="Mvp\MainPresenterTest.cs" />
-    <Compile Include="FileSystemEntryTest.cs" />
     <Compile Include="TreeMap\TreeMapDataSourceTest.cs" />
+    <Compile Include="IO\FileSystemEntryTest.cs" />
+    <Compile Include="IO\FolderScannerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -71,6 +72,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="IO\" />
+  </ItemGroup>
   <Import Project="..\ViewSize.Shared\ViewSize.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

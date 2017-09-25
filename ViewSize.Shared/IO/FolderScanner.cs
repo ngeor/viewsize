@@ -86,16 +86,14 @@ namespace CRLFLabs.ViewSize.IO
             finally
             {
                 scanning = false;
+
+                // reset cancel flag
+                CancelRequested = false;
             }
         }
 
         private void Calculate(FileSystemEntry entry)
         {
-            if (CancelRequested)
-            {
-                return;
-            }
-
             entry.DisplayText = entry.IsTopLevel ? entry.Path : Path.GetFileName(entry.Path);
 
             // calculate children recursively
@@ -104,6 +102,12 @@ namespace CRLFLabs.ViewSize.IO
 
         private List<FileSystemEntry> CalculateChildren(FileSystemEntry entry)
         {
+            var result = new List<FileSystemEntry>();
+            if (CancelRequested)
+            {
+                return result;
+            }
+
             var paths = FileUtils.EnumerateFileSystemEntries(entry.Path);
             entry.IsDirectory = paths != null;
             if (!entry.IsDirectory)
@@ -112,20 +116,26 @@ namespace CRLFLabs.ViewSize.IO
                 // my file size (should be zero for directories)
                 entry.OwnSize = FileUtils.FileLength(entry.Path);
                 entry.TotalSize = entry.OwnSize;
-                return new List<FileSystemEntry>();
+                return result;
             }
 
             // only fire for directories because otherwise it's too slow
             FireScanning(entry);
 
             // a directory after all
-            var result = (
-                from path in paths
-                select new FileSystemEntry(path, entry)
-            ).ToList();
 
-            foreach (var child in result)
+            // Important: just loop over paths, don't convert to list
+            // you don't know how many they are, and you need to be able to cancel the process!
+            foreach (var path in paths)
             {
+                if (CancelRequested)
+                {
+                    break;
+                }
+
+                var child = new FileSystemEntry(path, entry);
+                result.Add(child);
+
                 // recursion is done here
                 Calculate(child);
             }

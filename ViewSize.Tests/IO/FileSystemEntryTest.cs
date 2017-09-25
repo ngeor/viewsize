@@ -2,11 +2,12 @@
 using System.Linq;
 using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.TreeMap;
 using Moq;
 using NUnit.Framework;
 
-namespace ViewSize.Tests
+namespace ViewSize.Tests.IO
 {
     [TestFixture]
     public class FileSystemEntryTest

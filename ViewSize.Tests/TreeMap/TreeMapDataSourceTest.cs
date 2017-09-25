@@ -1,6 +1,7 @@
 ﻿using System;
 using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.TreeMap;
 using Moq;
 using NUnit.Framework;
