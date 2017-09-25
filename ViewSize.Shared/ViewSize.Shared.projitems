@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\ScaleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEntryContainerExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSystemEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginD.cs" />
@@ -38,8 +37,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Settings\ISettingsManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingsManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />
+    <Folder Include="$(MSBuildThisFileDirectory)IO\" />
   </ItemGroup>
 </Project>

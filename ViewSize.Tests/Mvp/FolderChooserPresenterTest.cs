@@ -1,5 +1,6 @@
 ﻿using System;
 using CRLFLabs.ViewSize.Mvp;
+using CRLFLabs.ViewSize.Settings;
 using Moq;
 using NUnit.Framework;
 
@@ -11,15 +12,27 @@ namespace ViewSize.Tests.Mvp
         private FolderChooserPresenter _presenter;
         private Mock<IFolderChooserModel> _model;
         private Mock<IFolderChooserView> _view;
+        private Mock<ISettingsManager> _settingsManager;
+        private Settings _settings;
 
         [SetUp]
         public void SetUp()
         {
             _view = new Mock<IFolderChooserView>();
             _model = new Mock<IFolderChooserModel>();
+            _settings = new Settings
+            {
+                SelectedFolder = "settings value"
+            };
+            _settingsManager = new Mock<ISettingsManager>();
+            _settingsManager.SetupGet(m => m.Settings).Returns(_settings);
             _model.SetupProperty(m => m.Folder);
-            _model.Object.Folder = "original value";
-            _presenter = new FolderChooserPresenter(_view.Object, _model.Object);    
+            _model.Object.Folder = "value before settings";
+            _presenter = new FolderChooserPresenter(
+                _view.Object,
+                _model.Object,
+                _settingsManager.Object
+            );    
         }
 
         [Test]
@@ -45,7 +58,7 @@ namespace ViewSize.Tests.Mvp
             _presenter.OnSelectFolder();
 
             // assert
-            Assert.AreEqual("original value", _model.Object.Folder);
+            Assert.AreEqual("settings value", _model.Object.Folder);
         }
     }
 }
