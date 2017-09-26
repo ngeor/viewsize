@@ -98,20 +98,6 @@ namespace CRLFLabs.ViewSize.IO
             return false;
         }
 
-        // TODO: is it possible to use Ancestors in all cases?
-        public IEnumerable<FileSystemEntry> AncestorsNearestFirst()
-        {
-            var parent = Parent as FileSystemEntry;
-            if (parent == null)
-            {
-                return Enumerable.Empty<FileSystemEntry>();
-            }
-            else
-            {
-                return Enumerable.Repeat(parent, 1).Concat(parent.AncestorsNearestFirst());
-            }
-        }
-
         public IEnumerable<FileSystemEntry> Ancestors()
         {
             var parent = Parent as FileSystemEntry;

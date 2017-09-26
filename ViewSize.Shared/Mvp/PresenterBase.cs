@@ -1,45 +1,49 @@
 ﻿using System;
 namespace CRLFLabs.ViewSize.Mvp
 {
-    public abstract class PresenterBase<T>
-        where T : class
+    public abstract class PresenterBase<TView>
+        where TView: class
     {
-        private T _view;
-
-        public PresenterBase()
+        public PresenterBase(TView view)
         {
+            if (view == null)
+            {
+                throw new ArgumentNullException(nameof(view));
+            }
+
+            View = view;
+            AttachToView();
         }
 
-        public T View
-        {
-            get
-            {
-                return _view;
-            }
-            set
-            {
-                if (_view != null)
-                {
-                    Detach(_view);
-                }
+        public TView View { get; }
 
-                _view = value;
-
-                if (_view != null)
-                {
-                    Attach(_view);
-                }
-            }
-        }
-
-        protected virtual void Detach(T view)
+        protected virtual void AttachToView()
         {
             
         }
+    }
 
-        protected virtual void Attach(T view)
+    public abstract class PresenterBase<TView, TModel> : PresenterBase<TView>
+        where TView: class
+        where TModel: class
+    {
+        public PresenterBase(TView view, TModel model)
+            : base(view)
         {
-            
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            Model = model;
+            AttachToModel();
+        }
+
+        public TModel Model { get; }
+
+        protected virtual void AttachToModel()
+        {
+
         }
     }
 }

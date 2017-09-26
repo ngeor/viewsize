@@ -26,10 +26,7 @@ namespace ViewSizeWpf
             var settingsManager = SettingsManager.Instance;
             var folderChooserPresenter = new FolderChooserPresenter(this, this, settingsManager);
 
-            var applicationPresenter = new ApplicationPresenter(settingsManager)
-            {
-                View = this
-            };
+            var applicationPresenter = new ApplicationPresenter(this, settingsManager);
         }
 
         #region IFolderChooserModel
@@ -116,7 +113,7 @@ namespace ViewSizeWpf
             }
 
             selectedFileSystemEntry.IsSelected = true;
-            foreach (var ancestor in selectedFileSystemEntry.AncestorsNearestFirst())
+            foreach (var ancestor in selectedFileSystemEntry.Ancestors())
             {
                 ancestor.IsExpanded = true;
             }

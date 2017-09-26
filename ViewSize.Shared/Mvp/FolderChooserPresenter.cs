@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using CRLFLabs.ViewSize.Settings;
 
@@ -8,29 +7,23 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Folder chooser presenter.
     /// </summary>
-    public class FolderChooserPresenter : PresenterBase<IFolderChooserView>
+    public class FolderChooserPresenter : PresenterBase<IFolderChooserView, IFolderChooserModel>
     {
-        private IFolderChooserModel Model { get; }
-        private ISettingsManager SettingsManager { get; }
-
         public FolderChooserPresenter(IFolderChooserView view, IFolderChooserModel model, ISettingsManager settingsManager)
+            : base(view, model)
         {
-            View = view;
-            Model = model;
             SettingsManager = settingsManager;
 
+            // cannot use AttachToModel because we need SettingsManager here
             Model.Folder = SettingsManager.Settings.SelectedFolder;
             Model.PropertyChanged += Model_PropertyChanged;
         }
 
-        protected override void Detach(IFolderChooserView view)
-        {
-            view.OnSelectFolderClick -= View_OnSelectFolderClick;
-        }
+        private ISettingsManager SettingsManager { get; }
 
-        protected override void Attach(IFolderChooserView view)
+        protected override void AttachToView()
         {
-            view.OnSelectFolderClick += View_OnSelectFolderClick;
+            View.OnSelectFolderClick += View_OnSelectFolderClick;
         }
 
         private void View_OnSelectFolderClick(object sender, EventArgs e)

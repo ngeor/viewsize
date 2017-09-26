@@ -21,9 +21,9 @@ namespace CRLFLabs.ViewSize.Mvp
         /// </summary>
         /// <param name="view">The view.</param>
         public MainPresenter(IMainView view, IFolderScanner folderScanner, IFileUtils fileUtils)
+            : base(view)
         {
             FileUtils = fileUtils;
-            View = view;
             FolderScanner = folderScanner;
             FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
         }
@@ -45,17 +45,11 @@ namespace CRLFLabs.ViewSize.Mvp
             }
         }
 
-        protected override void Attach(IMainView view)
+        protected override void AttachToView()
         {
-            view.OnBeginScanClick += View_OnBeginScanClick;
-            view.OnCancelScanClick += View_OnCancelScanClick;
-            view.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
-        }
-
-        protected override void Detach(IMainView view)
-        {
-            view.OnBeginScanClick -= View_OnBeginScanClick;
-            view.OnCancelScanClick -= View_OnCancelScanClick;
+            View.OnBeginScanClick += View_OnBeginScanClick;
+            View.OnCancelScanClick += View_OnCancelScanClick;
+            View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)
