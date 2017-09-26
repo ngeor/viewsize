@@ -52,8 +52,8 @@ namespace ViewSizeMac
             var folderOutlineDelegate = new FolderOutlineDelegate();
             folderOutlineDelegate.SelectionChanged += (sender, e) =>
             {
-                var m = outlineView.ItemAtRow(outlineView.SelectedRow) as FileSystemEntry;
-                _mainPresenter.OnTreeViewSelectionChanged(m);
+                var selectedEntry = outlineView.ItemAtRow(outlineView.SelectedRow) as FileSystemEntry;
+                OnTreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(selectedEntry));
             };
             outlineView.Delegate = folderOutlineDelegate;
         }
@@ -89,12 +89,16 @@ namespace ViewSizeMac
         #region Cocoa Actions
 
         partial void OnSelectFolder(NSObject sender) => OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
-        partial void OnScan(NSObject sender) => _mainPresenter.OnBeginScan();
-        partial void OnCancelScan(NSObject sender) => _mainPresenter.OnCancelScan();
+        partial void OnScan(NSObject sender) => OnBeginScanClick?.Invoke(this, EventArgs.Empty);
+        partial void OnCancelScan(NSObject sender) => OnCancelScanClick?.Invoke(this, EventArgs.Empty);
 
         #endregion
 
         #region IMainView
+
+        public event EventHandler OnBeginScanClick;
+        public event EventHandler OnCancelScanClick;
+        public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
         public SizeD TreeMapActualSize => folderGraph.BoundsD.Size;
         string IMainView.SelectedFolder => txtFolder.StringValue;

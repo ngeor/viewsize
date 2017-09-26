@@ -11,7 +11,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Main presenter.
     /// </summary>
-    public class MainPresenter : IMainPresenter
+    public class MainPresenter : PresenterBase<IMainView>
     {
         private TreeMapDataSource _treeMapDataSource;
         private bool _isScanning;
@@ -29,7 +29,6 @@ namespace CRLFLabs.ViewSize.Mvp
         }
 
         private IFolderScanner FolderScanner { get; }
-        private IMainView View { get; }
         private IFileUtils FileUtils { get; }
 
         private TreeMapDataSource TreeMapDataSource
@@ -46,7 +45,20 @@ namespace CRLFLabs.ViewSize.Mvp
             }
         }
 
-        public void OnBeginScan()
+        protected override void Attach(IMainView view)
+        {
+            view.OnBeginScanClick += View_OnBeginScanClick;
+            view.OnCancelScanClick += View_OnCancelScanClick;
+            view.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
+        }
+
+        protected override void Detach(IMainView view)
+        {
+            view.OnBeginScanClick -= View_OnBeginScanClick;
+            view.OnCancelScanClick -= View_OnCancelScanClick;
+        }
+
+        void View_OnBeginScanClick(object sender, EventArgs e)
         {
             string path = View.SelectedFolder;
             if (string.IsNullOrWhiteSpace(path))
@@ -115,14 +127,14 @@ namespace CRLFLabs.ViewSize.Mvp
             });
         }
 
-        public void OnCancelScan()
+        void View_OnCancelScanClick(object sender, EventArgs e)
         {
             FolderScanner.Cancel();
         }
 
-        public void OnTreeViewSelectionChanged(FileSystemEntry selection)
+        void View_OnTreeViewSelectionChanged(object sender, FileSystemEventArgs e)
         {
-            _treeMapDataSource.Selected = selection;
+            _treeMapDataSource.Selected = e.FileSystemEntry;
         }
 
         private void Attach(TreeMapDataSource treeMapDataSource)

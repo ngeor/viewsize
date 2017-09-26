@@ -34,7 +34,7 @@ namespace ViewSize.Tests.Mvp
             _viewMock.SetupGet(v => v.SelectedFolder).Returns("");
 
             // act
-            _presenter.OnBeginScan();
+            _viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
 
             // assert
             _viewMock.Verify(v => v.ShowError("No folder selected!"));
@@ -48,7 +48,7 @@ namespace ViewSize.Tests.Mvp
             _fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
 
             // act
-            _presenter.OnBeginScan();
+            _viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
 
             // assert
             _viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
