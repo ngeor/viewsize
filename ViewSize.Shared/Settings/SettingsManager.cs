@@ -15,6 +15,10 @@ namespace CRLFLabs.ViewSize.Settings
             new Lazy<SettingsManager>(() => new SettingsManager());
 
         public static ISettingsManager Instance => _instance.Value;
+
+        private SettingsManager()
+        {
+        }
         #endregion
 
         #region Settings Holder

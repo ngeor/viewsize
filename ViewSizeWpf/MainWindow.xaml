@@ -9,7 +9,7 @@
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
-            <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" />
+            <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" TextChanged="txtFolder_TextChanged" />
             <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,8,4,0" Click="btnSelectFolder_Click"/>
         </Grid>
         <Grid DockPanel.Dock="Top">
@@ -25,7 +25,6 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
@@ -35,10 +34,10 @@
                 <Label x:Name="lblStatus" Content="Welcome to ViewSize" Padding="8"/>
             </StatusBarItem>
             <StatusBarItem Grid.Column="1">
-                <Label x:Name="lblDuration" Content="00:00" Padding="8"/>
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="2">
-                <ProgressBar x:Name="progressBar" Width="100" Height="16" Margin="8" />
+                <StackPanel Orientation="Horizontal">
+                    <Label x:Name="lblDuration" Content="00:00" Padding="8"/>
+                    <ProgressBar x:Name="progressBar" Width="100" Height="16" Margin="8" />
+                </StackPanel>
             </StatusBarItem>
         </StatusBar>
         <Grid>

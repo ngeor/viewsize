@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace CRLFLabs.ViewSize
+namespace CRLFLabs.ViewSize.IO
 {
     partial class FileSystemEntry : INotifyPropertyChanged
     {

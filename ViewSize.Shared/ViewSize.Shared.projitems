@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
@@ -30,7 +31,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Settings\ISettingsManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingsManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntryContainerExtensions.cs" />
@@ -42,6 +42,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />
-    <Folder Include="$(MSBuildThisFileDirectory)IO\" />
   </ItemGroup>
 </Project>

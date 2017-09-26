@@ -1,35 +1,40 @@
-﻿using CRLFLabs.ViewSize;
-using CRLFLabs.ViewSize.Drawing;
+﻿using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
+using CRLFLabs.ViewSize.Settings;
 using CRLFLabs.ViewSize.TreeMap;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using ViewSizeWpf;
-using ViewSizeWpf.Controls;
 
 namespace ViewSizeWpf
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel
+    public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel, IApplicationView
     {
-        private readonly MainPresenter mainPresenter;
-        private readonly FolderChooserPresenter folderChooserPresenter;
-
         public MainWindow()
         {
             InitializeComponent();
-            mainPresenter = new MainPresenter(this);
-            folderChooserPresenter = new FolderChooserPresenter(this, this);
+
+            var fileUtils = new FileUtils();
+            var folderScanner = new FolderScanner(fileUtils);
+            var mainPresenter = new MainPresenter(this, folderScanner, fileUtils);
+
+            var settingsManager = SettingsManager.Instance;
+            var folderChooserPresenter = new FolderChooserPresenter(this, this, settingsManager);
+
+            var applicationPresenter = new ApplicationPresenter(settingsManager)
+            {
+                View = this
+            };
         }
 
         #region IFolderChooserModel
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         string IFolderChooserModel.Folder
         {
@@ -40,6 +45,8 @@ namespace ViewSizeWpf
         #endregion
 
         #region IFolderChooserView
+
+        public event EventHandler OnSelectFolderClick;
 
         public string SelectFolder()
         {
@@ -69,6 +76,11 @@ namespace ViewSizeWpf
         #endregion
 
         #region IMainView implementation
+
+        public event EventHandler OnBeginScanClick;
+        public event EventHandler OnCancelScanClick;
+        public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+
         public string SelectedFolder
         {
             get { return txtFolder.Text; }
@@ -80,6 +92,7 @@ namespace ViewSizeWpf
             btnScan.IsEnabled = enable;
             btnSelectFolder.IsEnabled = enable;
             btnCancel.IsEnabled = !enable;
+            progressBar.IsIndeterminate = !enable;
             Cursor = enable ? Cursors.Arrow : Cursors.Wait;
         }
 
@@ -111,20 +124,35 @@ namespace ViewSizeWpf
 
         #endregion
 
+        #region IApplicationView
+
+        private event EventHandler ApplicationView_Closing;
+        event EventHandler IApplicationView.Closing
+        {
+            add => ApplicationView_Closing += value;
+            remove => ApplicationView_Closing -= value;
+        }
+        #endregion
+
         #region WPF Event Handlers
+        private void txtFolder_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Folder"));
+        }
+
         private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            folderChooserPresenter.OnSelectFolder();
+            OnSelectFolderClick?.Invoke(this, e);
         }
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
         {
-            mainPresenter.OnBeginScan();
+            OnBeginScanClick?.Invoke(this, e);
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            mainPresenter.OnCancelScan();
+            OnCancelScanClick?.Invoke(this, e);
         }
 
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -146,13 +174,12 @@ namespace ViewSizeWpf
                 return;
             }
 
-            mainPresenter.OnTreeViewSelectionChanged(fileSystemEntry);
+            OnTreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(fileSystemEntry));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            folderChooserPresenter.SaveSettings();
-            mainPresenter.SaveSettings();
+            ApplicationView_Closing?.Invoke(this, e);
         }
 
         #endregion
