@@ -42,7 +42,7 @@ namespace ViewSize.Tests.Mvp
             _view.Setup(v => v.SelectFolder()).Returns("some path");
 
             // act
-            _presenter.OnSelectFolder();
+            _view.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
             Assert.AreEqual("some path", _model.Object.Folder);
@@ -55,7 +55,7 @@ namespace ViewSize.Tests.Mvp
             _view.Setup(v => v.SelectFolder()).Returns((string)null);
 
             // act
-            _presenter.OnSelectFolder();
+            _view.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
             Assert.AreEqual("settings value", _model.Object.Folder);

@@ -88,7 +88,7 @@ namespace ViewSizeMac
 
         #region Cocoa Actions
 
-        partial void OnSelectFolder(NSObject sender) => _folderChooserPresenter.OnSelectFolder();
+        partial void OnSelectFolder(NSObject sender) => OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
         partial void OnScan(NSObject sender) => _mainPresenter.OnBeginScan();
         partial void OnCancelScan(NSObject sender) => _mainPresenter.OnCancelScan();
 
@@ -159,6 +159,8 @@ namespace ViewSizeMac
         #endregion
 
         #region IFolderChooserView
+
+        public event EventHandler OnSelectFolderClick;
 
         public string SelectFolder()
         {

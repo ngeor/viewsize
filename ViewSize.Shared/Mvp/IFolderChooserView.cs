@@ -8,6 +8,11 @@ namespace CRLFLabs.ViewSize.Mvp
     public interface IFolderChooserView : IView
     {
         /// <summary>
+        /// Occurs when the user clicks the select folder button.
+        /// </summary>
+        event EventHandler OnSelectFolderClick;
+
+        /// <summary>
         /// Selects the folder.
         /// </summary>
         /// <returns>The folder.</returns>

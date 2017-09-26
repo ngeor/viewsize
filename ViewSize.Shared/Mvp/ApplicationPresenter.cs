@@ -3,10 +3,8 @@ using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
-    public class ApplicationPresenter
+    public class ApplicationPresenter : PresenterBase<IApplicationView>
     {
-        private IApplicationView _view;
-
         public ApplicationPresenter(ISettingsManager settingsManager)
         {
             SettingsManager = settingsManager;
@@ -14,34 +12,14 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private ISettingsManager SettingsManager { get; }
 
-        public IApplicationView View
+        protected override void Detach(IApplicationView view)
         {
-            get
-            {
-                return _view;    
-            }
-            set
-            {
-                Detach();
-                _view = value;
-                Attach();
-            }
+            view.Closing -= View_Closing;
         }
 
-        private void Detach()
+        protected override void Attach(IApplicationView view)
         {
-            if (_view != null)
-            {
-                _view.Closing -= View_Closing;
-            }
-        }
-
-        private void Attach()
-        {
-            if (_view != null)
-            {
-                _view.Closing += View_Closing;
-            }
+            view.Closing += View_Closing;
         }
 
         private void View_Closing(object sender, EventArgs e)

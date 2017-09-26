@@ -23,7 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\TreeMapDataSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\FolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventThrottler.cs" />
@@ -40,6 +39,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\FolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFileSystemEntryContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFolderScanner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />
