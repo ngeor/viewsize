@@ -3,9 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:custom="clr-namespace:ViewSizeWpf"
         xmlns:local="clr-namespace:ViewSizeWpf.Controls"
         mc:Ignorable="d"
         Title="ViewSize" Height="600" Width="800" Closing="Window_Closing">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static custom:MainWindow.ShowInExplorerCommand}"
+                        CanExecute="ShowInExplorer_CanExecute"
+                        Executed="ShowInExplorer_Execute"
+                        />
+    </Window.CommandBindings>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
@@ -59,7 +66,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <local:TreeListViewExpander/>
-                                    <TextBlock Text="{Binding DisplayText}"/>
+                                    <TextBlock Text="{Binding DisplayText}" />
                                 </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -72,6 +79,12 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                 </local:TreeListView.Columns>
+                <local:TreeListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Show in Explorer"
+                                  Command="{x:Static custom:MainWindow.ShowInExplorerCommand}"/>
+                    </ContextMenu>
+                </local:TreeListView.ContextMenu>
             </local:TreeListView>
             <GridSplitter x:Name="gridSplitter"  Width="5" Grid.Column="1" HorizontalAlignment="Stretch"/>
             <local:TreeMap x:Name="treeMap" Grid.Column="2" MouseLeftButtonUp="treeMap_MouseLeftButtonUp"/>

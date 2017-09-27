@@ -102,7 +102,7 @@ namespace ViewSizeWpf.Controls
             }
 
             ScaleD scale = ScaleToActual;
-            Render(g, dataSource.Children, scale);
+            RenderFileSystemEntries(g, dataSource, scale);
 
             var selected = dataSource.Selected;
             if (selected != null)
@@ -112,15 +112,25 @@ namespace ViewSizeWpf.Controls
             }
         }
 
-        private void Render(Graphics g, IEnumerable<FileSystemEntry> folders, ScaleD scale)
+        private void RenderFileSystemEntries(Graphics g, IFileSystemEntryContainer container, ScaleD scale)
         {
-            foreach (var folderWithSize in folders)
+            foreach (var folderWithSize in container.Children)
             {
-                Render(g, folderWithSize, scale);
+                RenderFileSystemEntryRecursively(g, folderWithSize, scale);
             }
         }
 
-        private void Render(Graphics g, FileSystemEntry folderWithSize, ScaleD scale)
+        private void RenderFileSystemEntryRecursively(Graphics g, FileSystemEntry folderWithSize, ScaleD scale)
+        {
+            if (!folderWithSize.Children.Any())
+            {
+                RenderFileSystemEntry(g, folderWithSize, scale);
+            }
+
+            RenderFileSystemEntries(g, folderWithSize, scale);
+        }
+
+        private void RenderFileSystemEntry(Graphics g, FileSystemEntry folderWithSize, ScaleD scale)
         {
             // scale rectangle to actual drawing dimensions and convert to GDI
             var rect = folderWithSize.Bounds.Scale(scale).ToRectangleF();
@@ -156,8 +166,6 @@ namespace ViewSizeWpf.Controls
 
             // draw outline
             g.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
-
-            Render(g, folderWithSize.Children, scale);
         }
         #endregion
     }

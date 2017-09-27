@@ -135,12 +135,6 @@ namespace CRLFLabs.ViewSize.TreeMap
 
             foreach (var folderWithDrawSize in streak)
             {
-                // at least 3 pixels are needed to draw border and content of box
-                if (folderWithDrawSize.Bounds.Width < 3 || folderWithDrawSize.Bounds.Height < 3)
-                {
-                    continue;
-                }
-
                 if (folderWithDrawSize == streak.Last.Value)
                 {
                     // adjust bounds for last item due to rounding errors etc

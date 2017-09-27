@@ -5,6 +5,7 @@ using CRLFLabs.ViewSize.Settings;
 using CRLFLabs.ViewSize.TreeMap;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -180,5 +181,29 @@ namespace ViewSizeWpf
         }
 
         #endregion
+
+        public static RoutedCommand ShowInExplorerCommand = new RoutedCommand();
+
+        private void ShowInExplorer_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
+            string path;
+            if (!fileSystemEntry.IsDirectory)
+            {
+                path = System.IO.Path.GetDirectoryName(fileSystemEntry.Path);
+            }
+            else
+            {
+                path = fileSystemEntry.Path;
+            }
+
+            Process.Start(path);
+        }
+
+        private void ShowInExplorer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
+            e.CanExecute = fileSystemEntry != null;
+        }
     }
 }
