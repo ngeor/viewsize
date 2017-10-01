@@ -1,8 +1,15 @@
 ﻿using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace CRLFLabs.ViewSize.IO
 {
@@ -41,6 +48,40 @@ namespace CRLFLabs.ViewSize.IO
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelected"));
                 }
             }
+        }
+
+        public ImageSource WpfIcon
+        {
+            get
+            {
+                return GetIcon(Path, true, IsDirectory);
+            }
+        }
+
+        public static ImageSource GetIcon(string strPath, bool bSmall, bool folder)
+        {
+            Interop.SHFILEINFO info = new Interop.SHFILEINFO(true);
+            int cbFileInfo = Marshal.SizeOf(info);
+            Interop.SHGFI flags;
+            if (bSmall)
+            {
+                flags = Interop.SHGFI.Icon | Interop.SHGFI.SmallIcon | Interop.SHGFI.UseFileAttributes;
+            }
+            else
+            {
+                flags = Interop.SHGFI.Icon | Interop.SHGFI.LargeIcon | Interop.SHGFI.UseFileAttributes;
+            }
+
+            Interop.SHGetFileInfo(strPath, folder ? Interop.FILE_ATTRIBUTE_DIRECTORY : Interop.FILE_ATTRIBUTE_NORMAL, out info, (uint)cbFileInfo, flags);
+
+            IntPtr iconHandle = info.hIcon;
+
+            ImageSource img = Imaging.CreateBitmapSourceFromHIcon(
+                        iconHandle,
+                        Int32Rect.Empty,
+                        BitmapSizeOptions.FromEmptyOptions());
+            Interop.DestroyIcon(iconHandle);
+            return img;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -67,10 +67,12 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <local:TreeListViewExpander Grid.Column="0"/>
-                                    <TextBlock Text="{Binding DisplayText}" Grid.Column="1" />
+                                    <Image Width="16" Height="16" Source="{Binding WpfIcon}" Grid.Column="1" />
+                                    <TextBlock Text="{Binding DisplayText}" Grid.Column="2" />
                                 </Grid>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

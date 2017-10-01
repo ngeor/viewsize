@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="DrawingConversions.cs" />
     <Compile Include="FileSystemEntry.cs" />
+    <Compile Include="Interop.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
