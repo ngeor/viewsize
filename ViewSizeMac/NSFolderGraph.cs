@@ -100,6 +100,8 @@ namespace ViewSizeMac
         private CGRect CalculateCGRect(FileSystemEntry entry, ScaleD drawScale)
             => entry.Bounds.Scale(drawScale).ToCGRect();
 
+
+        // TODO improve drawing performance, perhaps with drawing at a bitmap first
         public override void DrawRect(CGRect dirtyRect)
         {
             // clear rect
@@ -114,8 +116,12 @@ namespace ViewSizeMac
 
             var drawScale = DrawScale;
             Draw(dataSource.Children, drawScale);
+            DrawSelected(drawScale);
+        }
 
-            var selected = dataSource.Selected;
+        private void DrawSelected(ScaleD drawScale)
+        {
+            var selected = DataSource?.Selected;
             if (selected != null)
             {
                 var rect = CalculateCGRect(selected, drawScale);
@@ -134,12 +140,20 @@ namespace ViewSizeMac
 
         private void Draw(FileSystemEntry entry, ScaleD drawScale)
         {
-            var rect = CalculateCGRect(entry, drawScale);
-            DrawFill(entry, rect);
-            DrawOutline(rect);
-
-            // recursion
-            Draw(entry.Children, drawScale);
+            if (entry.Children.Any())
+            {
+                // recursion
+                if (NeedsToDraw(CalculateCGRect(entry, drawScale)))
+                {
+                    Draw(entry.Children, drawScale);
+                }
+            }
+            else
+            {
+                var rect = CalculateCGRect(entry, drawScale);
+                DrawFill(entry, rect);
+                DrawOutline(rect);
+            }
         }
 
         private void DrawFill(FileSystemEntry entry, CGRect rect)
@@ -150,9 +164,12 @@ namespace ViewSizeMac
             fillColor.Set();
             NSBezierPath.FillRect(rect);
 
-            NSGradient gradient = new NSGradient(lightColor, fillColor);
-            CGPoint middle = new CGPoint(0, 0);
-            gradient.DrawInRect(rect, middle);
+            if (rect.Width >= 5 && rect.Height >= 5)
+            {
+                NSGradient gradient = new NSGradient(lightColor, fillColor);
+                CGPoint middle = new CGPoint(0, 0);
+                gradient.DrawInRect(rect, middle);
+            }
         }
 
         private void DrawOutline(CGRect rect)
@@ -203,7 +220,11 @@ namespace ViewSizeMac
         void DataSource_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // gets called when the selection of the treemap data model changes
-            NeedsDisplay = true;
+            var selected = DataSource?.Selected;
+            if (selected != null)
+            {
+                SetNeedsDisplayInRect(CalculateCGRect(selected, DrawScale));
+            }
         }
     }
 }

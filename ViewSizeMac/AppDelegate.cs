@@ -11,7 +11,7 @@ namespace ViewSizeMac
     {
         public AppDelegate()
         {
-            new ApplicationPresenter(SettingsManager.Instance).View = this;
+            new ApplicationPresenter(this, SettingsManager.Instance);
         }
 
         public event EventHandler Closing;
