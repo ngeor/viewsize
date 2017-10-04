@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.ComponentModel;
 using System.Linq;
 using AppKit;
 using CoreGraphics;
-using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.TreeMap;
@@ -18,6 +17,14 @@ namespace ViewSizeMac
     [Register("NSFolderGraph")]
     public class NSFolderGraph : NSControl
     {
+        private TreeMapDataSource _dataSource;
+
+        /// <summary>
+        /// Holds the bounds of the previously selected area.
+        /// Used to repaint more efficiently when selection changes.
+        /// </summary>
+        private RectangleD? _oldSelectedRect;
+
         #region Constructors
 
         public NSFolderGraph()
@@ -43,8 +50,6 @@ namespace ViewSizeMac
         }
 
         #endregion
-
-        private TreeMapDataSource _dataSource;
 
         public TreeMapDataSource DataSource
         {
@@ -77,6 +82,8 @@ namespace ViewSizeMac
         /// </summary>
         /// <value><c>true</c> if it is flipped; otherwise, <c>false</c>.</value>
         public override bool IsFlipped => true;
+
+        public override bool IsOpaque => true;
 
         /// <summary>
         /// Gets the drawing bounds.
@@ -209,21 +216,41 @@ namespace ViewSizeMac
 
         private void Attach()
         {
+            DataSource.PropertyChanging += DataSource_PropertyChanging;
             DataSource.PropertyChanged += DataSource_PropertyChanged;
         }
 
         private void Detach()
         {
             DataSource.PropertyChanged -= DataSource_PropertyChanged;
+            DataSource.PropertyChanging -= DataSource_PropertyChanging;
         }
 
-        void DataSource_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        void DataSource_PropertyChanging(object sender, PropertyChangingEventArgs e)
+        {
+            if (e.PropertyName == TreeMapDataSource.SelectedPropertyName)
+            {
+                _oldSelectedRect = DataSource.Selected?.Bounds;
+            }
+        }
+
+        void DataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             // gets called when the selection of the treemap data model changes
-            var selected = DataSource?.Selected;
-            if (selected != null)
+            // we have the previously selected rect in _oldSelectedRect
+            if (e.PropertyName == TreeMapDataSource.SelectedPropertyName)
             {
-                SetNeedsDisplayInRect(CalculateCGRect(selected, DrawScale));
+                SetNeedsDisplayInRect(_oldSelectedRect);
+                _oldSelectedRect = null;
+                SetNeedsDisplayInRect(DataSource.Selected?.Bounds);
+            }
+        }
+
+        private void SetNeedsDisplayInRect(RectangleD? bounds)
+        {
+            if (bounds.HasValue)
+            {
+                SetNeedsDisplayInRect(bounds.Value.Scale(DrawScale).ToCGRect());
             }
         }
     }

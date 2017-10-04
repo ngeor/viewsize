@@ -10,8 +10,10 @@ namespace CRLFLabs.ViewSize.TreeMap
     /// <summary>
     /// A data source for a TreeMap kind of control.
     /// </summary>
-    public class TreeMapDataSource : INotifyPropertyChanged, IFileSystemEntryContainer
+    public class TreeMapDataSource : INotifyPropertyChanged, INotifyPropertyChanging, IFileSystemEntryContainer
     {
+        public const string SelectedPropertyName = "Selected";
+
         private FileSystemEntry _selected;
 
         public TreeMapDataSource(IEnumerable<FileSystemEntry> topLevelEntries, RectangleD bounds)
@@ -19,6 +21,9 @@ namespace CRLFLabs.ViewSize.TreeMap
             Children = topLevelEntries.Select(SetParent).ToList();
             Bounds = bounds;
         }
+
+        public event PropertyChangingEventHandler PropertyChanging;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets the file system entries with their tree map rectangles.
@@ -45,8 +50,12 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
             set
             {
-                _selected = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Selected"));
+                if (_selected != value)
+                {
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SelectedPropertyName));
+                    _selected = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SelectedPropertyName));
+                }
             }
         }
 
@@ -81,7 +90,5 @@ namespace CRLFLabs.ViewSize.TreeMap
             entry.Parent = this;
             return entry;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
