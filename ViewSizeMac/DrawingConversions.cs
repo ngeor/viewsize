@@ -1,4 +1,5 @@
 ﻿using System;
+using AppKit;
 using CoreGraphics;
 using CRLFLabs.ViewSize.Drawing;
 
@@ -22,6 +23,11 @@ namespace ViewSizeMac
         public static PointD ToPointD(this CGPoint point)
         {
             return new PointD(point.X, point.Y);
+        }
+
+        public static NSColor ToNSColor(this ColorD color)
+        {
+            return NSColor.FromRgb(color.Red, color.Green, color.Blue);
         }
     }
 }

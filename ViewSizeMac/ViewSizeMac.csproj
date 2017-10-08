@@ -89,6 +89,7 @@
     <Compile Include="MessageBox.cs" />
     <Compile Include="FileSystemEntry.cs" />
     <Compile Include="FolderChooserModel.cs" />
+    <Compile Include="GraphicsImpl.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />

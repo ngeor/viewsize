@@ -98,91 +98,14 @@ namespace ViewSizeMac
         private ScaleD DrawScale => DataSource == null ?
             default(ScaleD) : new ScaleD(DataSource.Bounds.Size, BoundsD.Size);
 
-        /// <summary>
-        /// Calculates the drawing bounds of the given file system entry.
-        /// </summary>
-        /// <returns>The drawing bounds of the given entry.</returns>
-        /// <param name="entry">The file system entry.</param>
-        /// <param name="drawScale">The drawing scale.</param>
-        private CGRect CalculateCGRect(FileSystemEntry entry, ScaleD drawScale)
-            => entry.Bounds.Scale(drawScale).ToCGRect();
-
-
-        // TODO improve drawing performance, perhaps with drawing at a bitmap first
         public override void DrawRect(CGRect dirtyRect)
         {
-            // clear rect
-            NSColor.White.Set();
-            NSBezierPath.FillRect(dirtyRect);
+            DrawHelper drawHelper = new DrawHelper(
+                new GraphicsImpl(),
+                rect => NeedsToDraw(rect.ToCGRect())
+            );
 
-            var dataSource = DataSource;
-            if (dataSource == null)
-            {
-                return;
-            }
-
-            var drawScale = DrawScale;
-            Draw(dataSource.Children, drawScale);
-            DrawSelected(drawScale);
-        }
-
-        private void DrawSelected(ScaleD drawScale)
-        {
-            var selected = DataSource?.Selected;
-            if (selected != null)
-            {
-                var rect = CalculateCGRect(selected, drawScale);
-                NSColor.White.Set();
-                NSBezierPath.StrokeRect(rect);
-            }
-        }
-
-        private void Draw(IEnumerable<FileSystemEntry> entries, ScaleD drawScale)
-        {
-            foreach (var entry in entries)
-            {
-                Draw(entry, drawScale);
-            }
-        }
-
-        private void Draw(FileSystemEntry entry, ScaleD drawScale)
-        {
-            if (entry.Children.Any())
-            {
-                // recursion
-                if (NeedsToDraw(CalculateCGRect(entry, drawScale)))
-                {
-                    Draw(entry.Children, drawScale);
-                }
-            }
-            else
-            {
-                var rect = CalculateCGRect(entry, drawScale);
-                DrawFill(entry, rect);
-                DrawOutline(rect);
-            }
-        }
-
-        private void DrawFill(FileSystemEntry entry, CGRect rect)
-        {
-            bool isSelected = entry.IsDescendantOf(DataSource.Selected);
-            NSColor fillColor = isSelected ? NSColor.Blue : NSColor.Gray;
-            NSColor lightColor = isSelected ? NSColor.Cyan : NSColor.LightGray;
-            fillColor.Set();
-            NSBezierPath.FillRect(rect);
-
-            if (rect.Width >= 5 && rect.Height >= 5)
-            {
-                NSGradient gradient = new NSGradient(lightColor, fillColor);
-                CGPoint middle = new CGPoint(0, 0);
-                gradient.DrawInRect(rect, middle);
-            }
-        }
-
-        private void DrawOutline(CGRect rect)
-        {
-            NSColor.Black.Set();
-            NSBezierPath.StrokeRect(rect);
+            drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale);
         }
         #endregion
 
