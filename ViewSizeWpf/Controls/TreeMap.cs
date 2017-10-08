@@ -4,14 +4,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Windows.Interop;
-using System.Drawing.Drawing2D;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
-using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
-using CRLFLabs.ViewSize;
-using CRLFLabs.ViewSize.IO;
 
 namespace ViewSizeWpf.Controls
 {
@@ -71,7 +66,9 @@ namespace ViewSizeWpf.Controls
             {
                 using (var g = Graphics.FromImage(tempBitmap))
                 {
-                    Render(g);
+                    GdiGraphics graphics = new GdiGraphics(g);
+                    DrawHelper drawHelper = new DrawHelper(graphics, (r) => true);
+                    drawHelper.Draw(DataSource, new RectangleD(0, 0, ActualWidth, ActualHeight), ScaleToActual);
                 }
 
                 var hbmp = tempBitmap.GetHbitmap();
@@ -88,85 +85,10 @@ namespace ViewSizeWpf.Controls
         /// <summary>
         /// Gets the scaling factor in order to convert datasource sizes into actual sizes.
         /// </summary>
-        public ScaleD ScaleToActual => new ScaleD(DataSource.Bounds.Size, ActualSize);
+        public ScaleD ScaleToActual => DataSource == null ?
+            default(ScaleD) :
+            new ScaleD(DataSource.Bounds.Size, ActualSize);
 
-        private void Render(Graphics g)
-        {
-            // clear background
-            g.FillRectangle(System.Drawing.Brushes.AliceBlue, 0, 0, (float)ActualWidth, (float)ActualHeight);
-
-            var dataSource = DataSource;
-            if (dataSource == null)
-            {
-                return;
-            }
-
-            ScaleD scale = ScaleToActual;
-            RenderFileSystemEntries(g, dataSource, scale);
-
-            var selected = dataSource.Selected;
-            if (selected != null)
-            {
-                var rect = selected.Bounds.Scale(scale).ToRectangleF();
-                g.DrawRectangle(Pens.White, rect.Left, rect.Top, rect.Width, rect.Height);
-            }
-        }
-
-        private void RenderFileSystemEntries(Graphics g, IFileSystemEntryContainer container, ScaleD scale)
-        {
-            foreach (var folderWithSize in container.Children)
-            {
-                RenderFileSystemEntryRecursively(g, folderWithSize, scale);
-            }
-        }
-
-        private void RenderFileSystemEntryRecursively(Graphics g, FileSystemEntry folderWithSize, ScaleD scale)
-        {
-            if (!folderWithSize.Children.Any())
-            {
-                RenderFileSystemEntry(g, folderWithSize, scale);
-            }
-
-            RenderFileSystemEntries(g, folderWithSize, scale);
-        }
-
-        private void RenderFileSystemEntry(Graphics g, FileSystemEntry folderWithSize, ScaleD scale)
-        {
-            // scale rectangle to actual drawing dimensions and convert to GDI
-            var rect = folderWithSize.Bounds.Scale(scale).ToRectangleF();
-            bool isUnderSelected = folderWithSize.IsDescendantOf(DataSource?.Selected);
-            var brush = isUnderSelected ?
-                System.Drawing.Brushes.Blue :
-                System.Drawing.Brushes.Gray;
-
-            g.FillRectangle(brush, rect);
-
-            // draw ellipse gradient
-            // the following condition is for performance optimization
-            // TODO: use common rendering code/abstraction for wpf/cocoa
-            // TODO: why certain font folders appear to be larger than their contents?
-            if (rect.Width >= 5 && rect.Height >= 5 && !folderWithSize.Children.Any())
-            {
-                using (GraphicsPath graphicsPath = new GraphicsPath())
-                {
-                    graphicsPath.AddEllipse(rect);
-                    using (PathGradientBrush gradientBrush = new PathGradientBrush(graphicsPath)
-                    {
-                        CenterColor = isUnderSelected ? System.Drawing.Color.Cyan : System.Drawing.Color.LightGray,
-                        SurroundColors = new[]
-                        {
-                        isUnderSelected ? System.Drawing.Color.Blue :  System.Drawing.Color.Gray
-                    }
-                    })
-                    {
-                        g.FillEllipse(gradientBrush, rect);
-                    }
-                }
-            }
-
-            // draw outline
-            g.DrawRectangle(Pens.Black, rect.Left, rect.Top, rect.Width, rect.Height);
-        }
         #endregion
     }
 }

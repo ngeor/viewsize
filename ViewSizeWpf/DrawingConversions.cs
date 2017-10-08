@@ -32,5 +32,10 @@ namespace ViewSizeWpf
         {
             return new PointD(point.X, point.Y);
         }
+
+        public static Color ToColor(this ColorD color)
+        {
+            return Color.FromArgb(color.Red, color.Green, color.Blue);
+        }
     }
 }
