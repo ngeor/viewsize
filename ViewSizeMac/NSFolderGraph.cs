@@ -83,7 +83,23 @@ namespace ViewSizeMac
         /// <value><c>true</c> if it is flipped; otherwise, <c>false</c>.</value>
         public override bool IsFlipped => true;
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:ViewSizeMac.NSFolderGraph"/> is opaque.
+        /// </summary>
+        /// <remarks>
+        /// Returns <c>true</c> for performance reasons.
+        /// </remarks>
+        /// <value><c>true</c> if is opaque; otherwise, <c>false</c>.</value>
         public override bool IsOpaque => true;
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:ViewSizeMac.NSFolderGraph"/> wants default clipping.
+        /// </summary>
+        /// <remarks>
+        /// Returns <c>false</c> for performance reasons.
+        /// </remarks>
+        /// <value><c>true</c> if wants default clipping; otherwise, <c>false</c>.</value>
+        public override bool WantsDefaultClipping => false;
 
         /// <summary>
         /// Gets the drawing bounds.
@@ -98,6 +114,10 @@ namespace ViewSizeMac
         private ScaleD DrawScale => DataSource == null ?
             default(ScaleD) : new ScaleD(DataSource.Bounds.Size, BoundsD.Size);
 
+        /// <summary>
+        /// Draws the view.
+        /// </summary>
+        /// <param name="dirtyRect">The rectangle that needs drawing.</param>
         public override void DrawRect(CGRect dirtyRect)
         {
             DrawHelper drawHelper = new DrawHelper(
@@ -105,8 +125,31 @@ namespace ViewSizeMac
                 rect => NeedsToDraw(rect.ToCGRect())
             );
 
-            drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale);
+            if (InLiveResize)
+            {
+                // being resized, don't draw too much
+                drawHelper.Graphics.FillRect(Colors.White, dirtyRect.ToRectangleD());
+            }
+            else
+            {
+                // TODO: use NSBitmapRep
+                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale);
+            }
         }
+
+        public override void ViewWillStartLiveResize()
+        {
+            base.ViewWillStartLiveResize();
+        }
+
+        public override void ViewDidEndLiveResize()
+        {
+            base.ViewDidEndLiveResize();
+
+            // request full redraw
+            NeedsDisplay = true;
+        }
+
         #endregion
 
         public override void MouseUp(NSEvent theEvent)
