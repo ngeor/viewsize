@@ -33,6 +33,16 @@ namespace ViewSizeWpf
             return new PointD(point.X, point.Y);
         }
 
+        /// <summary>
+        /// Converts the custom point to system drawing point.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static PointF ToPointF(this PointD point)
+        {
+            return new PointF((float)point.X, (float)point.Y);
+        }
+
         public static Color ToColor(this ColorD color)
         {
             return Color.FromArgb(color.Red, color.Green, color.Blue);

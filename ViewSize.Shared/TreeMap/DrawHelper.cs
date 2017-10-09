@@ -101,16 +101,21 @@ namespace CRLFLabs.ViewSize.TreeMap
         private void DrawFill(FileSystemEntry entry, RectangleD rect, FileSystemEntry selected, int level)
         {
             var fillColor = SelectFillColor(entry);
-            var lightColor = fillColor.Lighter();
-            var darkColor = fillColor.Darker();
+            var lightColor = fillColor.Lighter().Lighter();
             Graphics.FillRect(fillColor, rect);
 
             if (rect.Width >= 5 && rect.Height >= 5)
             {
-                //Graphics.FillEllipseGradient(lightColor, fillColor, rect);
+                var parent = entry.Parent as FileSystemEntry;
+                if (parent != null)
+                {
+                    Graphics.FillEllipseGradient(lightColor, fillColor, rect, parent.Bounds.Center);
+                }
+                else
+                {
+                    Graphics.FillEllipseGradient(lightColor, fillColor, rect);
+                }
             }
-
-            Graphics.DrawRect(darkColor, rect);
         }
 
         private ColorD SelectFillColor(FileSystemEntry entry)

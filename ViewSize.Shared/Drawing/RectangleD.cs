@@ -43,6 +43,8 @@ namespace CRLFLabs.ViewSize.Drawing
 
         public SizeD Size => new SizeD(Width, Height);
 
+        public PointD Center => new PointD(Left + Width / 2, Top + Height / 2);
+
         public override string ToString()
             => $"({Left}, {Top}), ({Right}, {Bottom})";
 
