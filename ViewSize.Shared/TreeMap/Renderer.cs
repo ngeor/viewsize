@@ -33,7 +33,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         {
             var originalRenderer = new Renderer(fullBounds, fileSystemEntries);
             var partialRenderer = new PartialRenderer(originalRenderer, fullBounds, fileSystemEntries);
-            var list = partialRenderer.Render(parent: null);
+            var list = partialRenderer.Render();
 
             var result = new TreeMapDataSource(list, fullBounds);
             return result;
@@ -42,7 +42,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         public IReadOnlyList<FileSystemEntry> Render(FileSystemEntry parent)
         {
             var partialRenderer = new PartialRenderer(this, parent.Bounds, parent.Children);
-            return partialRenderer.Render(parent);
+            return partialRenderer.Render();
         }
 
         private double ToPixelSize(double sizeInBytes) => totalSizeInPixels * sizeInBytes / totalSizeInBytes;

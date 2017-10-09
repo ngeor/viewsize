@@ -1,106 +1,137 @@
-﻿using CRLFLabs.ViewSize.Drawing;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
     class PartialRenderer
     {
-        private readonly Renderer renderer;
-        private readonly bool drawVertically;
-        private readonly IReadOnlyList<FileSystemEntry> fileSystemEntries;
-        private readonly RectangleD bounds;
+        private readonly Renderer _renderer;
+        private readonly IReadOnlyList<FileSystemEntry> _fileSystemEntries;
+        private readonly RectangleD _initialBounds;
+        private RectangleD _bounds;
+        private bool _drawVertically;
 
+        /// <summary>
+        /// Creates an instance of this class.
+        /// </summary>
+        /// <param name="renderer">The parent renderer.</param>
+        /// <param name="bounds">The bounds within rendering is confined.</param>
+        /// <param name="fileSystemEntries">The file system entries to render.</param>
         public PartialRenderer(Renderer renderer, RectangleD bounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
         {
-            this.renderer = renderer;
-            this.fileSystemEntries = fileSystemEntries;
-            this.bounds = bounds;
-            drawVertically = bounds.Width > bounds.Height;
+            _renderer = renderer;
+            _fileSystemEntries = fileSystemEntries;
+            _initialBounds = bounds;
         }
 
-        public IReadOnlyList<FileSystemEntry> Render(FileSystemEntry parent)
+        public IReadOnlyList<FileSystemEntry> Render()
         {
-            var streakCandidate = new LinkedList<FileSystemEntry>();
-
-            double previousAspect = -1;
-
-            // copy entries
-            // TODO: try to implement without copying into entries
-            var remainingEntries = new LinkedList<FileSystemEntry>(fileSystemEntries.Where(f => f.TotalSize > 0));
             var result = new List<FileSystemEntry>();
-            while (remainingEntries.Any())
+            int i = 0;
+
+            SwitchBounds(_initialBounds);
+            while (i < _fileSystemEntries.Count)
             {
-                // remove first entry
-                var entry = remainingEntries.First.Value;
-                remainingEntries.RemoveFirst();
+                // start new streak
+                var streakCandidate = new LinkedList<FileSystemEntry>();
 
-                // add to the current streak
-                streakCandidate.AddLast(entry);
+                double previousAspect = -1;
 
-                // real size of the streak
-                var streakSizeInBytes = streakCandidate.Sum(f => f.TotalSize);
-
-                // e.g. draw total size = 10 pixels
-                var streakBounds = renderer.FillOneDimension(bounds, drawVertically, streakSizeInBytes);
-
-                foreach (var f in streakCandidate)
+                bool gotWorse = false;
+                while (i < _fileSystemEntries.Count && !gotWorse)
                 {
-                    f.Bounds = renderer.FillProportionally(streakBounds, drawVertically, f.TotalSize);
-                }
+                    // go on with current streak as long as it doesn't get worse aspect ratio
+                    // take next entry
+                    var entry = _fileSystemEntries[i];
+                    i++;
 
-                var aspects = streakCandidate.Select(s => s.Bounds.Size.AspectRatio);
-                var worseAspect = aspects.Max();
-
-                // is the new aspect worse?
-                if (previousAspect >= 0 && previousAspect < worseAspect)
-                {
-                    // it got worse
-                    // remove the last item
-                    streakCandidate.RemoveLast();
-
-                    // put back in entries
-                    remainingEntries.AddFirst(entry);
-
-                    // render streak
-                    // recalculate streak etc (TODO: this is duplication)
-                    streakSizeInBytes = streakCandidate.Sum(f => f.TotalSize);
-                    streakBounds = renderer.FillOneDimension(bounds, drawVertically, streakSizeInBytes);
-                    foreach (var f in streakCandidate)
+                    if (entry.TotalSize <= 0)
                     {
-                        f.Bounds = renderer.FillProportionally(streakBounds, drawVertically, f.TotalSize);
+                        continue;
                     }
 
-                    result.AddRange(DrawStreak(streakCandidate, streakBounds));
+                    // add to the current streak
+                    streakCandidate.AddLast(entry);
 
-                    // continue in remaining bounds
-                    var newList = remainingEntries.ToList();
-                    remainingEntries.Clear(); // so that we'll exit the while loop
+                    // e.g. draw total size = 10 pixels
+                    var streakBounds = CalculateStreakBounds(streakCandidate);
 
-                    var r = new PartialRenderer(renderer, bounds.Subtract(streakBounds), newList);
+                    var aspects = streakCandidate.Select(s => s.Bounds.Size.AspectRatio);
+                    var worseAspect = aspects.Max();
 
-                    // add the rest
-                    result.AddRange(r.Render(parent));
-                }
-                else
-                {
-                    // it got better (or we did not have a previous aspect to compare with)
-                    // store it for reference
-                    previousAspect = worseAspect;
-
-                    // if it's the last item let's draw
-                    if (!remainingEntries.Any())
+                    // is the new aspect worse?
+                    gotWorse = previousAspect >= 0 && previousAspect < worseAspect;
+                    if (gotWorse)
                     {
-                        result.AddRange(DrawStreak(streakCandidate, streakBounds));
+                        // it got worse
+                        // remove the last item
+                        streakCandidate.RemoveLast();
+                        i--;
+
+                        // render streak
+                        // recalculate streak bounds
+                        streakBounds = CalculateStreakBounds(streakCandidate);
+                        DrawStreak(streakCandidate, streakBounds);
+                        result.AddRange(streakCandidate);
+
+                        // continue in remaining bounds
+                        SwitchBounds(_bounds.Subtract(streakBounds));
+                    }
+                    else
+                    {
+                        // it got better (or we did not have a previous aspect to compare with)
+                        // store it for reference
+                        previousAspect = worseAspect;
+
+                        // if it's the last item let's draw
+                        if (i >= _fileSystemEntries.Count)
+                        {
+                            DrawStreak(streakCandidate, streakBounds);
+                            result.AddRange(streakCandidate);
+                        }
                     }
                 }
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Asserts that the outer bounds contain the inner bounds.
+        /// </summary>
+        /// <param name="outerBounds">The outer bounds</param>
+        /// <param name="innerBounds">The inner bounds</param>
+        private static void AssertInBounds(RectangleD outerBounds, RectangleD innerBounds)
+        {
+            Debug.Assert(
+                innerBounds.Left >= outerBounds.Left && innerBounds.Top >= outerBounds.Top
+                && innerBounds.Right <= outerBounds.Right && innerBounds.Bottom <= outerBounds.Bottom,
+                $"Rectangle {innerBounds} exceeded {outerBounds}");
+        }
+
+        private RectangleD CalculateStreakBounds(LinkedList<FileSystemEntry> streakCandidate)
+        {
+            // real size of the streak
+            var streakSizeInBytes = streakCandidate.Sum(f => f.TotalSize);
+
+            // e.g. draw total size = 10 pixels
+            var streakBounds = _renderer.FillOneDimension(_bounds, _drawVertically, streakSizeInBytes);
+
+            foreach (var f in streakCandidate)
+            {
+                f.Bounds = _renderer.FillProportionally(streakBounds, _drawVertically, f.TotalSize);
+            }
+
+            return streakBounds;
+        }
+
+        private void SwitchBounds(RectangleD bounds)
+        {
+            _bounds = bounds;
+            _drawVertically = bounds.Width > bounds.Height;
         }
 
         private void Stack(LinkedList<FileSystemEntry> streak)
@@ -118,7 +149,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     renderedFileSystemEntry.Bounds = renderedFileSystemEntry.Bounds.WithOrigin(lastOrigin);
                 }
 
-                if (drawVertically)
+                if (_drawVertically)
                 {
                     lastOrigin = renderedFileSystemEntry.Bounds.Origin.Move(0, renderedFileSystemEntry.Bounds.Height);
                 }
@@ -129,7 +160,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        private IEnumerable<FileSystemEntry> DrawStreak(LinkedList<FileSystemEntry> streak, RectangleD streakBounds)
+        private void DrawStreak(LinkedList<FileSystemEntry> streak, RectangleD streakBounds)
         {
             Stack(streak);
 
@@ -138,7 +169,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                 if (folderWithDrawSize == streak.Last.Value)
                 {
                     // adjust bounds for last item due to rounding errors etc
-                    if (drawVertically)
+                    if (_drawVertically)
                     {
                         folderWithDrawSize.Bounds = folderWithDrawSize.Bounds.WithHeight(streakBounds.Bottom - folderWithDrawSize.Bounds.Top);
                     }
@@ -151,24 +182,8 @@ namespace CRLFLabs.ViewSize.TreeMap
                 AssertInBounds(streakBounds, folderWithDrawSize.Bounds);
 
                 // subtree
-                folderWithDrawSize.Children = renderer.Render(folderWithDrawSize);
-
-                // add in result
-                yield return folderWithDrawSize;
+                folderWithDrawSize.Children = _renderer.Render(folderWithDrawSize);
             }
-        }
-
-        /// <summary>
-        /// Asserts that the outer bounds contain the inner bounds.
-        /// </summary>
-        /// <param name="outerBounds">The outer bounds</param>
-        /// <param name="innerBounds">The inner bounds</param>
-        private static void AssertInBounds(RectangleD outerBounds, RectangleD innerBounds)
-        {
-            Debug.Assert(
-                innerBounds.Left >= outerBounds.Left && innerBounds.Top >= outerBounds.Top
-                && innerBounds.Right <= outerBounds.Right && innerBounds.Bottom <= outerBounds.Bottom,
-                $"Rectangle {innerBounds} exceeded {outerBounds}");
         }
     }
 }
