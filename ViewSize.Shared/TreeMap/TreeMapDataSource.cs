@@ -59,11 +59,18 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        /// <summary>
-        /// Gets the drawing bounds.
-        /// This can be used to scale the drawing in the control.
-        /// </summary>
-        public RectangleD Bounds { get; }
+        private RectangleD Bounds { get; set; }
+
+        public void ReCalculate(RectangleD bounds)
+        {
+            if (Bounds.Size == bounds.Size)
+            {
+                return;
+            }
+
+            Renderer.Render(bounds, Children);
+            Bounds = bounds;
+        }
 
         /// <summary>
         /// Finds the file system entry that exists within these coordinates.

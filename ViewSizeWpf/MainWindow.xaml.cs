@@ -94,7 +94,7 @@ namespace ViewSizeWpf
             Cursor = enable ? Cursors.Arrow : Cursors.Wait;
         }
 
-        public SizeD TreeMapActualSize => treeMap.ActualSize;
+        public SizeD TreeMapActualSize => new SizeD(treeMap.ActualWidth, treeMap.ActualHeight);
 
         public void SetScanningItem(string path) => lblStatus.Content = path;
         public void SetDurationLabel(string durationLabel) => lblDuration.Content = durationLabel;
@@ -159,7 +159,7 @@ namespace ViewSizeWpf
             if (dataSource != null)
             {
                 var point = e.GetPosition(treeMap);
-                var folder = dataSource.Find(point.ToPointD().Scale(treeMap.ScaleToActual.Invert()));
+                var folder = dataSource.Find(point.ToPointD());
                 dataSource.Selected = folder;
             }
         }

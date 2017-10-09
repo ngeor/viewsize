@@ -114,7 +114,7 @@ namespace CRLFLabs.ViewSize.IO
                 // just a regular file, not a directory
                 // my file size (should be zero for directories)
                 entry.OwnSize = FileUtils.FileLength(entry.Path);
-                entry.TotalSize = entry.OwnSize;
+                entry.AdjustTotalSizeAndSortChildren();
                 return;
             }
 

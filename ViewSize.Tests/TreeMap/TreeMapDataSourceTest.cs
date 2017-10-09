@@ -19,7 +19,6 @@ namespace ViewSize.Tests.TreeMap
             var topLevelEntry = new FileSystemEntry("root", folderScanner);
             var childEntry = new FileSystemEntry("child", topLevelEntry);
             var topLevelEntries = Lists.Of(topLevelEntry);
-            topLevelEntry.Children = Lists.Of(childEntry);
 
             // act
             TreeMapDataSource dataSource = new TreeMapDataSource(topLevelEntries, default(RectangleD));

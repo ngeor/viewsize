@@ -121,11 +121,11 @@ namespace ViewSize.Tests.TreeMap
 
         private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IReadOnlyList<FileSystemEntry> children = null)
         {
-            return new FileSystemEntry("", Mock.Of<IFileSystemEntryContainer>())
-            {
-                TotalSize = children != null ? children.Sum(c => c.TotalSize) : totalSize,
-                Children = children ?? Lists.Empty<FileSystemEntry>()
-            };
+            Mock<FileSystemEntry> mock = new Mock<FileSystemEntry>("", Mock.Of<IFileSystemEntryContainer>());
+            mock.SetupGet(e => e.TotalSize)
+                .Returns(children != null ? children.Sum(c => c.TotalSize) : totalSize);
+            mock.SetupGet(e => e.Children).Returns(children ?? Lists.Empty<FileSystemEntry>());
+            return mock.Object;
         }
     }
 }

@@ -51,9 +51,12 @@ namespace ViewSizeWpf.Controls
         }
 
         #region Rendering
+
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
+            var actualBounds = new RectangleD(0, 0, ActualWidth, ActualHeight);
+            DataSource?.ReCalculate(actualBounds);
             var source = RenderWithGdi();
             drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
         }
@@ -68,7 +71,7 @@ namespace ViewSizeWpf.Controls
                 {
                     GdiGraphics graphics = new GdiGraphics(g);
                     DrawHelper drawHelper = new DrawHelper(graphics, (r) => true);
-                    drawHelper.Draw(DataSource, new RectangleD(0, 0, ActualWidth, ActualHeight), ScaleToActual);
+                    drawHelper.Draw(DataSource, new RectangleD(0, 0, ActualWidth, ActualHeight));
                 }
 
                 var hbmp = tempBitmap.GetHbitmap();
@@ -76,18 +79,6 @@ namespace ViewSizeWpf.Controls
                 return Imaging.CreateBitmapSourceFromHBitmap(hbmp, IntPtr.Zero, Int32Rect.Empty, options);
             }
         }
-
-        /// <summary>
-        /// Gets the actual size of this control.
-        /// </summary>
-        public SizeD ActualSize => new SizeD(ActualWidth, ActualHeight);
-
-        /// <summary>
-        /// Gets the scaling factor in order to convert datasource sizes into actual sizes.
-        /// </summary>
-        public ScaleD ScaleToActual => DataSource == null ?
-            default(ScaleD) :
-            new ScaleD(DataSource.Bounds.Size, ActualSize);
 
         #endregion
     }

@@ -29,7 +29,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         private Func<RectangleD, bool> NeedsToDraw { get; }
 
-        public void Draw(TreeMapDataSource dataSource, RectangleD dirtyRect, ScaleD drawScale,
+        public void Draw(TreeMapDataSource dataSource, RectangleD dirtyRect,
                         bool drawContents = true,
                         bool drawSelected = true)
         {
@@ -44,27 +44,26 @@ namespace CRLFLabs.ViewSize.TreeMap
 
             if (drawContents)
             {
-                DrawChildren(dataSource, drawScale, selected, 0);
+                DrawChildren(dataSource, selected, 0);
             }
 
             if (drawSelected)
             {
-                DrawSelected(selected, drawScale);
+                DrawSelected(selected);
             }
         }
 
-        private void DrawSelected(FileSystemEntry selected, ScaleD drawScale)
+        private void DrawSelected(FileSystemEntry selected)
         {
             if (selected != null)
             {
-                var rect = selected.Bounds.Scale(drawScale);
+                var rect = selected.Bounds;
                 Graphics.DrawRect(Colors.Yellow, rect, 2);
             }
         }
 
         private void DrawChildren(
             IFileSystemEntryContainer container,
-            ScaleD drawScale,
             FileSystemEntry selected,
             int level)
         {
@@ -74,13 +73,13 @@ namespace CRLFLabs.ViewSize.TreeMap
             //}
             foreach (var entry in container.Children)
             {
-                Draw(entry, drawScale, selected, level + 1);
+                Draw(entry, selected, level + 1);
             }
         }
 
-        private void Draw(FileSystemEntry entry, ScaleD drawScale, FileSystemEntry selected, int level)
+        private void Draw(FileSystemEntry entry, FileSystemEntry selected, int level)
         {
-            var rect = entry.Bounds.Scale(drawScale);
+            var rect = entry.Bounds;
             if (!NeedsToDraw(rect))
             {
                 return;
@@ -89,7 +88,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (entry.Children.Any())
             {
                 // recursion
-                DrawChildren(entry, drawScale, selected, level);
+                DrawChildren(entry, selected, level);
                 Graphics.DrawRect(Colors.Black, rect);
             }
             else

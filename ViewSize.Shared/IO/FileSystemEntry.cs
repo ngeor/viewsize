@@ -33,7 +33,8 @@ namespace CRLFLabs.ViewSize.IO
         public bool IsDirectory { get; set; }
 
         // computed
-        public long TotalSize { get; set; }
+        // virtual for unit tests
+        public virtual long TotalSize { get; private set; }
         public double Percentage { get; set; }
 
         // relationships
@@ -62,7 +63,8 @@ namespace CRLFLabs.ViewSize.IO
             }
         }
 
-        public IReadOnlyList<FileSystemEntry> Children => _children;
+        // virtual for unit tests
+        public virtual IReadOnlyList<FileSystemEntry> Children => _children;
 
         public bool IsTopLevel => !(Parent is FileSystemEntry);
 
@@ -114,6 +116,12 @@ namespace CRLFLabs.ViewSize.IO
 
         internal void AdjustTotalSizeAndSortChildren()
         {
+            if (!IsDirectory)
+            {
+                TotalSize = OwnSize;
+                return;
+            }
+
             TotalSize = _children.Select(c => c.TotalSize).Sum();
             _children.Sort((x, y) =>
             {
