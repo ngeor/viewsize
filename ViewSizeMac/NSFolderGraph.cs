@@ -113,6 +113,31 @@ namespace ViewSizeMac
         /// <value>The scale to draw.</value>
         private ScaleD DrawScale => DataSource == null ?
             default(ScaleD) : new ScaleD(DataSource.Bounds.Size, BoundsD.Size);
+       
+        private NSBitmapImageRep DrawInBitmap(Action action)
+        {
+            NSBitmapImageRep bitmapImageRep = new NSBitmapImageRep(
+                IntPtr.Zero,
+                (int)Bounds.Width,
+                (int)Bounds.Height,
+                8,
+                4,
+                true,
+                false,
+                NSColorSpace.CalibratedRGB,
+                0,
+                0
+            );
+
+            NSGraphicsContext context = NSGraphicsContext.FromBitmap(bitmapImageRep);
+            NSGraphicsContext.GlobalSaveGraphicsState();
+            NSGraphicsContext.CurrentContext = context;
+
+            action();
+            NSGraphicsContext.GlobalRestoreGraphicsState();
+            context.Dispose();
+            return bitmapImageRep;
+        }
 
         /// <summary>
         /// Draws the view.
@@ -120,6 +145,8 @@ namespace ViewSizeMac
         /// <param name="dirtyRect">The rectangle that needs drawing.</param>
         public override void DrawRect(CGRect dirtyRect)
         {
+            bool isFullDraw = !InLiveResize && dirtyRect == Bounds;
+
             DrawHelper drawHelper = new DrawHelper(
                 new GraphicsImpl(),
                 rect => NeedsToDraw(rect.ToCGRect())
@@ -128,14 +155,54 @@ namespace ViewSizeMac
             if (InLiveResize)
             {
                 // being resized, don't draw too much
-                drawHelper.Graphics.FillRect(Colors.White, dirtyRect.ToRectangleD());
+                if (_lastFullImage != null)
+                {
+                    _lastFullImage.Draw(
+                        dirtyRect,
+                        _lastFullImageRect,
+                        NSCompositingOperation.Copy,
+                        1,
+                        false,
+                        null);
+                }
+                else
+                {
+                    drawHelper.Graphics.FillRect(Colors.White, dirtyRect.ToRectangleD());
+                }
             }
             else
             {
-                // TODO: use NSBitmapRep
-                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale);
+                var bitmapImageRep = DrawInBitmap(() =>
+                             drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale));
+                NSImage image = new NSImage(Bounds.Size);
+                image.AddRepresentation(bitmapImageRep);
+                image.Draw(dirtyRect,
+                           dirtyRect,
+                           NSCompositingOperation.Copy,
+                           1,
+                           false, null);
+
+                if (isFullDraw)
+                {
+                    // delete old last full image
+                    if (_lastFullImage != null)
+                    {
+                        _lastFullImage.Dispose();
+                    }
+
+                    // store this image for resizing
+                    _lastFullImage = image;
+                    _lastFullImageRect = dirtyRect;
+                }
+                else
+                {
+                    image.Dispose();
+                }
             }
         }
+
+        private NSImage _lastFullImage;
+        private CGRect _lastFullImageRect;
 
         public override void ViewWillStartLiveResize()
         {

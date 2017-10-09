@@ -6,8 +6,16 @@ using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
+    /// <summary>
+    /// Cross-platform helper for drawing a treemap datasource.
+    /// </summary>
     public class DrawHelper
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:CRLFLabs.ViewSize.TreeMap.DrawHelper"/> class.
+        /// </summary>
+        /// <param name="graphics">The graphics system to use.</param>
+        /// <param name="needsToDraw">A function that can determin if a rectangle needs drawing.</param>
         public DrawHelper(IGraphics graphics, Func<RectangleD, bool> needsToDraw)
         {
             Graphics = graphics;
@@ -15,6 +23,10 @@ namespace CRLFLabs.ViewSize.TreeMap
         }
 
         public IGraphics Graphics { get; }
+
+        /// <summary>
+        /// Gets a function that can determine if a rectangle needs drawing.
+        /// </summary>
         private Func<RectangleD, bool> NeedsToDraw { get; }
 
         public void Draw(TreeMapDataSource dataSource, RectangleD dirtyRect, ScaleD drawScale)
@@ -41,7 +53,10 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        private void DrawChildren(IFileSystemEntryContainer container, ScaleD drawScale, FileSystemEntry selected)
+        private void DrawChildren(
+            IFileSystemEntryContainer container,
+            ScaleD drawScale,
+            FileSystemEntry selected)
         {
             foreach (var entry in container.Children)
             {
@@ -65,32 +80,49 @@ namespace CRLFLabs.ViewSize.TreeMap
             else
             {
                 DrawFill(entry, rect, selected);
-                DrawOutline(rect);
             }
         }
 
         private void DrawFill(FileSystemEntry entry, RectangleD rect, FileSystemEntry selected)
         {
-            bool isSelected = entry.IsDescendantOf(selected);
-            var fillColor = isSelected ? Colors.Blue : Colors.Gray;
-            var lightColor = isSelected ? Colors.LightBlue : Colors.LightGray;
-            if (Path.GetExtension(entry.Path) == ".jpg")
-            {
-                fillColor = Colors.Red;
-                lightColor = Colors.LightRed;
-            }
-
+            var fillColor = SelectFillColor(entry);
+            var lightColor = fillColor.Lighter();
+            var darkColor = fillColor.Darker();
             Graphics.FillRect(fillColor, rect);
 
             if (rect.Width >= 5 && rect.Height >= 5)
             {
                 Graphics.FillEllipseGradient(lightColor, fillColor, rect);
             }
+
+            Graphics.DrawRect(darkColor, rect);
         }
 
-        private void DrawOutline(RectangleD rect)
+        private ColorD SelectFillColor(FileSystemEntry entry)
         {
-            Graphics.DrawRect(Colors.Black, rect);
+            switch (Path.GetExtension(entry.Path))
+            {
+                case ".jpg":
+                case ".png":
+                case ".gif":
+                case ".bmp":
+                    return Colors.Red;
+                case ".zip":
+                    return Colors.Green;
+                case ".xml":
+                    return Colors.Yellow;
+                case ".avi":
+                case ".mp4":
+                    return Colors.Purple;
+                case ".mp3":
+                    return Colors.Pink;
+                case ".pdf":
+                case ".docx":
+                case ".xlsx":
+                    return Colors.Blue;
+                default:
+                    return Colors.Gray;
+            }
         }
     }
 }

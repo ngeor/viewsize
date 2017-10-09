@@ -9,7 +9,7 @@ namespace ViewSizeMac
         public void DrawRect(ColorD color, RectangleD rect)
         {
             color.ToNSColor().Set();
-            NSBezierPath.StrokeRect(rect.ToCGRect());
+            NSGraphics.FrameRect(rect.ToCGRect());
         }
 
         public void FillEllipseGradient(ColorD inner, ColorD outer, RectangleD rect)
@@ -22,7 +22,7 @@ namespace ViewSizeMac
         public void FillRect(ColorD color, RectangleD rect)
         {
             color.ToNSColor().Set();
-            NSBezierPath.FillRect(rect.ToCGRect());
+            NSGraphics.RectFill(rect.ToCGRect());
         }
     }
 }

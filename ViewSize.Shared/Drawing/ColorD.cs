@@ -1,4 +1,6 @@
-﻿namespace CRLFLabs.ViewSize.Drawing
+﻿using System;
+
+namespace CRLFLabs.ViewSize.Drawing
 {
     public struct ColorD
     {
@@ -16,6 +18,19 @@
         public override string ToString()
         {
             return string.Format("[ColorD: Red={0}, Green={1}, Blue={2}]", Red, Green, Blue);
+        }
+
+        public ColorD Lighter() => Adjust(1.5f);
+        public ColorD Darker() => Adjust(0.66f);
+
+        private ColorD Adjust(float factor)
+        {
+            return new ColorD(Cap(Red * factor), Cap(Green * factor), Cap(Blue * factor));
+        }
+
+        private static int Cap(float value)
+        {
+            return (int)Math.Min(255, value);
         }
     }
 }
