@@ -97,15 +97,14 @@ namespace CRLFLabs.ViewSize.IO
             entry.DisplayText = entry.IsTopLevel ? entry.Path : Path.GetFileName(entry.Path);
 
             // calculate children recursively
-            entry.Children = CalculateChildren(entry);
+            CalculateChildren(entry);
         }
 
-        private List<FileSystemEntry> CalculateChildren(FileSystemEntry entry)
+        private void CalculateChildren(FileSystemEntry entry)
         {
-            var result = new List<FileSystemEntry>();
             if (CancelRequested)
             {
-                return result;
+                return;
             }
 
             var paths = FileUtils.EnumerateFileSystemEntries(entry.Path);
@@ -116,7 +115,7 @@ namespace CRLFLabs.ViewSize.IO
                 // my file size (should be zero for directories)
                 entry.OwnSize = FileUtils.FileLength(entry.Path);
                 entry.TotalSize = entry.OwnSize;
-                return result;
+                return;
             }
 
             // only fire for directories because otherwise it's too slow
@@ -133,32 +132,15 @@ namespace CRLFLabs.ViewSize.IO
                     break;
                 }
 
+                // constructor links to parent's children colletion
                 var child = new FileSystemEntry(path, entry);
-                result.Add(child);
 
                 // recursion is done here
                 Calculate(child);
             }
 
             // now that children are done, we can calculate total size
-            entry.TotalSize = result.Select(c => c.TotalSize).Sum();
-            result.Sort((x, y) =>
-            {
-                if (x.TotalSize > y.TotalSize)
-                {
-                    return -1;
-                }
-                else if (x.TotalSize < y.TotalSize)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return x.Path.CompareTo(y.Path);
-                }
-            });
-
-            return result;
+            entry.AdjustTotalSizeAndSortChildren();
         }
 
         #region Setting properties after scan is complete

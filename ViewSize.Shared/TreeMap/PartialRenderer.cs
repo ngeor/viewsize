@@ -27,9 +27,8 @@ namespace CRLFLabs.ViewSize.TreeMap
             _initialBounds = bounds;
         }
 
-        public IReadOnlyList<FileSystemEntry> Render()
+        public void Render()
         {
-            var result = new List<FileSystemEntry>();
             int i = 0;
 
             SwitchBounds(_initialBounds);
@@ -75,7 +74,6 @@ namespace CRLFLabs.ViewSize.TreeMap
                         // recalculate streak bounds
                         streakBounds = CalculateStreakBounds(streakCandidate);
                         RenderChildrenOfStreak(streakCandidate);
-                        result.AddRange(streakCandidate);
 
                         // continue in remaining bounds
                         SwitchBounds(_bounds.Subtract(streakBounds));
@@ -92,11 +90,8 @@ namespace CRLFLabs.ViewSize.TreeMap
                 if (i >= _fileSystemEntries.Count)
                 {
                     RenderChildrenOfStreak(streakCandidate);
-                    result.AddRange(streakCandidate);
                 }
             }
-
-            return result;
         }
 
         /// <summary>
@@ -155,7 +150,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             foreach (var entry in streak)
             {
                 // subtree
-                entry.Children = _renderer.Render(entry);
+                _renderer.Render(entry);
             }
         }
     }

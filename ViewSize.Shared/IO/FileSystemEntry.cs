@@ -7,6 +7,7 @@ namespace CRLFLabs.ViewSize.IO
 {
     public partial class FileSystemEntry : IFileSystemEntryContainer
     {
+        private readonly List<FileSystemEntry> _children = new List<FileSystemEntry>();
         private IFileSystemEntryContainer _parent;
 
         public FileSystemEntry(string path, IFileSystemEntryContainer parent)
@@ -23,6 +24,7 @@ namespace CRLFLabs.ViewSize.IO
 
             Path = path;
             _parent = parent;
+            AddToChildrenOfParent();
         }
 
         // core properties
@@ -60,8 +62,7 @@ namespace CRLFLabs.ViewSize.IO
             }
         }
 
-        // TODO delete setter
-        public IReadOnlyList<FileSystemEntry> Children { get; set; }
+        public IReadOnlyList<FileSystemEntry> Children => _children;
 
         public bool IsTopLevel => !(Parent is FileSystemEntry);
 
@@ -108,6 +109,34 @@ namespace CRLFLabs.ViewSize.IO
             else
             {
                 return parent.Ancestors().Concat(Enumerable.Repeat(parent, 1));
+            }
+        }
+
+        internal void AdjustTotalSizeAndSortChildren()
+        {
+            TotalSize = _children.Select(c => c.TotalSize).Sum();
+            _children.Sort((x, y) =>
+            {
+                if (x.TotalSize > y.TotalSize)
+                {
+                    return -1;
+                }
+                else if (x.TotalSize < y.TotalSize)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return x.Path.CompareTo(y.Path);
+                }
+            });
+        }
+
+        private void AddToChildrenOfParent()
+        {
+            if (_parent is FileSystemEntry parent)
+            {
+                parent._children.Add(this);
             }
         }
     }
