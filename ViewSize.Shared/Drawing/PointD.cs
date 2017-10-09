@@ -1,9 +1,11 @@
-﻿namespace CRLFLabs.ViewSize.Drawing
+﻿using System;
+
+namespace CRLFLabs.ViewSize.Drawing
 {
     /// <summary>
     /// A point in 2D space.
     /// </summary>
-    public struct PointD
+    public struct PointD : IEquatable<PointD>
     {
         public PointD(double x, double y)
         {
@@ -14,8 +16,41 @@
         public double X { get; }
         public double Y { get; }
 
+        public override bool Equals(object obj)
+        {
+            return (obj is PointD point) && Equals(point);
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode();
+        }
+
         public override string ToString() => $"({X}, {Y})";
 
-        public PointD Scale(ScaleD scale) => new PointD(X * scale.ScaleX, Y * scale.ScaleY);
+        public bool Equals(PointD other)
+        {
+            return X == other.X && Y == other.Y;
+        }
+
+        public static bool operator ==(PointD left, PointD right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PointD left, PointD right)
+        {
+            return !(left == right);
+        }
+
+        public static PointD operator + (PointD left, PointD right)
+        {
+            return new PointD(left.X + right.X, left.Y + right.Y);    
+        }
+
+        public static PointD operator - (PointD left, PointD right)
+        {
+            return new PointD(left.X - right.X, left.Y - right.Y);
+        }
     }
 }

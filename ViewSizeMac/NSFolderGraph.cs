@@ -120,13 +120,6 @@ namespace ViewSizeMac
         /// <value>The drawing bounds.</value>
         public RectangleD BoundsD => Bounds.ToRectangleD();
 
-        /// <summary>
-        /// Gets a scale that adjusts datasource coordinates to actual drawing coordinates.
-        /// </summary>
-        /// <value>The scale to draw.</value>
-        private ScaleD DrawScale => DataSource == null ?
-            default(ScaleD) : new ScaleD(DataSource.Bounds.Size, BoundsD.Size);
-       
         private NSBitmapImageRep DrawInBitmap(Action action)
         {
             NSBitmapImageRep bitmapImageRep = new NSBitmapImageRep(
@@ -193,13 +186,13 @@ namespace ViewSizeMac
                     null);
 
                 // draw the selection on top
-                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale, drawContents: false);
+                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), drawContents: false);
             }
             else
             {
                 var bitmapImageRep = DrawInBitmap(() =>
                 {
-                    drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale, drawSelected: false);
+                    drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), drawSelected: false);
                 });
                 NSImage image = new NSImage(Bounds.Size);
                 image.AddRepresentation(bitmapImageRep);
@@ -209,7 +202,7 @@ namespace ViewSizeMac
                            1,
                            false, null);
                 
-                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale, drawContents: false);
+                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), drawContents: false);
 
                 bool isFullDraw = dirtyRect == Bounds;
 
@@ -253,6 +246,8 @@ namespace ViewSizeMac
         {
             base.ViewDidEndLiveResize();
 
+            DataSource?.ReCalculate(BoundsD);
+
             // request full redraw
             NeedsDisplay = true;
         }
@@ -269,7 +264,7 @@ namespace ViewSizeMac
             }
 
             var locationInWindow = theEvent.LocationInWindow;
-            var pt = ToClientCoordinates(locationInWindow).ToPointD().Scale(DrawScale.Invert());
+            var pt = ToClientCoordinates(locationInWindow).ToPointD();
             var folderWithDrawSize = dataSource.Find(pt);
             dataSource.Selected = folderWithDrawSize;
         }
@@ -323,7 +318,7 @@ namespace ViewSizeMac
         {
             if (bounds.HasValue)
             {
-                SetNeedsDisplayInRect(bounds.Value.Scale(DrawScale).ToCGRect());
+                SetNeedsDisplayInRect(bounds.Value.ToCGRect());
             }
         }
     }

@@ -25,6 +25,11 @@ namespace ViewSizeMac
             return new PointD(point.X, point.Y);
         }
 
+        public static CGPoint ToCGPoint(this PointD point)
+        {
+            return new CGPoint(point.X, point.Y);
+        }
+
         public static NSColor ToNSColor(this ColorD color)
         {
             return NSColor.FromRgb(color.Red, color.Green, color.Blue);

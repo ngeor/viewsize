@@ -41,6 +41,16 @@ namespace CRLFLabs.ViewSize.Drawing
 
         public bool Equals(SizeD other) => Width == other.Width && Height == other.Height;
 
+        public override bool Equals(object obj)
+        {
+            return (obj is SizeD size) && Equals(size);
+        }
+
+        public override int GetHashCode()
+        {
+            return Width.GetHashCode() ^ Height.GetHashCode();
+        }
+
         public override string ToString() => $"({Width}, {Height})";
 
         public static bool operator ==(SizeD left, SizeD right) => left.Equals(right);

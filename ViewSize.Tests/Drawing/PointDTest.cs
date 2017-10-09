@@ -18,20 +18,5 @@ namespace ViewSize.Tests.Drawing
             Assert.AreEqual(x, point.X);
             Assert.AreEqual(y, point.Y);
         }
-
-        [Test]
-        public void Scale()
-        {
-            // arrange
-            var point = new PointD(2, 4);
-            var scale = new ScaleD(2, 3);
-            var expected = new PointD(4, 12);
-
-            // act
-            var actual = point.Scale(scale);
-
-            // assert
-            Assert.AreEqual(expected, actual);
-        }
     }
 }
