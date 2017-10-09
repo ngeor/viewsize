@@ -74,7 +74,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                         // render streak
                         // recalculate streak bounds
                         streakBounds = CalculateStreakBounds(streakCandidate);
-                        DrawStreak(streakCandidate, streakBounds);
+                        RenderChildrenOfStreak(streakCandidate);
                         result.AddRange(streakCandidate);
 
                         // continue in remaining bounds
@@ -85,14 +85,14 @@ namespace CRLFLabs.ViewSize.TreeMap
                         // it got better (or we did not have a previous aspect to compare with)
                         // store it for reference
                         previousAspect = worseAspect;
-
-                        // if it's the last item let's draw
-                        if (i >= _fileSystemEntries.Count)
-                        {
-                            DrawStreak(streakCandidate, streakBounds);
-                            result.AddRange(streakCandidate);
-                        }
                     }
+                }
+                
+                // if it's the last item let's draw what's left
+                if (i >= _fileSystemEntries.Count)
+                {
+                    RenderChildrenOfStreak(streakCandidate);
+                    result.AddRange(streakCandidate);
                 }
             }
 
@@ -120,10 +120,10 @@ namespace CRLFLabs.ViewSize.TreeMap
             // e.g. draw total size = 10 pixels
             var streakBounds = _renderer.FillOneDimension(_bounds, _drawVertically, streakSizeInBytes);
 
-            foreach (var f in streakCandidate)
-            {
-                f.Bounds = _renderer.FillProportionally(streakBounds, _drawVertically, f.TotalSize);
-            }
+            // distribute the streak proportionally within the given bounds
+            _renderer.FillProportionally(streakBounds, _drawVertically, streakCandidate);
+
+            AdjustLastEntrySize(streakBounds, streakCandidate);
 
             return streakBounds;
         }
@@ -134,55 +134,28 @@ namespace CRLFLabs.ViewSize.TreeMap
             _drawVertically = bounds.Width > bounds.Height;
         }
 
-        private void Stack(LinkedList<FileSystemEntry> streak)
+        private void AdjustLastEntrySize(RectangleD streakBounds, LinkedList<FileSystemEntry> streakCandidate)
         {
-            bool isFirst = true;
-            OriginD lastOrigin = default(OriginD);
-            foreach (var renderedFileSystemEntry in streak)
+            // adjust bounds for last item due to rounding errors etc
+            var folderWithDrawSize = streakCandidate.Last.Value;
+            if (_drawVertically)
             {
-                if (isFirst)
-                {
-                    isFirst = false;
-                }
-                else
-                {
-                    renderedFileSystemEntry.Bounds = renderedFileSystemEntry.Bounds.WithOrigin(lastOrigin);
-                }
-
-                if (_drawVertically)
-                {
-                    lastOrigin = renderedFileSystemEntry.Bounds.Origin.Move(0, renderedFileSystemEntry.Bounds.Height);
-                }
-                else
-                {
-                    lastOrigin = renderedFileSystemEntry.Bounds.Origin.Move(renderedFileSystemEntry.Bounds.Width, 0);
-                }
+                folderWithDrawSize.Bounds = folderWithDrawSize.Bounds.WithHeight(streakBounds.Bottom - folderWithDrawSize.Bounds.Top);
             }
+            else
+            {
+                folderWithDrawSize.Bounds = folderWithDrawSize.Bounds.WithWidth(streakBounds.Right - folderWithDrawSize.Bounds.Left);
+            }
+
+            AssertInBounds(streakBounds, folderWithDrawSize.Bounds);
         }
 
-        private void DrawStreak(LinkedList<FileSystemEntry> streak, RectangleD streakBounds)
+        private void RenderChildrenOfStreak(LinkedList<FileSystemEntry> streak)
         {
-            Stack(streak);
-
-            foreach (var folderWithDrawSize in streak)
+            foreach (var entry in streak)
             {
-                if (folderWithDrawSize == streak.Last.Value)
-                {
-                    // adjust bounds for last item due to rounding errors etc
-                    if (_drawVertically)
-                    {
-                        folderWithDrawSize.Bounds = folderWithDrawSize.Bounds.WithHeight(streakBounds.Bottom - folderWithDrawSize.Bounds.Top);
-                    }
-                    else
-                    {
-                        folderWithDrawSize.Bounds = folderWithDrawSize.Bounds.WithWidth(streakBounds.Right - folderWithDrawSize.Bounds.Left);
-                    }
-                }
-
-                AssertInBounds(streakBounds, folderWithDrawSize.Bounds);
-
                 // subtree
-                folderWithDrawSize.Children = _renderer.Render(folderWithDrawSize);
+                entry.Children = _renderer.Render(entry);
             }
         }
     }

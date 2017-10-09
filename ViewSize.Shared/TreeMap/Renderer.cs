@@ -74,16 +74,23 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <param name="bounds"></param>
         /// <param name="drawVertically"></param>
         /// <returns></returns>
-        public RectangleD FillProportionally(RectangleD bounds, bool drawVertically, long sizeInBytes)
+        public void FillProportionally(RectangleD bounds, bool drawVertically, LinkedList<FileSystemEntry> streakCandidate)
         {
-            var amount = ToPixelSize(sizeInBytes);
-            if (drawVertically)
+            double lastLeft = bounds.Left;
+            double lastTop = bounds.Top;
+            foreach (var entry in streakCandidate)
             {
-                return bounds.WithHeight(amount / bounds.Width);
-            }
-            else
-            {
-                return bounds.WithWidth(amount / bounds.Height);
+                var amount = ToPixelSize(entry.TotalSize);
+                if (drawVertically)
+                {
+                    entry.Bounds = new RectangleD(bounds.Left, lastTop, bounds.Width, amount / bounds.Width);
+                    lastTop = entry.Bounds.Bottom;
+                }
+                else
+                {
+                    entry.Bounds = new RectangleD(lastLeft, bounds.Top, amount / bounds.Height, bounds.Height);
+                    lastLeft = entry.Bounds.Right;
+                }
             }
         }
     }
