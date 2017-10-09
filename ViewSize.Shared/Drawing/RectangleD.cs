@@ -48,9 +48,6 @@ namespace CRLFLabs.ViewSize.Drawing
         public override string ToString()
             => $"({Left}, {Top}), ({Right}, {Bottom})";
 
-        public RectangleD WithLeft(double left)
-            => new RectangleD(left, Top, Width, Height);
-
         public RectangleD Subtract(RectangleD innerRect)
         {
             // to subtract, we need two points of the two rectangles to be equal
@@ -78,33 +75,15 @@ namespace CRLFLabs.ViewSize.Drawing
             }
         }
 
-        /// <summary>
-        /// Creates a scaled version of this rectangle, applying the given scale transformation.
-        /// </summary>
-        /// <param name="scale">The scaling factor.</param>
-        /// <returns>A new scaled rectangle.</returns>
-        public RectangleD Scale(ScaleD scale)
-        {
-            double sx = scale.ScaleX;
-            double sy = scale.ScaleY;
-            return new RectangleD(Left * sx, Top * sy, Width * sx, Height * sy);
-        }
-
         public bool Contains(PointD point)
         {
             return Left <= point.X && point.X < Right && Top <= point.Y && point.Y < Bottom;
         }
-
-        public RectangleD WithTop(double top)
-            => new RectangleD(Left, top, Width, Height);
 
         public RectangleD WithWidth(double width)
             => new RectangleD(Left, Top, width, Height);
 
         public RectangleD WithHeight(double height)
             => new RectangleD(Left, Top, Width, height);
-
-        public RectangleD WithOrigin(OriginD origin)
-            => new RectangleD(origin.Left, origin.Top, Width, Height);
     }
 }

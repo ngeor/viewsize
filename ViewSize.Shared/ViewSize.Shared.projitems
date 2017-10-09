@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\Colors.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\IGraphics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\PointD.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Drawing\ScaleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeD.cs" />
