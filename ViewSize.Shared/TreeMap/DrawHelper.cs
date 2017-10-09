@@ -29,19 +29,28 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         private Func<RectangleD, bool> NeedsToDraw { get; }
 
-        public void Draw(TreeMapDataSource dataSource, RectangleD dirtyRect, ScaleD drawScale)
+        public void Draw(TreeMapDataSource dataSource, RectangleD dirtyRect, ScaleD drawScale,
+                        bool drawContents = true,
+                        bool drawSelected = true)
         {
-            // clear rect
-            Graphics.FillRect(Colors.White, dirtyRect);
-
             if (dataSource == null)
             {
+                // clear rect
+                Graphics.FillRect(Colors.White, dirtyRect);
                 return;
             }
 
             var selected = dataSource.Selected;
-            DrawChildren(dataSource, drawScale, selected);
-            DrawSelected(selected, drawScale);
+
+            if (drawContents)
+            {
+                DrawChildren(dataSource, drawScale, selected, 0);
+            }
+
+            if (drawSelected)
+            {
+                DrawSelected(selected, drawScale);
+            }
         }
 
         private void DrawSelected(FileSystemEntry selected, ScaleD drawScale)
@@ -49,22 +58,27 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (selected != null)
             {
                 var rect = selected.Bounds.Scale(drawScale);
-                Graphics.DrawRect(Colors.White, rect);
+                Graphics.DrawRect(Colors.Yellow, rect, 2);
             }
         }
 
         private void DrawChildren(
             IFileSystemEntryContainer container,
             ScaleD drawScale,
-            FileSystemEntry selected)
+            FileSystemEntry selected,
+            int level)
         {
+            //if (level > 7)
+            //{
+            //    return;
+            //}
             foreach (var entry in container.Children)
             {
-                Draw(entry, drawScale, selected);
+                Draw(entry, drawScale, selected, level + 1);
             }
         }
 
-        private void Draw(FileSystemEntry entry, ScaleD drawScale, FileSystemEntry selected)
+        private void Draw(FileSystemEntry entry, ScaleD drawScale, FileSystemEntry selected, int level)
         {
             var rect = entry.Bounds.Scale(drawScale);
             if (!NeedsToDraw(rect))
@@ -75,15 +89,16 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (entry.Children.Any())
             {
                 // recursion
-                DrawChildren(entry, drawScale, selected);
+                DrawChildren(entry, drawScale, selected, level);
+                Graphics.DrawRect(Colors.Black, rect);
             }
             else
             {
-                DrawFill(entry, rect, selected);
+                DrawFill(entry, rect, selected, level);
             }
         }
 
-        private void DrawFill(FileSystemEntry entry, RectangleD rect, FileSystemEntry selected)
+        private void DrawFill(FileSystemEntry entry, RectangleD rect, FileSystemEntry selected, int level)
         {
             var fillColor = SelectFillColor(entry);
             var lightColor = fillColor.Lighter();
@@ -92,7 +107,7 @@ namespace CRLFLabs.ViewSize.TreeMap
 
             if (rect.Width >= 5 && rect.Height >= 5)
             {
-                Graphics.FillEllipseGradient(lightColor, fillColor, rect);
+                //Graphics.FillEllipseGradient(lightColor, fillColor, rect);
             }
 
             Graphics.DrawRect(darkColor, rect);

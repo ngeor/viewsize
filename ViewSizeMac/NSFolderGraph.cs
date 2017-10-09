@@ -25,6 +25,16 @@ namespace ViewSizeMac
         /// </summary>
         private RectangleD? _oldSelectedRect;
 
+        /// <summary>
+        /// Holds the last fully drawn image.
+        /// </summary>
+        private readonly ImageHolder _lastFullImageHolder = new ImageHolder();
+
+        /// <summary>
+        /// Holds the size of the last fully drawn image.
+        /// </summary>
+        private CGRect _lastFullImageRect;
+
         #region Constructors
 
         public NSFolderGraph()
@@ -70,6 +80,9 @@ namespace ViewSizeMac
                 {
                     Attach();
                 }
+
+                _lastFullImageHolder.Dispose();
+                _oldSelectedRect = null;
 
                 NeedsDisplay = true;
             }
@@ -139,41 +152,55 @@ namespace ViewSizeMac
             return bitmapImageRep;
         }
 
-        /// <summary>
-        /// Draws the view.
-        /// </summary>
-        /// <param name="dirtyRect">The rectangle that needs drawing.</param>
-        public override void DrawRect(CGRect dirtyRect)
+        private void DrawRectDuringLiveResize(CGRect dirtyRect)
         {
-            bool isFullDraw = !InLiveResize && dirtyRect == Bounds;
+            if (_lastFullImageHolder.HasValue)
+            {
+                // we have the last image, scale it even if it becomes fuzzy
+                _lastFullImageHolder.Image.Draw(
+                    dirtyRect,
+                    _lastFullImageRect,
+                    NSCompositingOperation.Copy,
+                    1,
+                    false,
+                    null);
+            }
+            else
+            {
+                // no last image, just paint everything white
+                NSColor.White.Set();
+                NSGraphics.RectFill(dirtyRect);
+            }
+        }
 
+        private void DrawRectNotResizing(CGRect dirtyRect)
+        {
             DrawHelper drawHelper = new DrawHelper(
                 new GraphicsImpl(),
                 rect => NeedsToDraw(rect.ToCGRect())
             );
 
-            if (InLiveResize)
+            // if bounds haven't changed since we drew the last full image
+            if (_lastFullImageRect == Bounds && _lastFullImageHolder.HasValue)
             {
-                // being resized, don't draw too much
-                if (_lastFullImage != null)
-                {
-                    _lastFullImage.Draw(
-                        dirtyRect,
-                        _lastFullImageRect,
-                        NSCompositingOperation.Copy,
-                        1,
-                        false,
-                        null);
-                }
-                else
-                {
-                    drawHelper.Graphics.FillRect(Colors.White, dirtyRect.ToRectangleD());
-                }
+                // draw the previous image
+                _lastFullImageHolder.Image.Draw(
+                    dirtyRect,
+                    dirtyRect,
+                    NSCompositingOperation.Copy,
+                    1,
+                    false,
+                    null);
+
+                // draw the selection on top
+                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale, drawContents: false);
             }
             else
             {
                 var bitmapImageRep = DrawInBitmap(() =>
-                             drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale));
+                {
+                    drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale, drawSelected: false);
+                });
                 NSImage image = new NSImage(Bounds.Size);
                 image.AddRepresentation(bitmapImageRep);
                 image.Draw(dirtyRect,
@@ -181,17 +208,15 @@ namespace ViewSizeMac
                            NSCompositingOperation.Copy,
                            1,
                            false, null);
+                
+                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), DrawScale, drawContents: false);
+
+                bool isFullDraw = dirtyRect == Bounds;
 
                 if (isFullDraw)
                 {
-                    // delete old last full image
-                    if (_lastFullImage != null)
-                    {
-                        _lastFullImage.Dispose();
-                    }
-
                     // store this image for resizing
-                    _lastFullImage = image;
+                    _lastFullImageHolder.Image = image;
                     _lastFullImageRect = dirtyRect;
                 }
                 else
@@ -201,8 +226,23 @@ namespace ViewSizeMac
             }
         }
 
-        private NSImage _lastFullImage;
-        private CGRect _lastFullImageRect;
+        /// <summary>
+        /// Draws the view.
+        /// </summary>
+        /// <param name="dirtyRect">The rectangle that needs drawing.</param>
+        public override void DrawRect(CGRect dirtyRect)
+        {
+            if (InLiveResize)
+            {
+                // being resized, don't draw too much
+                DrawRectDuringLiveResize(dirtyRect);
+            }
+            else
+            {
+                // not doing a live resize, regular drawing
+                DrawRectNotResizing(dirtyRect);
+            }
+        }
 
         public override void ViewWillStartLiveResize()
         {
@@ -284,6 +324,36 @@ namespace ViewSizeMac
             if (bounds.HasValue)
             {
                 SetNeedsDisplayInRect(bounds.Value.Scale(DrawScale).ToCGRect());
+            }
+        }
+    }
+
+    class ImageHolder : IDisposable
+    {
+        private NSImage _lastValue;
+
+        public bool HasValue => Image != null;
+
+        public NSImage Image
+        {
+            get
+            {
+                return _lastValue;
+            }
+
+            set
+            {
+                Dispose();
+                _lastValue = value;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_lastValue != null)
+            {
+                _lastValue.Dispose();
+                _lastValue = null;
             }
         }
     }

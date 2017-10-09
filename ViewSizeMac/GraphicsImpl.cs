@@ -6,10 +6,10 @@ namespace ViewSizeMac
 {
     public class GraphicsImpl : IGraphics
     {
-        public void DrawRect(ColorD color, RectangleD rect)
+        public void DrawRect(ColorD color, RectangleD rect, int width)
         {
             color.ToNSColor().Set();
-            NSGraphics.FrameRect(rect.ToCGRect());
+            NSGraphics.FrameRect(rect.ToCGRect(), width);
         }
 
         public void FillEllipseGradient(ColorD inner, ColorD outer, RectangleD rect)

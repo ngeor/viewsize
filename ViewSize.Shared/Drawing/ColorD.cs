@@ -23,7 +23,7 @@ namespace CRLFLabs.ViewSize.Drawing
         public ColorD Lighter() => Adjust(1.5f);
         public ColorD Darker() => Adjust(0.66f);
 
-        private ColorD Adjust(float factor)
+        public ColorD Adjust(float factor)
         {
             return new ColorD(Cap(Red * factor), Cap(Green * factor), Cap(Blue * factor));
         }
