@@ -182,7 +182,7 @@ namespace ViewSizeMac
             return null;
         }
 
-        public void TriggerSelectFolderClick()
+        internal void TriggerSelectFolderClick()
         {
             OnSelectFolder(null);
         }

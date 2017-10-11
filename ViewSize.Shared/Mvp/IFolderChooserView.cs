@@ -17,7 +17,5 @@ namespace CRLFLabs.ViewSize.Mvp
         /// </summary>
         /// <returns>The folder.</returns>
         string SelectFolder();
-
-        void TriggerSelectFolderClick();
     }
 }

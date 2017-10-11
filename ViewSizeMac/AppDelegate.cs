@@ -3,6 +3,7 @@ using AppKit;
 using CRLFLabs.ViewSize.Mvp;
 using Foundation;
 using CRLFLabs.ViewSize.Settings;
+using System.Linq;
 
 namespace ViewSizeMac
 {
@@ -35,7 +36,8 @@ namespace ViewSizeMac
         [Export("openDocument:")]
         void OnOpenDocument(NSObject sender)
         {
-            Registry.Instance.Get<IFolderChooserView>().TriggerSelectFolderClick();
+            FindViewController().TriggerSelectFolderClick();
+            ShowMainWindow();
         }
 
         /// <summary>
@@ -48,7 +50,26 @@ namespace ViewSizeMac
         {
             var model = Registry.Instance.Get<IFolderChooserModel>();
             model.Folder = filename;
+            ShowMainWindow();
             return true;
+        }
+
+        private ViewController FindViewController()
+        {
+            var q =
+                from w in NSApplication.SharedApplication.Windows
+                select w.ContentViewController as ViewController;
+            return q.FirstOrDefault();
+        }
+
+        private void ShowMainWindow()
+        {
+            var q =
+                from w in NSApplication.SharedApplication.Windows
+                where w.ContentViewController is ViewController
+                select w;
+            var window = q.FirstOrDefault();
+            window.MakeKeyAndOrderFront(this);
         }
     }
 }
