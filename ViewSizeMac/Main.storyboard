@@ -588,6 +588,9 @@ Gw
                                                             </prototypeCellViews>
                                                         </tableColumn>
                                                     </tableColumns>
+                                                    <connections>
+                                                        <outlet property="menu" destination="ZxG-Th-whh" id="M7Q-F8-4Oj"/>
+                                                    </connections>
                                                 </outlineView>
                                             </subviews>
                                         </clipView>
@@ -681,6 +684,22 @@ Gw
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="ZxG-Th-whh">
+                    <items>
+                        <menuItem title="Show in Finder" id="klb-rm-4DI">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="OnShowInFinder:" target="XfG-lQ-9wD" id="R41-Ew-bIg"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Item 2" id="EPf-C6-zE4">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 3" id="B7G-aA-pjo">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                    </items>
+                </menu>
             </objects>
             <point key="canvasLocation" x="75" y="814"/>
         </scene>

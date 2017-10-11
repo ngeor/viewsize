@@ -91,7 +91,19 @@ namespace ViewSizeMac
         partial void OnSelectFolder(NSObject sender) => OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
         partial void OnScan(NSObject sender) => OnBeginScanClick?.Invoke(this, EventArgs.Empty);
         partial void OnCancelScan(NSObject sender) => OnCancelScanClick?.Invoke(this, EventArgs.Empty);
+        partial void OnShowInFinder(NSObject sender)
+        {
+            var selected = folderGraph.DataSource?.Selected;
+            if (selected == null)
+            {
+                return;
+            }
 
+            NSWorkspace.SharedWorkspace.ActivateFileViewer(new NSUrl[]
+            {
+                new NSUrl(selected.Path, selected.IsDirectory)
+            });
+        }
         #endregion
 
         #region IMainView

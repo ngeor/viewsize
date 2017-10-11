@@ -53,6 +53,9 @@ namespace ViewSizeMac
 
 		[Action ("OnSelectFolder:")]
 		partial void OnSelectFolder (Foundation.NSObject sender);
+
+		[Action ("OnShowInFinder:")]
+		partial void OnShowInFinder (Foundation.NSObject sender);
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -86,6 +89,11 @@ namespace ViewSizeMac
 				folderGraph = null;
 			}
 
+			if (lblDuration != null) {
+				lblDuration.Dispose ();
+				lblDuration = null;
+			}
+
 			if (lblStatus != null) {
 				lblStatus.Dispose ();
 				lblStatus = null;
@@ -96,19 +104,14 @@ namespace ViewSizeMac
 				outlineView = null;
 			}
 
-			if (txtFolder != null) {
-				txtFolder.Dispose ();
-				txtFolder = null;
-			}
-
-			if (lblDuration != null) {
-				lblDuration.Dispose ();
-				lblDuration = null;
-			}
-
 			if (pbScan != null) {
 				pbScan.Dispose ();
 				pbScan = null;
+			}
+
+			if (txtFolder != null) {
+				txtFolder.Dispose ();
+				txtFolder = null;
 			}
 		}
 	}
