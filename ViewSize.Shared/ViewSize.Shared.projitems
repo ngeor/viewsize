@@ -42,6 +42,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\Registry.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

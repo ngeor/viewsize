@@ -31,5 +31,24 @@ namespace ViewSizeMac
             Closing?.Invoke(this, EventArgs.Empty);
             return NSApplicationTerminateReply.Now;
         }
+
+        [Export("openDocument:")]
+        void OnOpenDocument(NSObject sender)
+        {
+            Registry.Instance.Get<IFolderChooserView>().TriggerSelectFolderClick();
+        }
+
+        /// <summary>
+        /// Opens the file from the recently opened files list.
+        /// </summary>
+        /// <returns><c>true</c>, if file was opened, <c>false</c> otherwise.</returns>
+        /// <param name="sender">Sender.</param>
+        /// <param name="filename">Filename.</param>
+        public override bool OpenFile(NSApplication sender, string filename)
+        {
+            var model = Registry.Instance.Get<IFolderChooserModel>();
+            model.Folder = filename;
+            return true;
+        }
     }
 }

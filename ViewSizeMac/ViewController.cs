@@ -174,10 +174,17 @@ namespace ViewSizeMac
             dlg.CanCreateDirectories = false;
             if (dlg.RunModal() == 1)
             {
+                // TODO move this to the presenter
+                NSDocumentController.SharedDocumentController.NoteNewRecentDocumentURL(dlg.Url);
                 return dlg.Url.Path;
             }
 
             return null;
+        }
+
+        public void TriggerSelectFolderClick()
+        {
+            OnSelectFolder(null);
         }
 
         #endregion

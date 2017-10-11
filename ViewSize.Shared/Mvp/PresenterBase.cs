@@ -12,6 +12,7 @@ namespace CRLFLabs.ViewSize.Mvp
             }
 
             View = view;
+            Registry.Instance.Register(view);
             AttachToView();
         }
 
@@ -36,6 +37,7 @@ namespace CRLFLabs.ViewSize.Mvp
             }
 
             Model = model;
+            Registry.Instance.Register(model);
             AttachToModel();
         }
 
