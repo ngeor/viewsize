@@ -182,12 +182,35 @@ namespace ViewSizeMac
             return null;
         }
 
+        #endregion
+
         internal void TriggerSelectFolderClick()
         {
             OnSelectFolder(null);
         }
 
-        #endregion
+        [Action("upOneLevel:")]
+        public void UpOneLevel(NSObject sender)
+        {
+            // TODO move to presenter
+            var dataSource = folderGraph.DataSource;
+            if (dataSource == null)
+            {
+                return;
+            }
+
+            var selected = dataSource.Selected;
+            if (selected == null)
+            {
+                return;
+            }
+
+            var parent = selected.Parent as FileSystemEntry;
+            if (parent != null)
+            {
+                dataSource.Selected = parent;
+            }
+        }
 
         private void ShowExceptionAlert(Exception ex)
         {
