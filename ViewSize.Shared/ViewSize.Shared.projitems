@@ -43,6 +43,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\Registry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\SortKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

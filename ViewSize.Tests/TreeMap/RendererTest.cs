@@ -24,11 +24,11 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(entry);
 
             // act
-            var dataSource = Renderer.Render(fullBounds, folders);
+            var renderer = new Renderer(fullBounds, folders);
+            renderer.Render();
 
             // assert
-            Assert.AreEqual(1, dataSource.Children.Count);
-            Assert.AreEqual(new RectangleD(0, 0, width, height), dataSource.Children[0].Bounds);
+            Assert.AreEqual(new RectangleD(0, 0, width, height), folders[0].Bounds);
         }
 
         [Test]
@@ -42,12 +42,12 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(entry);
 
             // act
-            var calculatedBounds = Renderer.Render(fullBounds, folders).Children;
+            var renderer = new Renderer(fullBounds, folders);
+            renderer.Render();
 
             // assert
-            Assert.AreEqual(1, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].Bounds);
-            Assert.AreEqual(new RectangleD(0, 0, 100, 100), calculatedBounds[0].Children[0].Bounds);
+            Assert.AreEqual(new RectangleD(0, 0, 100, 100), folders[0].Bounds);
+            Assert.AreEqual(new RectangleD(0, 0, 100, 100), folders[0].Children[0].Bounds);
         }
 
         [Test]
@@ -63,12 +63,12 @@ namespace ViewSize.Tests.TreeMap
             };
 
             // act
-            var calculatedBounds = Renderer.Render(fullBounds, folders).Children;
+            var renderer = new Renderer(fullBounds, folders);
+            renderer.Render();
 
             // assert
-            Assert.AreEqual(2, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 50, 100), calculatedBounds[0].Bounds, "first rectangle");
-            Assert.AreEqual(new RectangleD(50, 0, 50, 100), calculatedBounds[1].Bounds, "second rectangle");
+            Assert.AreEqual(new RectangleD(0, 0, 50, 100), folders[0].Bounds, "first rectangle");
+            Assert.AreEqual(new RectangleD(50, 0, 50, 100), folders[1].Bounds, "second rectangle");
         }
 
         [Test]
@@ -86,14 +86,14 @@ namespace ViewSize.Tests.TreeMap
             };
 
             // act
-            var calculatedBounds = Renderer.Render(fullBounds, folders).Children;
+            var renderer = new Renderer(fullBounds, folders);
+            renderer.Render();
 
             // assert
-            Assert.AreEqual(4, calculatedBounds.Count);
-            Assert.AreEqual(new RectangleD(0, 0, 50, 50), calculatedBounds[0].Bounds, "first rectangle");
-            Assert.AreEqual(new RectangleD(50, 0, 50, 50), calculatedBounds[1].Bounds, "second rectangle");
-            Assert.AreEqual(new RectangleD(0, 50, 50, 50), calculatedBounds[2].Bounds, "third rectangle");
-            Assert.AreEqual(new RectangleD(50, 50, 50, 50), calculatedBounds[3].Bounds, "fourth rectangle");
+            Assert.AreEqual(new RectangleD(0, 0, 50, 50), folders[0].Bounds, "first rectangle");
+            Assert.AreEqual(new RectangleD(50, 0, 50, 50), folders[1].Bounds, "second rectangle");
+            Assert.AreEqual(new RectangleD(0, 50, 50, 50), folders[2].Bounds, "third rectangle");
+            Assert.AreEqual(new RectangleD(50, 50, 50, 50), folders[3].Bounds, "fourth rectangle");
         }
 
         [Test]
@@ -109,9 +109,8 @@ namespace ViewSize.Tests.TreeMap
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                Renderer.Render(
-                    new RectangleD(0, 0, 800, 600),
-                    topLevelFolders);
+                var renderer = new Renderer(new RectangleD(0,0,800,600), topLevelFolders);
+                renderer.Render();
             }
 
             stopwatch.Stop();

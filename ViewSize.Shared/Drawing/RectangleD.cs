@@ -45,6 +45,8 @@ namespace CRLFLabs.ViewSize.Drawing
 
         public PointD Center => new PointD(Left + Width / 2, Top + Height / 2);
 
+        public bool IsEmpty => Width < 1 || Height < 1;
+
         public override string ToString()
             => $"({Left}, {Top}), ({Right}, {Bottom})";
 

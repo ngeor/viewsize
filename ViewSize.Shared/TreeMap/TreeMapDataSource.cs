@@ -61,14 +61,27 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         private RectangleD Bounds { get; set; }
 
-        public void ReCalculate(RectangleD bounds)
+        public void ReCalculate(RectangleD bounds, SortKey sortKey)
         {
             if (Bounds.Size == bounds.Size)
             {
                 return;
             }
 
-            Renderer.Render(bounds, Children);
+            var renderer = new Renderer(bounds, Children);
+            switch (sortKey)
+            {
+                case SortKey.Size:
+                    renderer.Measurer = Renderer.TotalSizeMeasurer;
+                    break;
+                case SortKey.Count:
+                    renderer.Measurer = Renderer.FileCountMeasurer;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+
+            renderer.Render();
             Bounds = bounds;
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AppKit;
 using CRLFLabs.ViewSize.Mvp;
 using Foundation;
@@ -8,7 +8,7 @@ using System.Linq;
 namespace ViewSizeMac
 {
     [Register("AppDelegate")]
-    public class AppDelegate : NSApplicationDelegate, IApplicationView
+    public partial class AppDelegate : NSApplicationDelegate, IApplicationView
     {
         public AppDelegate()
         {
@@ -20,6 +20,7 @@ namespace ViewSizeMac
         public override void DidFinishLaunching(NSNotification notification)
         {
             // Insert code here to initialize your application
+            mnuFileSizeTreeMap.State = NSCellStateValue.On;
         }
 
         public override void WillTerminate(NSNotification notification)
@@ -38,6 +39,24 @@ namespace ViewSizeMac
         {
             FindViewController().TriggerSelectFolderClick();
             ShowMainWindow();
+        }
+
+        [Export("fileSizeTreeMap:")]
+        void OnFileSizeTreeMap(NSObject sender)
+        {
+            mnuFileSizeTreeMap.State = NSCellStateValue.On;
+            mnuFileCountTreeMap.State = NSCellStateValue.Off;
+            var model = Registry.Instance.Get<IMainModel>();
+            model.SortKey = CRLFLabs.ViewSize.IO.SortKey.Size;
+        }
+
+        [Export("fileCountTreeMap:")]
+        void OnFileCountTreeMap(NSObject sender)
+        {
+            mnuFileCountTreeMap.State = NSCellStateValue.On;
+            mnuFileSizeTreeMap.State = NSCellStateValue.Off;
+            var model = Registry.Instance.Get<IMainModel>();
+            model.SortKey = CRLFLabs.ViewSize.IO.SortKey.Count;
         }
 
         /// <summary>

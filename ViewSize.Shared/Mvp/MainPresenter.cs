@@ -11,17 +11,15 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Main presenter.
     /// </summary>
-    public class MainPresenter : PresenterBase<IMainView>
+    public class MainPresenter : PresenterBase<IMainView, IMainModel>
     {
-        private TreeMapDataSource _treeMapDataSource;
         private bool _isScanning;
 
         /// <summary>
         /// Creates an instance of this class.
         /// </summary>
-        /// <param name="view">The view.</param>
-        public MainPresenter(IMainView view, IFolderScanner folderScanner, IFileUtils fileUtils)
-            : base(view)
+        public MainPresenter(IMainView view, IMainModel model, IFolderScanner folderScanner, IFileUtils fileUtils)
+            : base(view, model)
         {
             FileUtils = fileUtils;
             FolderScanner = folderScanner;
@@ -31,25 +29,19 @@ namespace CRLFLabs.ViewSize.Mvp
         private IFolderScanner FolderScanner { get; }
         private IFileUtils FileUtils { get; }
 
-        private TreeMapDataSource TreeMapDataSource
-        {
-            get
-            {
-                return _treeMapDataSource;
-            }
-            set
-            {
-                Detach(_treeMapDataSource);
-                _treeMapDataSource = value;
-                Attach(_treeMapDataSource);
-            }
-        }
-
         protected override void AttachToView()
         {
             View.OnBeginScanClick += View_OnBeginScanClick;
             View.OnCancelScanClick += View_OnCancelScanClick;
             View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
+            View.OnRedrawTreeMapClick += View_OnRedrawTreeMapClick;
+        }
+
+        protected override void AttachToModel()
+        {
+            Model.PropertyChanging += Model_PropertyChanging;
+            Model.PropertyChanged += Model_PropertyChanged;
+            Attach(Model.DataSource);
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)
@@ -69,7 +61,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
             _isScanning = true;
             View.EnableUI(false);
-            var treeMapSize = View.TreeMapActualSize;
+            var treeMapSize = View.TreeMapBounds.Size;
             var treeMapWidth = treeMapSize.Width;
             var treeMapHeight = treeMapSize.Height;
 
@@ -97,13 +89,12 @@ namespace CRLFLabs.ViewSize.Mvp
                     var topLevelFolders = FolderScanner.Scan(path);
 
                     var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    TreeMapDataSource = Renderer.Render(
-                        bounds,
-                        topLevelFolders);
+                    var renderer = new Renderer(bounds, topLevelFolders);
+                    renderer.Render();
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
-                        View.SetTreeMapDataSource(TreeMapDataSource);
+                        Model.DataSource = new TreeMapDataSource(topLevelFolders, bounds);
                     });
                 }
                 catch (Exception ex)
@@ -128,7 +119,33 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void View_OnTreeViewSelectionChanged(object sender, FileSystemEventArgs e)
         {
-            _treeMapDataSource.Selected = e.FileSystemEntry;
+            Model.DataSource.Selected = e.FileSystemEntry;
+        }
+
+        void View_OnRedrawTreeMapClick(object sender, EventArgs e)
+        {
+            Model.DataSource?.ReCalculate(View.TreeMapBounds, Model.SortKey);
+        }
+
+        void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
+        {
+            if (e.PropertyName == MainModel.DataSourceProperty)
+            {
+                Detach(Model.DataSource);
+            }
+        }
+
+        void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case MainModel.DataSourceProperty:
+                    Attach(Model.DataSource);
+                    break;
+                case MainModel.SortKeyProperty:
+                    Model.DataSource?.ReCalculate(View.TreeMapBounds, Model.SortKey);
+                    break;
+            }
         }
 
         private void Attach(TreeMapDataSource treeMapDataSource)
@@ -149,7 +166,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void TreeMapDataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            View.SetSelectedTreeViewItem(TreeMapDataSource.Selected);
+            View.SetSelectedTreeViewItem(Model.DataSource.Selected);
         }
 
         private void _folderScanner_Scanning(object sender, FileSystemEventArgs e)

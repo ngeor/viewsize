@@ -90,6 +90,10 @@
     <Compile Include="FileSystemEntry.cs" />
     <Compile Include="FolderChooserModel.cs" />
     <Compile Include="GraphicsImpl.cs" />
+    <Compile Include="AppDelegate.designer.cs">
+      <DependentUpon>AppDelegate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImageHolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />

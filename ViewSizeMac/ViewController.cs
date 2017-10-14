@@ -16,6 +16,7 @@ namespace ViewSizeMac
     public partial class ViewController : NSViewController, IMainView, IFolderChooserView
     {
         private MainPresenter _mainPresenter;
+        private MainModel _mainModel;
         private FolderChooserPresenter _folderChooserPresenter;
 
         public ViewController(IntPtr handle) : base(handle)
@@ -61,8 +62,10 @@ namespace ViewSizeMac
         private void CreatePresenters()
         {
             var fileUtils = new FileUtils();
+            _mainModel = new MainModel();
             _mainPresenter = new MainPresenter(
                 this,
+                _mainModel,
                 new FolderScanner(fileUtils),
                 fileUtils
             );
@@ -71,6 +74,8 @@ namespace ViewSizeMac
                 new FolderChooserModel(txtFolder),
                 SettingsManager.Instance
             );
+
+            _mainModel.PropertyChanged += _mainModel_PropertyChanged;
         }
 
         public override NSObject RepresentedObject
@@ -111,8 +116,19 @@ namespace ViewSizeMac
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+        public event EventHandler OnRedrawTreeMapClick
+        {
+            add
+            {
+                folderGraph.OnRedrawTreeMapClick += value;
+            }
+            remove
+            {
+                folderGraph.OnRedrawTreeMapClick -= value;
+            }
+        }
 
-        public SizeD TreeMapActualSize => folderGraph.BoundsD.Size;
+        public RectangleD TreeMapBounds => folderGraph.BoundsD;
         string IMainView.SelectedFolder => txtFolder.StringValue;
 
         public void EnableUI(bool enable)
@@ -137,11 +153,14 @@ namespace ViewSizeMac
 
         public void ShowError(string message) => MessageBox.ShowMessage(message);
 
-        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
+        void _mainModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            var dataSource = new FolderOutlineDataSource(treeMapDataSource.Children);
-            outlineView.DataSource = dataSource;
-            folderGraph.DataSource = treeMapDataSource;
+            if (e.PropertyName == MainModel.DataSourceProperty)
+            {
+                var dataSource = new FolderOutlineDataSource(_mainModel.DataSource.Children);
+                outlineView.DataSource = dataSource;
+                folderGraph.DataSource = _mainModel.DataSource;
+            }
         }
 
         public void SetScanningItem(string path) => lblStatus.StringValue = path;

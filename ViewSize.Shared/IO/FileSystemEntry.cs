@@ -36,6 +36,7 @@ namespace CRLFLabs.ViewSize.IO
         // virtual for unit tests
         public virtual long TotalSize { get; private set; }
         public double Percentage { get; set; }
+        public long FileCount { get; private set; }
 
         // relationships
         public IFileSystemEntryContainer Parent
@@ -119,10 +120,12 @@ namespace CRLFLabs.ViewSize.IO
             if (!IsDirectory)
             {
                 TotalSize = OwnSize;
+                FileCount = 1;
                 return;
             }
 
             TotalSize = _children.Select(c => c.TotalSize).Sum();
+            FileCount = _children.Select(c => c.FileCount).Sum();
             _children.Sort((x, y) =>
             {
                 if (x.TotalSize > y.TotalSize)

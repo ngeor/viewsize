@@ -30,16 +30,19 @@ namespace ViewSizeMac
             var folder = item as FileSystemEntry;
 
 			// Setup view based on the column selected
-			switch (tableColumn.Title)
+            switch (tableColumn.Identifier)
 			{
-				case "Folder":
+				case "colFolder":
                     view.StringValue = folder.DisplayText;
 					break;
-				case "Size":
+				case "colSize":
                     view.StringValue = folder.DisplaySize;
 					break;
+                case "colFileCount":
+                    view.StringValue = folder.FileCount.ToString();
+                    break;
                 default:
-                    view.StringValue = tableColumn.Title;
+                    view.StringValue = tableColumn.Identifier;
                     break;
 			}
 

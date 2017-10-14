@@ -47,7 +47,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     var entry = _fileSystemEntries[i];
                     i++;
 
-                    if (entry.TotalSize <= 0)
+                    if (_renderer.Measurer(entry) <= 0)
                     {
                         continue;
                     }
@@ -110,7 +110,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         private RectangleD CalculateStreakBounds(LinkedList<FileSystemEntry> streakCandidate)
         {
             // real size of the streak
-            var streakSizeInBytes = streakCandidate.Sum(f => f.TotalSize);
+            var streakSizeInBytes = streakCandidate.Sum(_renderer.Measurer);
 
             // e.g. draw total size = 10 pixels
             var streakBounds = _renderer.FillOneDimension(_bounds, _drawVertically, streakSizeInBytes);
@@ -150,7 +150,10 @@ namespace CRLFLabs.ViewSize.TreeMap
             foreach (var entry in streak)
             {
                 // subtree
-                _renderer.Render(entry);
+                if (!entry.Bounds.IsEmpty)
+                {
+                    _renderer.Render(entry);
+                }
             }
         }
     }

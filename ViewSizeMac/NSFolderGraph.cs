@@ -61,6 +61,8 @@ namespace ViewSizeMac
 
         #endregion
 
+        public event EventHandler OnRedrawTreeMapClick;
+
         public TreeMapDataSource DataSource
         {
             get
@@ -246,7 +248,7 @@ namespace ViewSizeMac
         {
             base.ViewDidEndLiveResize();
 
-            DataSource?.ReCalculate(BoundsD);
+            OnRedrawTreeMapClick?.Invoke(this, EventArgs.Empty);
 
             // request full redraw
             NeedsDisplay = true;
@@ -319,36 +321,6 @@ namespace ViewSizeMac
             if (bounds.HasValue)
             {
                 SetNeedsDisplayInRect(bounds.Value.ToCGRect());
-            }
-        }
-    }
-
-    class ImageHolder : IDisposable
-    {
-        private NSImage _lastValue;
-
-        public bool HasValue => Image != null;
-
-        public NSImage Image
-        {
-            get
-            {
-                return _lastValue;
-            }
-
-            set
-            {
-                Dispose();
-                _lastValue = value;
-            }
-        }
-
-        public void Dispose()
-        {
-            if (_lastValue != null)
-            {
-                _lastValue.Dispose();
-                _lastValue = null;
             }
         }
     }

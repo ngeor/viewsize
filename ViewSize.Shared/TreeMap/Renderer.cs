@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
 
@@ -14,32 +13,28 @@ namespace CRLFLabs.ViewSize.TreeMap
     {
         private readonly long totalSizeInBytes;
         private readonly double totalSizeInPixels;
+        private readonly RectangleD _fullBounds;
+        private readonly IReadOnlyList<FileSystemEntry> _fileSystemEntries;
 
-        private Renderer(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
+        public Renderer(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
         {
             // e.g. real total size = 200 bytes
-            totalSizeInBytes = fileSystemEntries.Sum(f => f.TotalSize);
+            totalSizeInBytes = fileSystemEntries.Sum(Measurer);
 
             // e.g. draw total size = 100 pixels = 20x5
             totalSizeInPixels = fullBounds.Width * fullBounds.Height;
+
+            _fullBounds = fullBounds;
+            _fileSystemEntries = fileSystemEntries;
         }
 
-        /// <summary>
-        /// Renders a tree map of the given file system entries within the given bounds.
-        /// </summary>
-        /// <param name="fullBounds">The bounds within to render.</param>
-        /// <param name="fileSystemEntries">The file system entries.</param>
-        public static TreeMapDataSource Render(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
+        public void Render()
         {
-            var originalRenderer = new Renderer(fullBounds, fileSystemEntries);
-            var partialRenderer = new PartialRenderer(originalRenderer, fullBounds, fileSystemEntries);
+            var partialRenderer = new PartialRenderer(this, _fullBounds, _fileSystemEntries);
             partialRenderer.Render();
-
-            var result = new TreeMapDataSource(fileSystemEntries, fullBounds);
-            return result;
         }
 
-        public void Render(FileSystemEntry parent)
+        internal void Render(FileSystemEntry parent)
         {
             var partialRenderer = new PartialRenderer(this, parent.Bounds, parent.Children);
             partialRenderer.Render();
@@ -80,7 +75,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             double lastTop = bounds.Top;
             foreach (var entry in streakCandidate)
             {
-                var amount = ToPixelSize(entry.TotalSize);
+                var amount = ToPixelSize(Measurer(entry));
                 if (drawVertically)
                 {
                     entry.Bounds = new RectangleD(bounds.Left, lastTop, bounds.Width, amount / bounds.Width);
@@ -93,5 +88,10 @@ namespace CRLFLabs.ViewSize.TreeMap
                 }
             }
         }
+
+        public Func<FileSystemEntry, long> Measurer { get; set; } = TotalSizeMeasurer;
+
+        public static Func<FileSystemEntry, long> TotalSizeMeasurer = f => f.TotalSize;
+        public static Func<FileSystemEntry, long> FileCountMeasurer = f => f.FileCount;
     }
 }
