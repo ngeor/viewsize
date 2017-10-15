@@ -43,7 +43,6 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             Model.PropertyChanging += Model_PropertyChanging;
             Model.PropertyChanged += Model_PropertyChanged;
-            Attach(Model.DataSource);
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)
@@ -98,8 +97,7 @@ namespace CRLFLabs.ViewSize.Mvp
                         _lastBounds = bounds;
                         _lastSortKey = Model.SortKey;
 
-                        Model.TopLevelFolders = topLevelFolders;
-                        Model.DataSource = new TreeMapDataSource(topLevelFolders);
+                        Model.Children = topLevelFolders;
                     });
                 }
                 catch (Exception ex)
@@ -124,7 +122,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void View_OnTreeViewSelectionChanged(object sender, FileSystemEventArgs e)
         {
-            Model.DataSource.Selected = e.FileSystemEntry;
+            Model.Selected = e.FileSystemEntry;
         }
 
         void TreeMapView_RedrawNeeded(object sender, EventArgs e)
@@ -134,46 +132,21 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
         {
-            if (e.PropertyName == MainModel.DataSourceProperty)
-            {
-                Detach(Model.DataSource);
-            }
         }
 
         void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case MainModel.DataSourceProperty:
-                    Attach(Model.DataSource);
+                case MainModel.SelectedPropertyName:
+                    View.SetSelectedTreeViewItem(Model.Selected);
                     break;
-                case MainModel.SortKeyProperty:
+                case MainModel.SortKeyPropertyName:
                     ReCalculateTreeMap(true);
                     break;
             }
         }
-
-        private void Attach(TreeMapDataSource treeMapDataSource)
-        {
-            if (treeMapDataSource != null)
-            {
-                treeMapDataSource.PropertyChanged += TreeMapDataSource_PropertyChanged;
-            }
-        }
-
-        private void Detach(TreeMapDataSource treeMapDataSource)
-        {
-            if (treeMapDataSource != null)
-            {
-                treeMapDataSource.PropertyChanged -= TreeMapDataSource_PropertyChanged;
-            }
-        }
-
-        private void TreeMapDataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            View.SetSelectedTreeViewItem(Model.DataSource.Selected);
-        }
-
+        
         private void _folderScanner_Scanning(object sender, FileSystemEventArgs e)
         {
             View.RunOnGuiThread(() =>
@@ -184,7 +157,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void ReCalculateTreeMap(bool forceRedraw)
         {
-            if (Model.TopLevelFolders == null)
+            if (Model.Children == null)
             {
                 // no data yet
                 return;
@@ -199,7 +172,7 @@ namespace CRLFLabs.ViewSize.Mvp
             _lastBounds = bounds;
             _lastSortKey = Model.SortKey;
 
-            var renderer = new Renderer(bounds, Model.TopLevelFolders, Model.SortKey);
+            var renderer = new Renderer(bounds, Model.Children, Model.SortKey);
             renderer.Render();
 
             if (forceRedraw)

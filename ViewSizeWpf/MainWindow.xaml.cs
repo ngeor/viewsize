@@ -32,6 +32,8 @@ namespace ViewSizeWpf
             var folderChooserPresenter = new FolderChooserPresenter(this, this, settingsManager);
 
             var applicationPresenter = new ApplicationPresenter(this, settingsManager);
+
+            treeMap.Model = _mainModel;
         }
 
         #region IFolderChooserModel
@@ -79,10 +81,9 @@ namespace ViewSizeWpf
 
         private void MainModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == MainModel.DataSourceProperty)
+            if (e.PropertyName == MainModel.ChildrenPropertyName)
             {
-                treeMap.DataSource = ((MainModel)sender).DataSource;
-                treeView.DataContext = ((MainModel)sender).DataSource;
+                treeView.DataContext = ((MainModel)sender);
             }
         }
 
@@ -162,12 +163,12 @@ namespace ViewSizeWpf
 
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var dataSource = treeMap.DataSource;
-            if (dataSource != null)
+            var fileSystemEntries = _mainModel.Children;
+            if (fileSystemEntries != null)
             {
                 var point = e.GetPosition(treeMap);
-                var folder = dataSource.Find(point.ToPointD());
-                dataSource.Selected = folder;
+                var folder = fileSystemEntries.Find(point.ToPointD());
+                _mainModel.Selected = folder;
             }
         }
 
@@ -242,12 +243,12 @@ namespace ViewSizeWpf
 
         private void UpOneLevel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _mainModel.DataSource.Selected = _mainModel.DataSource.Selected.Parent as FileSystemEntry;
+            _mainModel.Selected = _mainModel.Selected.Parent as FileSystemEntry;
         }
 
         private void UpOneLevel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var selected = _mainModel.DataSource?.Selected;
+            var selected = _mainModel?.Selected;
             e.CanExecute = selected != null && selected.Parent is FileSystemEntry;
         }
 

@@ -14,7 +14,7 @@ namespace CRLFLabs.ViewSize.IO
         /// <summary>
         /// Holds a value indicating whether scanning is in progress.
         /// </summary>
-        private bool scanning;
+        private bool _scanning;
 
         public FolderScanner(IFileUtils fileUtils)
         {
@@ -23,9 +23,7 @@ namespace CRLFLabs.ViewSize.IO
 
         private IFileUtils FileUtils { get; }
 
-        /// <summary>
-        /// Gets the total size, in bytes, of the scanned items.
-        /// </summary>
+        // TODO: remove TotalSize from here, move it to the Model
         private long TotalSize { get; set; }
 
         /// <summary>
@@ -52,12 +50,12 @@ namespace CRLFLabs.ViewSize.IO
         /// <param name="paths">The paths to scan.</param>
         public IReadOnlyList<FileSystemEntry> Scan(params string[] paths)
         {
-            if (scanning)
+            if (_scanning)
             {
                 throw new InvalidOperationException("Already scanning");
             }
 
-            scanning = true;
+            _scanning = true;
             TotalSize = 0;
 
             try
@@ -81,7 +79,7 @@ namespace CRLFLabs.ViewSize.IO
             }
             finally
             {
-                scanning = false;
+                _scanning = false;
 
                 // reset cancel flag
                 CancelRequested = false;

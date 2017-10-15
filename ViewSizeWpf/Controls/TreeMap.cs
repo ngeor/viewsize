@@ -13,38 +13,38 @@ namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement, ITreeMapView
     {
-        private TreeMapDataSource _dataSource;
+        private IMainModel _model;
 
-        public TreeMapDataSource DataSource
+        public IMainModel Model
         {
             get
             {
-                return _dataSource;
+                return _model;
             }
             set
             {
-                Detach(_dataSource);
-                _dataSource = value;
-                Attach(_dataSource);
+                Detach(_model);
+                _model = value;
+                Attach(_model);
                 InvalidateVisual();
             }
         }
 
         public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
 
-        private void Attach(TreeMapDataSource dataSource)
+        private void Attach(IMainModel model)
         {
-            if (dataSource != null)
+            if (model != null)
             {
-                dataSource.PropertyChanged += DataSourcePropertyChanged;
+                model.PropertyChanged += DataSourcePropertyChanged;
             }
         }
 
-        private void Detach(TreeMapDataSource dataSource)
+        private void Detach(IMainModel model)
         {
-            if (dataSource != null)
+            if (model != null)
             {
-                dataSource.PropertyChanged -= DataSourcePropertyChanged;
+                model.PropertyChanged -= DataSourcePropertyChanged;
             }
         }
 
@@ -76,7 +76,7 @@ namespace ViewSizeWpf.Controls
                 {
                     GdiGraphics graphics = new GdiGraphics(g);
                     DrawHelper drawHelper = new DrawHelper(graphics, (r) => true);
-                    drawHelper.Draw(DataSource, new RectangleD(0, 0, ActualWidth, ActualHeight));
+                    drawHelper.Draw(Model, new RectangleD(0, 0, ActualWidth, ActualHeight));
                 }
 
                 var hbmp = tempBitmap.GetHbitmap();

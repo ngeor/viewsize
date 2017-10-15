@@ -4,6 +4,7 @@ using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
 using System.Collections.Generic;
+using CRLFLabs.ViewSize.Mvp;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
@@ -30,22 +31,22 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         private Func<RectangleD, bool> NeedsToDraw { get; }
 
-        public void Draw(TreeMapDataSource dataSource, RectangleD dirtyRect,
+        public void Draw(IMainModel model, RectangleD dirtyRect,
                         bool drawContents = true,
                         bool drawSelected = true)
         {
-            if (dataSource == null)
+            if (model == null || model.Children == null)
             {
                 // clear rect
                 Graphics.FillRect(Colors.White, dirtyRect);
                 return;
             }
 
-            var selected = dataSource.Selected;
+            var selected = model.Selected;
 
             if (drawContents)
             {
-                DrawChildren(dataSource.Children, selected, 0);
+                DrawChildren(model.Children, selected, 0);
             }
 
             if (drawSelected)

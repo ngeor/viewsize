@@ -9,6 +9,5 @@ namespace CRLFLabs.ViewSize.IO
 
         IReadOnlyList<FileSystemEntry> Scan(params string[] paths);
         void Cancel();
-
     }
 }

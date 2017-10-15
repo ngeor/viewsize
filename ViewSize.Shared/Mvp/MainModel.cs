@@ -1,20 +1,19 @@
 ﻿using System;
 using System.ComponentModel;
 using CRLFLabs.ViewSize.IO;
-using CRLFLabs.ViewSize.TreeMap;
 using System.Collections.Generic;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
     public class MainModel : IMainModel
     {
-        public const string SortKeyProperty = "SortKey";
-        public const string DataSourceProperty = "DataSource";
-        public const string TopLevelFoldersProperty = "TopLevelFolders";
+        public const string SortKeyPropertyName = "SortKey";
+        public const string ChildrenPropertyName = "Children";
+        public const string SelectedPropertyName = "Selected";
 
         private SortKey _sortKey;
-        private TreeMapDataSource _dataSource;
-        private IReadOnlyList<FileSystemEntry> _topLevelFolders;
+        private IReadOnlyList<FileSystemEntry> _children;
+        private FileSystemEntry _selected;
 
         public event PropertyChangingEventHandler PropertyChanging;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -29,43 +28,43 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 if (_sortKey != value)
                 {
-                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SortKeyProperty));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SortKeyPropertyName));
                     _sortKey = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SortKeyProperty));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SortKeyPropertyName));
                 }
             }
         }
 
-        public TreeMapDataSource DataSource
+        public IReadOnlyList<FileSystemEntry> Children
         {
             get
             {
-                return _dataSource;
+                return _children;
             }
             set
             {
-                if (_dataSource != value)
+                if (_children != value)
                 {
-                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(DataSourceProperty));
-                    _dataSource = value;
-                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(DataSourceProperty));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(ChildrenPropertyName));
+                    _children = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(ChildrenPropertyName));
                 }
             }
         }
 
-        public IReadOnlyList<FileSystemEntry> TopLevelFolders
+        public FileSystemEntry Selected
         {
             get
             {
-                return _topLevelFolders;
+                return _selected;
             }
             set
             {
-                if (_topLevelFolders != value)
+                if (_selected != value)
                 {
-                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(TopLevelFoldersProperty));
-                    _topLevelFolders = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(TopLevelFoldersProperty));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SelectedPropertyName));
+                    _selected = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SelectedPropertyName));
                 }
             }
         }
