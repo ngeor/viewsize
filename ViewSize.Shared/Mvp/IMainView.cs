@@ -25,10 +25,8 @@ namespace CRLFLabs.ViewSize.Mvp
         /// </summary>
         event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
-        event EventHandler OnRedrawTreeMapClick;
-
         string SelectedFolder { get; }
-        RectangleD TreeMapBounds { get; }
+        ITreeMapView TreeMapView { get; }
 
         void EnableUI(bool enable);
 

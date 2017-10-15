@@ -91,17 +91,6 @@ namespace ViewSizeWpf
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
-        public event EventHandler OnRedrawTreeMapClick
-        {
-            add
-            {
-                treeMap.OnRedrawTreeMapClick += value;
-            }
-            remove
-            {
-                treeMap.OnRedrawTreeMapClick -= value;
-            }
-        }
 
         public string SelectedFolder
         {
@@ -118,7 +107,7 @@ namespace ViewSizeWpf
             Cursor = enable ? Cursors.Arrow : Cursors.Wait;
         }
 
-        public RectangleD TreeMapBounds => new RectangleD(0, 0, treeMap.ActualWidth, treeMap.ActualHeight);
+        public ITreeMapView TreeMapView => treeMap;
 
         public void SetScanningItem(string path) => lblStatus.Content = path;
         public void SetDurationLabel(string durationLabel) => lblDuration.Content = durationLabel;

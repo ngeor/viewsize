@@ -21,7 +21,7 @@ namespace ViewSize.Tests.TreeMap
             var topLevelEntries = Lists.Of(topLevelEntry);
 
             // act
-            TreeMapDataSource dataSource = new TreeMapDataSource(topLevelEntries, default(RectangleD));
+            TreeMapDataSource dataSource = new TreeMapDataSource(topLevelEntries);
 
             // assert
             var dataSourceChildren = dataSource.Children;

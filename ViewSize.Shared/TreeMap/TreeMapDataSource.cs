@@ -16,10 +16,9 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         private FileSystemEntry _selected;
 
-        public TreeMapDataSource(IEnumerable<FileSystemEntry> topLevelEntries, RectangleD bounds)
+        public TreeMapDataSource(IEnumerable<FileSystemEntry> topLevelEntries)
         {
             Children = topLevelEntries.Select(SetParent).ToList();
-            Bounds = bounds;
         }
 
         public event PropertyChangingEventHandler PropertyChanging;
@@ -57,15 +56,6 @@ namespace CRLFLabs.ViewSize.TreeMap
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SelectedPropertyName));
                 }
             }
-        }
-
-        private RectangleD Bounds { get; set; }
-
-        public void ReCalculate(RectangleD bounds, SortKey sortKey)
-        {
-            var renderer = new Renderer(bounds, Children, sortKey);
-            renderer.Render();
-            Bounds = bounds;
         }
 
         /// <summary>

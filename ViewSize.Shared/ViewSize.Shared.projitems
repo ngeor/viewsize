@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />

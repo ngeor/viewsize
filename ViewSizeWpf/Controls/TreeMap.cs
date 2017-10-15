@@ -7,10 +7,11 @@ using System.Windows.Interop;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using System.ComponentModel;
+using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeWpf.Controls
 {
-    public class TreeMap : FrameworkElement
+    public class TreeMap : FrameworkElement, ITreeMapView
     {
         private TreeMapDataSource _dataSource;
 
@@ -28,6 +29,8 @@ namespace ViewSizeWpf.Controls
                 InvalidateVisual();
             }
         }
+
+        public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
 
         private void Attach(TreeMapDataSource dataSource)
         {
@@ -50,7 +53,7 @@ namespace ViewSizeWpf.Controls
             InvalidateVisual();
         }
 
-        public event EventHandler OnRedrawTreeMapClick;
+        public event EventHandler RedrawNeeded;
 
 
         #region Rendering
@@ -58,7 +61,7 @@ namespace ViewSizeWpf.Controls
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            OnRedrawTreeMapClick?.Invoke(this, EventArgs.Empty);
+            RedrawNeeded?.Invoke(this, EventArgs.Empty);
             var source = RenderWithGdi();
             drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
         }
@@ -80,6 +83,11 @@ namespace ViewSizeWpf.Controls
                 var options = BitmapSizeOptions.FromEmptyOptions();
                 return Imaging.CreateBitmapSourceFromHBitmap(hbmp, IntPtr.Zero, Int32Rect.Empty, options);
             }
+        }
+
+        public void Redraw()
+        {
+            InvalidateVisual();
         }
 
         #endregion

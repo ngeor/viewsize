@@ -14,6 +14,8 @@ namespace CRLFLabs.ViewSize.Mvp
     public class MainPresenter : PresenterBase<IMainView, IMainModel>
     {
         private bool _isScanning;
+        private RectangleD _lastBounds;
+        private SortKey _lastSortKey;
 
         /// <summary>
         /// Creates an instance of this class.
@@ -34,7 +36,7 @@ namespace CRLFLabs.ViewSize.Mvp
             View.OnBeginScanClick += View_OnBeginScanClick;
             View.OnCancelScanClick += View_OnCancelScanClick;
             View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
-            View.OnRedrawTreeMapClick += View_OnRedrawTreeMapClick;
+            View.TreeMapView.RedrawNeeded += TreeMapView_RedrawNeeded;
         }
 
         protected override void AttachToModel()
@@ -61,9 +63,9 @@ namespace CRLFLabs.ViewSize.Mvp
 
             _isScanning = true;
             View.EnableUI(false);
-            var treeMapSize = View.TreeMapBounds.Size;
-            var treeMapWidth = treeMapSize.Width;
-            var treeMapHeight = treeMapSize.Height;
+            var bounds = View.TreeMapView.BoundsD;
+            var treeMapWidth = bounds.Width;
+            var treeMapHeight = bounds.Height;
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -87,14 +89,17 @@ namespace CRLFLabs.ViewSize.Mvp
                 try
                 {
                     var topLevelFolders = FolderScanner.Scan(path);
-
-                    var bounds = new RectangleD(0, 0, treeMapWidth, treeMapHeight);
-                    var renderer = new Renderer(bounds, topLevelFolders);
+                    var renderer = new Renderer(bounds, topLevelFolders, Model.SortKey);
                     renderer.Render();
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
-                        Model.DataSource = new TreeMapDataSource(topLevelFolders, bounds);
+                        // capture these two for recalculate
+                        _lastBounds = bounds;
+                        _lastSortKey = Model.SortKey;
+
+                        Model.TopLevelFolders = topLevelFolders;
+                        Model.DataSource = new TreeMapDataSource(topLevelFolders);
                     });
                 }
                 catch (Exception ex)
@@ -122,9 +127,9 @@ namespace CRLFLabs.ViewSize.Mvp
             Model.DataSource.Selected = e.FileSystemEntry;
         }
 
-        void View_OnRedrawTreeMapClick(object sender, EventArgs e)
+        void TreeMapView_RedrawNeeded(object sender, EventArgs e)
         {
-            Model.DataSource?.ReCalculate(View.TreeMapBounds, Model.SortKey);
+            ReCalculateTreeMap(false);
         }
 
         void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
@@ -143,7 +148,7 @@ namespace CRLFLabs.ViewSize.Mvp
                     Attach(Model.DataSource);
                     break;
                 case MainModel.SortKeyProperty:
-                    Model.DataSource?.ReCalculate(View.TreeMapBounds, Model.SortKey);
+                    ReCalculateTreeMap(true);
                     break;
             }
         }
@@ -175,6 +180,29 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 View.SetScanningItem(e.FileSystemEntry.Path);
             });
+        }
+
+        private void ReCalculateTreeMap(bool forceRedraw)
+        {
+            if (Model.TopLevelFolders == null)
+            {
+                // no data yet
+                return;
+            }
+
+            var bounds = View.TreeMapView.BoundsD;
+            if (bounds.Size == _lastBounds.Size && Model.SortKey == _lastSortKey)
+            {
+                return;
+            }
+
+            var renderer = new Renderer(bounds, Model.TopLevelFolders, Model.SortKey);
+            renderer.Render();
+
+            if (forceRedraw)
+            {
+                View.TreeMapView.Redraw();
+            }
         }
     }
 }

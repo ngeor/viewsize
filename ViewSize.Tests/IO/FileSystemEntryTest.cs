@@ -43,7 +43,7 @@ namespace ViewSize.Tests.IO
         public void Ancestor_UnderTreeMapDataSource_ShouldBeEmpty()
         {
             // arrange
-            var parent = new TreeMapDataSource(Enumerable.Empty<FileSystemEntry>(), default(RectangleD));
+            var parent = new TreeMapDataSource(Enumerable.Empty<FileSystemEntry>());
             var entry = new FileSystemEntry("entry", parent);
 
             // act
