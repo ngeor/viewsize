@@ -9,11 +9,12 @@ namespace CRLFLabs.ViewSize.Mvp
             : base(view)
         {
             SettingsManager = settingsManager;
+            AttachToView();
         }
 
         private ISettingsManager SettingsManager { get; }
 
-        protected override void AttachToView()
+        private void AttachToView()
         {
             View.Closing += View_Closing;
         }

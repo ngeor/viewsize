@@ -36,7 +36,7 @@ namespace ViewSizeWpf.Controls
         {
             if (model != null)
             {
-                model.PropertyChanged += DataSourcePropertyChanged;
+                model.PropertyChanged += Model_PropertyChanged;
             }
         }
 
@@ -44,13 +44,16 @@ namespace ViewSizeWpf.Controls
         {
             if (model != null)
             {
-                model.PropertyChanged -= DataSourcePropertyChanged;
+                model.PropertyChanged -= Model_PropertyChanged;
             }
         }
 
-        private void DataSourcePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            InvalidateVisual();
+            if (e.PropertyName == MainModel.ChildrenPropertyName || e.PropertyName == MainModel.SelectedPropertyName)
+            {
+                InvalidateVisual();
+            }
         }
 
         public event EventHandler RedrawNeeded;

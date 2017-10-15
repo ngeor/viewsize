@@ -13,15 +13,9 @@ namespace CRLFLabs.ViewSize.Mvp
 
             View = view;
             Registry.Instance.Register(view);
-            AttachToView();
         }
 
         public TView View { get; }
-
-        protected virtual void AttachToView()
-        {
-            
-        }
     }
 
     public abstract class PresenterBase<TView, TModel> : PresenterBase<TView>
@@ -38,14 +32,8 @@ namespace CRLFLabs.ViewSize.Mvp
 
             Model = model;
             Registry.Instance.Register(model);
-            AttachToModel();
         }
 
         public TModel Model { get; }
-
-        protected virtual void AttachToModel()
-        {
-
-        }
     }
 }

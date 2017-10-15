@@ -26,12 +26,14 @@ namespace CRLFLabs.ViewSize.Mvp
             FileUtils = fileUtils;
             FolderScanner = folderScanner;
             FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
+            AttachToModel();
+            AttachToView();
         }
 
         private IFolderScanner FolderScanner { get; }
         private IFileUtils FileUtils { get; }
 
-        protected override void AttachToView()
+        private void AttachToView()
         {
             View.OnBeginScanClick += View_OnBeginScanClick;
             View.OnCancelScanClick += View_OnCancelScanClick;
@@ -39,7 +41,7 @@ namespace CRLFLabs.ViewSize.Mvp
             View.TreeMapView.RedrawNeeded += TreeMapView_RedrawNeeded;
         }
 
-        protected override void AttachToModel()
+        private void AttachToModel()
         {
             Model.PropertyChanging += Model_PropertyChanging;
             Model.PropertyChanged += Model_PropertyChanged;

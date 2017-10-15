@@ -13,15 +13,14 @@ namespace CRLFLabs.ViewSize.Mvp
             : base(view, model)
         {
             SettingsManager = settingsManager;
-
-            // cannot use AttachToModel because we need SettingsManager here
             Model.Folder = SettingsManager.Settings.SelectedFolder;
             Model.PropertyChanged += Model_PropertyChanged;
+            AttachToView();
         }
 
         private ISettingsManager SettingsManager { get; }
 
-        protected override void AttachToView()
+        private void AttachToView()
         {
             View.OnSelectFolderClick += View_OnSelectFolderClick;
         }
