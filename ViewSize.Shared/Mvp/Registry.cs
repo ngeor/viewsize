@@ -51,5 +51,13 @@ namespace CRLFLabs.ViewSize.Mvp
                 return (T)_instances[type];
             }
         }
+
+        /// <summary>
+        /// Clears all registered instances.
+        /// </summary>
+        public void Clear()
+        {
+            _instances.Clear();
+        }
     }
 }

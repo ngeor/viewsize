@@ -24,7 +24,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(entry);
 
             // act
-            var renderer = new Renderer(fullBounds, folders);
+            var renderer = new Renderer(fullBounds, folders, SortKey.Size);
             renderer.Render();
 
             // assert
@@ -42,7 +42,7 @@ namespace ViewSize.Tests.TreeMap
             var folders = Lists.Of(entry);
 
             // act
-            var renderer = new Renderer(fullBounds, folders);
+            var renderer = new Renderer(fullBounds, folders, SortKey.Size);
             renderer.Render();
 
             // assert
@@ -63,7 +63,7 @@ namespace ViewSize.Tests.TreeMap
             };
 
             // act
-            var renderer = new Renderer(fullBounds, folders);
+            var renderer = new Renderer(fullBounds, folders, SortKey.Size);
             renderer.Render();
 
             // assert
@@ -86,7 +86,7 @@ namespace ViewSize.Tests.TreeMap
             };
 
             // act
-            var renderer = new Renderer(fullBounds, folders);
+            var renderer = new Renderer(fullBounds, folders, SortKey.Size);
             renderer.Render();
 
             // assert
@@ -109,7 +109,7 @@ namespace ViewSize.Tests.TreeMap
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                var renderer = new Renderer(new RectangleD(0,0,800,600), topLevelFolders);
+                var renderer = new Renderer(new RectangleD(0,0,800,600), topLevelFolders, SortKey.Size);
                 renderer.Render();
             }
 
@@ -120,7 +120,7 @@ namespace ViewSize.Tests.TreeMap
 
         private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IReadOnlyList<FileSystemEntry> children = null)
         {
-            Mock<FileSystemEntry> mock = new Mock<FileSystemEntry>("", Mock.Of<IFileSystemEntryContainer>());
+            Mock<FileSystemEntry> mock = new Mock<FileSystemEntry>("", null);
             mock.SetupGet(e => e.TotalSize)
                 .Returns(children != null ? children.Sum(c => c.TotalSize) : totalSize);
             mock.SetupGet(e => e.Children).Returns(children ?? Lists.Empty<FileSystemEntry>());

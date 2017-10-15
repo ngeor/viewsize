@@ -18,6 +18,7 @@ namespace ViewSize.Tests.Mvp
         [SetUp]
         public void SetUp()
         {
+            Registry.Instance.Clear();
             _view = new Mock<IFolderChooserView>();
             _model = new Mock<IFolderChooserModel>();
             _settings = new Settings

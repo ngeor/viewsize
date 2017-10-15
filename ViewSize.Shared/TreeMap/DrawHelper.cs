@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
+using System.Collections.Generic;
 
 namespace CRLFLabs.ViewSize.TreeMap
 {
@@ -44,7 +45,7 @@ namespace CRLFLabs.ViewSize.TreeMap
 
             if (drawContents)
             {
-                DrawChildren(dataSource, selected, 0);
+                DrawChildren(dataSource.Children, selected, 0);
             }
 
             if (drawSelected)
@@ -63,7 +64,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         }
 
         private void DrawChildren(
-            IFileSystemEntryContainer container,
+            IReadOnlyList<FileSystemEntry> elements,
             FileSystemEntry selected,
             int level)
         {
@@ -71,7 +72,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             //{
             //    return;
             //}
-            foreach (var entry in container.Children)
+            foreach (var entry in elements)
             {
                 Draw(entry, selected, level + 1);
             }
@@ -88,7 +89,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (entry.Children.Any())
             {
                 // recursion
-                DrawChildren(entry, selected, level);
+                DrawChildren(entry.Children, selected, level);
                 Graphics.DrawRect(Colors.Black, rect);
             }
             else

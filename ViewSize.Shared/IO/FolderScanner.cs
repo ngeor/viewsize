@@ -9,7 +9,7 @@ namespace CRLFLabs.ViewSize.IO
     /// Scans a folder recursively and gathers information.
     /// This is the main API that should be used.
     /// </summary>
-    public class FolderScanner : IFolderScanner, IFileSystemEntryContainer
+    public class FolderScanner : IFolderScanner
     {
         /// <summary>
         /// Holds a value indicating whether scanning is in progress.
@@ -38,10 +38,6 @@ namespace CRLFLabs.ViewSize.IO
             private set;
         }
 
-        public IReadOnlyList<FileSystemEntry> Children => throw new NotImplementedException();
-
-        public IFileSystemEntryContainer Parent => null;
-
         /// <summary>
         /// Requests to terminate scanning.
         /// </summary>
@@ -69,7 +65,7 @@ namespace CRLFLabs.ViewSize.IO
                 var result = new List<FileSystemEntry>();
                 foreach (var path in paths)
                 {
-                    var root = new FileSystemEntry(path, this);
+                    var root = new FileSystemEntry(path, null);
                     result.Add(root);
                     Calculate(root);
                 }

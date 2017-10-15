@@ -15,8 +15,7 @@ namespace ViewSize.Tests.TreeMap
         public void Create()
         {
             // arrange
-            var folderScanner = Mock.Of<IFileSystemEntryContainer>();
-            var topLevelEntry = new FileSystemEntry("root", folderScanner);
+            var topLevelEntry = new FileSystemEntry("root", null);
             var childEntry = new FileSystemEntry("child", topLevelEntry);
             var topLevelEntries = Lists.Of(topLevelEntry);
 

@@ -5,25 +5,19 @@ using System.Linq;
 
 namespace CRLFLabs.ViewSize.IO
 {
-    public partial class FileSystemEntry : IFileSystemEntryContainer
+    public partial class FileSystemEntry
     {
         private readonly List<FileSystemEntry> _children = new List<FileSystemEntry>();
-        private IFileSystemEntryContainer _parent;
 
-        public FileSystemEntry(string path, IFileSystemEntryContainer parent)
+        public FileSystemEntry(string path, FileSystemEntry parent)
         {
             if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));
             }
 
-            if (parent == null)
-            {
-                throw new ArgumentNullException(nameof(parent));
-            }
-
             Path = path;
-            _parent = parent;
+            Parent = parent;
             AddToChildrenOfParent();
         }
 
@@ -39,35 +33,12 @@ namespace CRLFLabs.ViewSize.IO
         public long FileCount { get; private set; }
 
         // relationships
-        public IFileSystemEntryContainer Parent
-        {
-            get => _parent;
-
-            internal set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException();
-                }
-
-                if (!IsTopLevel)
-                {
-                    throw new InvalidOperationException("Can only reparent top-level entries");
-                }
-
-                if (value is FileSystemEntry)
-                {
-                    throw new InvalidOperationException("New parent cannot be FileSystemEntry");
-                }
-
-                _parent = value;
-            }
-        }
+        public FileSystemEntry Parent { get; }
 
         // virtual for unit tests
         public virtual IReadOnlyList<FileSystemEntry> Children => _children;
 
-        public bool IsTopLevel => !(Parent is FileSystemEntry);
+        public bool IsTopLevel => Parent == null;
 
         // UI
         public string DisplayText { get; set; }
@@ -91,7 +62,7 @@ namespace CRLFLabs.ViewSize.IO
                 return false;
             }
 
-            for (IFileSystemEntryContainer n = this; n != null; n = n.Parent)
+            for (var n = this; n != null; n = n.Parent)
             {
                 if (n == otherFolder)
                 {
@@ -145,10 +116,7 @@ namespace CRLFLabs.ViewSize.IO
 
         private void AddToChildrenOfParent()
         {
-            if (_parent is FileSystemEntry parent)
-            {
-                parent._children.Add(this);
-            }
+            Parent?._children.Add(this);
         }
     }
 }

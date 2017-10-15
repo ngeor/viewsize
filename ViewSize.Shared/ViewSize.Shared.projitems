@@ -36,10 +36,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Settings\SettingsManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntry.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntryContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FolderScanner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IO\IFileSystemEntryContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
