@@ -50,13 +50,15 @@ namespace ViewSizeWpf.Controls
             InvalidateVisual();
         }
 
+        public event EventHandler OnRedrawTreeMapClick;
+
+
         #region Rendering
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            var actualBounds = new RectangleD(0, 0, ActualWidth, ActualHeight);
-            DataSource?.ReCalculate(actualBounds);
+            OnRedrawTreeMapClick?.Invoke(this, EventArgs.Empty);
             var source = RenderWithGdi();
             drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
         }

@@ -16,8 +16,20 @@ namespace CRLFLabs.ViewSize.TreeMap
         private readonly RectangleD _fullBounds;
         private readonly IReadOnlyList<FileSystemEntry> _fileSystemEntries;
 
-        public Renderer(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries)
+        public Renderer(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries, SortKey sortKey = SortKey.Size)
         {
+            switch (sortKey)
+            {
+                case SortKey.Size:
+                    Measurer = TotalSizeMeasurer;
+                    break;
+                case SortKey.Count:
+                    Measurer = FileCountMeasurer;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+
             // e.g. real total size = 200 bytes
             totalSizeInBytes = fileSystemEntries.Sum(Measurer);
 
@@ -89,7 +101,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             }
         }
 
-        public Func<FileSystemEntry, long> Measurer { get; set; } = TotalSizeMeasurer;
+        internal Func<FileSystemEntry, long> Measurer { get; private set; } = TotalSizeMeasurer;
 
         public static Func<FileSystemEntry, long> TotalSizeMeasurer = f => f.TotalSize;
         public static Func<FileSystemEntry, long> FileCountMeasurer = f => f.FileCount;

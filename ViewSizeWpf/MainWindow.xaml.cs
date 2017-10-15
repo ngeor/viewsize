@@ -16,13 +16,17 @@ namespace ViewSizeWpf
     /// </summary>
     public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel, IApplicationView
     {
+        private readonly MainModel _mainModel;
+
         public MainWindow()
         {
             InitializeComponent();
 
             var fileUtils = new FileUtils();
             var folderScanner = new FolderScanner(fileUtils);
-            var mainPresenter = new MainPresenter(this, folderScanner, fileUtils);
+            _mainModel = new MainModel();
+            _mainModel.PropertyChanged += MainModel_PropertyChanged;
+            var mainPresenter = new MainPresenter(this, _mainModel, folderScanner, fileUtils);
 
             var settingsManager = SettingsManager.Instance;
             var folderChooserPresenter = new FolderChooserPresenter(this, this, settingsManager);
@@ -73,11 +77,31 @@ namespace ViewSizeWpf
         }
         #endregion
 
+        private void MainModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == MainModel.DataSourceProperty)
+            {
+                treeMap.DataSource = ((MainModel)sender).DataSource;
+                treeView.DataContext = ((MainModel)sender).DataSource;
+            }
+        }
+
         #region IMainView implementation
 
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+        public event EventHandler OnRedrawTreeMapClick
+        {
+            add
+            {
+                treeMap.OnRedrawTreeMapClick += value;
+            }
+            remove
+            {
+                treeMap.OnRedrawTreeMapClick -= value;
+            }
+        }
 
         public string SelectedFolder
         {
@@ -94,16 +118,10 @@ namespace ViewSizeWpf
             Cursor = enable ? Cursors.Arrow : Cursors.Wait;
         }
 
-        public SizeD TreeMapActualSize => new SizeD(treeMap.ActualWidth, treeMap.ActualHeight);
+        public RectangleD TreeMapBounds => new RectangleD(0, 0, treeMap.ActualWidth, treeMap.ActualHeight);
 
         public void SetScanningItem(string path) => lblStatus.Content = path;
         public void SetDurationLabel(string durationLabel) => lblDuration.Content = durationLabel;
-
-        public void SetTreeMapDataSource(TreeMapDataSource treeMapDataSource)
-        {
-            treeMap.DataSource = treeMapDataSource;
-            treeView.DataContext = treeMapDataSource;
-        }
 
         public void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry)
         {
@@ -183,8 +201,35 @@ namespace ViewSizeWpf
         #endregion
 
         public static RoutedCommand ShowInExplorerCommand = new RoutedCommand();
+        public static RoutedCommand UpOneLevelCommand = new RoutedCommand();
+        public static RoutedCommand FileSizeTreeMapCommand = new RoutedCommand();
+        public static RoutedCommand FileCountTreeMapCommand = new RoutedCommand();
 
-        private void ShowInExplorer_Execute(object sender, ExecutedRoutedEventArgs e)
+        private void FileSizeTreeMap_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void FileSizeTreeMap_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            mnuFileCountTreeMap.IsChecked = false;
+            mnuFileSizeTreeMap.IsChecked = true;
+            _mainModel.SortKey = SortKey.Size;
+        }
+
+        private void FileCountTreeMap_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void FileCountTreeMap_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            mnuFileCountTreeMap.IsChecked = true;
+            mnuFileSizeTreeMap.IsChecked = false;
+            _mainModel.SortKey = SortKey.Count;
+        }
+
+        private void ShowInExplorer_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
             string path;
@@ -204,6 +249,22 @@ namespace ViewSizeWpf
         {
             var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
             e.CanExecute = fileSystemEntry != null;
+        }
+
+        private void UpOneLevel_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            _mainModel.DataSource.Selected = _mainModel.DataSource.Selected.Parent as FileSystemEntry;
+        }
+
+        private void UpOneLevel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var selected = _mainModel.DataSource?.Selected;
+            e.CanExecute = selected != null && selected.Parent is FileSystemEntry;
+        }
+
+        private void CloseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

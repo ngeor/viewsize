@@ -10,10 +10,37 @@
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static custom:MainWindow.ShowInExplorerCommand}"
                         CanExecute="ShowInExplorer_CanExecute"
-                        Executed="ShowInExplorer_Execute"
+                        Executed="ShowInExplorer_Executed"
                         />
+        <CommandBinding Command="Close"
+                        Executed="CloseCommand_Executed"/>
+        <CommandBinding Command="{x:Static custom:MainWindow.UpOneLevelCommand}"
+                        CanExecute="UpOneLevel_CanExecute"
+                        Executed="UpOneLevel_Executed"/>
+
+        <CommandBinding Command="{x:Static custom:MainWindow.FileSizeTreeMapCommand}"
+                        CanExecute="FileSizeTreeMap_CanExecute"
+                        Executed="FileSizeTreeMap_Executed"/>
+
+        <CommandBinding Command="{x:Static custom:MainWindow.FileCountTreeMapCommand}"
+                        CanExecute="FileCountTreeMap_CanExecute"
+                        Executed="FileCountTreeMap_Executed"/>
     </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static custom:MainWindow.UpOneLevelCommand}"/>
+    </Window.InputBindings>
     <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="E_xit" Command="Close" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Up One Level" Command="{x:Static custom:MainWindow.UpOneLevelCommand}" InputGestureText="Ctrl+U"/>
+                <Separator />
+                <MenuItem x:Name="mnuFileSizeTreeMap" Header="File Size Tree Map" IsChecked="True" Command="{x:Static custom:MainWindow.FileSizeTreeMapCommand}"/>
+                <MenuItem x:Name="mnuFileCountTreeMap" Header="File Count Tree Map" Command="{x:Static custom:MainWindow.FileCountTreeMapCommand}"/>
+            </MenuItem>
+        </Menu>
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
             <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" TextChanged="txtFolder_TextChanged" />
