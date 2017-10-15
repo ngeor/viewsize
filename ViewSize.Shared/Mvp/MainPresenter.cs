@@ -196,6 +196,9 @@ namespace CRLFLabs.ViewSize.Mvp
                 return;
             }
 
+            _lastBounds = bounds;
+            _lastSortKey = Model.SortKey;
+
             var renderer = new Renderer(bounds, Model.TopLevelFolders, Model.SortKey);
             renderer.Render();
 

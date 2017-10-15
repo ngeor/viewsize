@@ -49,6 +49,7 @@ namespace CRLFLabs.ViewSize.TreeMap
 
                     if (_renderer.Measurer(entry) <= 0)
                     {
+                        entry.Bounds = default(RectangleD);
                         continue;
                     }
 
@@ -145,15 +146,33 @@ namespace CRLFLabs.ViewSize.TreeMap
             AssertInBounds(streakBounds, folderWithDrawSize.Bounds);
         }
 
+        /// <summary>
+        /// Recursively renders the children of this streak.
+        /// </summary>
+        /// <param name="streak">The current streak.</param>
         private void RenderChildrenOfStreak(LinkedList<FileSystemEntry> streak)
         {
             foreach (var entry in streak)
             {
                 // subtree
-                if (!entry.Bounds.IsEmpty)
+                if (entry.Bounds.IsEmpty)
+                {
+                    // it is empty, just nuke the children as well so we don't have previous rectangles appearing
+                    CopyBoundsToChildren(entry);
+                }
+                else
                 {
                     _renderer.Render(entry);
                 }
+            }
+        }
+
+        private void CopyBoundsToChildren(FileSystemEntry entry)
+        {
+            foreach (var child in entry.Children)
+            {
+                child.Bounds = entry.Bounds;
+                CopyBoundsToChildren(child);
             }
         }
     }

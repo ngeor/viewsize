@@ -116,19 +116,8 @@ namespace ViewSizeMac
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
-        public event EventHandler OnRedrawTreeMapClick
-        {
-            add
-            {
-                folderGraph.OnRedrawTreeMapClick += value;
-            }
-            remove
-            {
-                folderGraph.OnRedrawTreeMapClick -= value;
-            }
-        }
 
-        public RectangleD TreeMapBounds => folderGraph.BoundsD;
+        public ITreeMapView TreeMapView => folderGraph;
         string IMainView.SelectedFolder => txtFolder.StringValue;
 
         public void EnableUI(bool enable)

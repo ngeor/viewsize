@@ -5,7 +5,7 @@ using System.Linq;
 using AppKit;
 using CoreGraphics;
 using CRLFLabs.ViewSize.Drawing;
-using CRLFLabs.ViewSize.IO;
+using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.TreeMap;
 using Foundation;
 
@@ -15,7 +15,7 @@ namespace ViewSizeMac
     /// Custom control that renders a tree map graph.
     /// </summary>
     [Register("NSFolderGraph")]
-    public class NSFolderGraph : NSControl
+    public class NSFolderGraph : NSControl, ITreeMapView
     {
         private TreeMapDataSource _dataSource;
 
@@ -60,8 +60,6 @@ namespace ViewSizeMac
         }
 
         #endregion
-
-        public event EventHandler OnRedrawTreeMapClick;
 
         public TreeMapDataSource DataSource
         {
@@ -248,7 +246,7 @@ namespace ViewSizeMac
         {
             base.ViewDidEndLiveResize();
 
-            OnRedrawTreeMapClick?.Invoke(this, EventArgs.Empty);
+            RedrawNeeded?.Invoke(this, EventArgs.Empty);
 
             // request full redraw
             NeedsDisplay = true;
@@ -322,6 +320,15 @@ namespace ViewSizeMac
             {
                 SetNeedsDisplayInRect(bounds.Value.ToCGRect());
             }
+        }
+
+        public event EventHandler RedrawNeeded;
+
+        public void Redraw()
+        {
+            _lastFullImageHolder.Dispose();
+            _oldSelectedRect = null;
+            NeedsDisplay = true;
         }
     }
 }
