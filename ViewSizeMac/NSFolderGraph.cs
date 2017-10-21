@@ -5,6 +5,7 @@ using System.Linq;
 using AppKit;
 using CoreGraphics;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.TreeMap;
 using Foundation;
@@ -17,7 +18,10 @@ namespace ViewSizeMac
     [Register("NSFolderGraph")]
     public class NSFolderGraph : NSControl, ITreeMapView
     {
-        private TreeMapDataSource _dataSource;
+        /// <summary>
+        /// The main model.
+        /// </summary>
+        private IMainModel _model;
 
         /// <summary>
         /// Holds the bounds of the previously selected area.
@@ -61,30 +65,27 @@ namespace ViewSizeMac
 
         #endregion
 
-        public TreeMapDataSource DataSource
+        public IMainModel Model
         {
             get
             {
-                return _dataSource;
+                return _model;
             }
             set
             {
-                if (_dataSource != null)
+                if (_model != null)
                 {
                     Detach();
                 }
 
-                _dataSource = value;
+                _model = value;
 
-                if (_dataSource != null)
+                if (_model != null)
                 {
                     Attach();
                 }
 
-                _lastFullImageHolder.Dispose();
-                _oldSelectedRect = null;
-
-                NeedsDisplay = true;
+                Redraw();
             }
         }
 
@@ -186,13 +187,13 @@ namespace ViewSizeMac
                     null);
 
                 // draw the selection on top
-                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), drawContents: false);
+                drawHelper.Draw(Model, dirtyRect.ToRectangleD(), drawContents: false);
             }
             else
             {
                 var bitmapImageRep = DrawInBitmap(() =>
                 {
-                    drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), drawSelected: false);
+                    drawHelper.Draw(Model, dirtyRect.ToRectangleD(), drawSelected: false);
                 });
                 NSImage image = new NSImage(Bounds.Size);
                 image.AddRepresentation(bitmapImageRep);
@@ -202,7 +203,7 @@ namespace ViewSizeMac
                            1,
                            false, null);
                 
-                drawHelper.Draw(DataSource, dirtyRect.ToRectangleD(), drawContents: false);
+                drawHelper.Draw(Model, dirtyRect.ToRectangleD(), drawContents: false);
 
                 bool isFullDraw = dirtyRect == Bounds;
 
@@ -257,15 +258,15 @@ namespace ViewSizeMac
         public override void MouseUp(NSEvent theEvent)
         {
             base.MouseUp(theEvent);
-            var dataSource = DataSource;
-            if (dataSource == null)
+            var dataSource = Model;
+            if (dataSource == null || dataSource.Children == null)
             {
                 return;
             }
 
             var locationInWindow = theEvent.LocationInWindow;
             var pt = ToClientCoordinates(locationInWindow).ToPointD();
-            var folderWithDrawSize = dataSource.Find(pt);
+            var folderWithDrawSize = dataSource.Children.Find(pt);
             dataSource.Selected = folderWithDrawSize;
         }
 
@@ -284,33 +285,38 @@ namespace ViewSizeMac
 
         private void Attach()
         {
-            DataSource.PropertyChanging += DataSource_PropertyChanging;
-            DataSource.PropertyChanged += DataSource_PropertyChanged;
+            Model.PropertyChanging += Model_PropertyChanging;
+            Model.PropertyChanged += Model_PropertyChanged;
         }
 
         private void Detach()
         {
-            DataSource.PropertyChanged -= DataSource_PropertyChanged;
-            DataSource.PropertyChanging -= DataSource_PropertyChanging;
+            Model.PropertyChanged -= Model_PropertyChanged;
+            Model.PropertyChanging -= Model_PropertyChanging;
         }
 
-        void DataSource_PropertyChanging(object sender, PropertyChangingEventArgs e)
+        void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
         {
-            if (e.PropertyName == TreeMapDataSource.SelectedPropertyName)
+            if (e.PropertyName == MainModel.SelectedPropertyName)
             {
-                _oldSelectedRect = DataSource.Selected?.Bounds;
+                _oldSelectedRect = Model.Selected?.Bounds;
             }
         }
 
-        void DataSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             // gets called when the selection of the treemap data model changes
             // we have the previously selected rect in _oldSelectedRect
-            if (e.PropertyName == TreeMapDataSource.SelectedPropertyName)
+            switch (e.PropertyName)
             {
-                SetNeedsDisplayInRect(_oldSelectedRect);
-                _oldSelectedRect = null;
-                SetNeedsDisplayInRect(DataSource.Selected?.Bounds);
+                case MainModel.SelectedPropertyName:
+                    SetNeedsDisplayInRect(_oldSelectedRect);
+                    _oldSelectedRect = null;
+                    SetNeedsDisplayInRect(Model.Selected?.Bounds);
+                    break;
+                case MainModel.ChildrenPropertyName:
+                    Redraw();
+                    break;
             }
         }
 

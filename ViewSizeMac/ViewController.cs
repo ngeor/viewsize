@@ -76,6 +76,8 @@ namespace ViewSizeMac
             );
 
             _mainModel.PropertyChanged += _mainModel_PropertyChanged;
+
+            folderGraph.Model = _mainModel;
         }
 
         public override NSObject RepresentedObject
@@ -98,7 +100,7 @@ namespace ViewSizeMac
         partial void OnCancelScan(NSObject sender) => OnCancelScanClick?.Invoke(this, EventArgs.Empty);
         partial void OnShowInFinder(NSObject sender)
         {
-            var selected = folderGraph.DataSource?.Selected;
+            var selected = _mainModel.Selected;
             if (selected == null)
             {
                 return;
@@ -144,11 +146,10 @@ namespace ViewSizeMac
 
         void _mainModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == MainModel.DataSourceProperty)
+            if (e.PropertyName == MainModel.ChildrenPropertyName)
             {
-                var dataSource = new FolderOutlineDataSource(_mainModel.DataSource.Children);
+                var dataSource = new FolderOutlineDataSource(_mainModel.Children);
                 outlineView.DataSource = dataSource;
-                folderGraph.DataSource = _mainModel.DataSource;
             }
         }
 
@@ -213,13 +214,7 @@ namespace ViewSizeMac
         public void UpOneLevel(NSObject sender)
         {
             // TODO move to presenter
-            var dataSource = folderGraph.DataSource;
-            if (dataSource == null)
-            {
-                return;
-            }
-
-            var selected = dataSource.Selected;
+            var selected = _mainModel.Selected;
             if (selected == null)
             {
                 return;
@@ -228,7 +223,7 @@ namespace ViewSizeMac
             var parent = selected.Parent as FileSystemEntry;
             if (parent != null)
             {
-                dataSource.Selected = parent;
+                _mainModel.Selected = parent;
             }
         }
 
