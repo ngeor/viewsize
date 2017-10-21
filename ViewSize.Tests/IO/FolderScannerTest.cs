@@ -25,7 +25,7 @@ namespace ViewSize.Tests.IO
         public void Cancel_ShouldCancelScan()
         {
             // arrange
-            const int count = 100000;
+            const int count = 1000000;
             _fileUtilsMock.Setup(p => p.EnumerateFileSystemEntries("test"))
                           .Returns(Enumerable.Repeat("nope", count));
 

@@ -4,3 +4,6 @@ obj/
 .vs/
 UpgradeLog.htm
 packages/
+coveragereport/
+results.xml
+TestResult.xml
