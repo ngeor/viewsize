@@ -27,9 +27,10 @@ namespace ViewSize.Tests.Mvp
             _fileUtilsMock = new Mock<IFileUtils>();
             _presenter = new MainPresenter(
                 _viewMock.Object,
-                new MainModel(),
                 _folderScannerMock.Object,
                 _fileUtilsMock.Object);
+
+            _viewMock.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]

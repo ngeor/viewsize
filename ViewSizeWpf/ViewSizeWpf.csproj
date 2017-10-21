@@ -55,9 +55,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ApplicationView.cs" />
     <Compile Include="Controls\GdiGraphics.cs" />
     <Compile Include="Controls\TreeListView.cs" />
     <Compile Include="Controls\TreeMap.cs" />
+    <Compile Include="FolderChooserView.cs" />
+    <Compile Include="ResolverContainer.cs" />
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Drawing\PointDTest.cs" />
     <Compile Include="Drawing\RectangleDTest.cs" />
+    <Compile Include="IoC\ResolverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Drawing\SizeDTest.cs" />
     <Compile Include="TreeMap\RendererTest.cs" />

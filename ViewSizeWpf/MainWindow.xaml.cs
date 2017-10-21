@@ -14,59 +14,22 @@ namespace ViewSizeWpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainView, IFolderChooserView, IFolderChooserModel, IApplicationView
+    [Presenter(typeof(MainPresenter))]
+    public partial class MainWindow : Window, IMainView
     {
-        private readonly MainModel _mainModel;
-
         public MainWindow()
         {
             InitializeComponent();
+            PresenterFactory.Create(ResolverContainer.Resolver, this);
+            Load?.Invoke(this, EventArgs.Empty);
 
-            var fileUtils = new FileUtils();
-            var folderScanner = new FolderScanner(fileUtils);
-            _mainModel = new MainModel();
-            _mainModel.PropertyChanged += MainModel_PropertyChanged;
-            var mainPresenter = new MainPresenter(this, _mainModel, folderScanner, fileUtils);
+            // we have a model after Load event
+            Model.PropertyChanged += MainModel_PropertyChanged;
+            treeMap.Model = Model;
 
-            var settingsManager = SettingsManager.Instance;
-            var folderChooserPresenter = new FolderChooserPresenter(this, this, settingsManager);
-
-            var applicationPresenter = new ApplicationPresenter(this, settingsManager);
-
-            treeMap.Model = _mainModel;
+            new FolderChooserView(this);
+            new ApplicationView(this);
         }
-
-        #region IFolderChooserModel
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        string IFolderChooserModel.Folder
-        {
-            get { return txtFolder.Text; }
-            set { txtFolder.Text = value; }
-        }
-
-        #endregion
-
-        #region IFolderChooserView
-
-        public event EventHandler OnSelectFolderClick;
-
-        public string SelectFolder()
-        {
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                var result = dialog.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
-                {
-                    return dialog.SelectedPath;
-                }
-            }
-
-            return null;
-        }
-
-        #endregion
 
         #region IView implementation
         public void RunOnGuiThread(Action action) => Dispatcher.Invoke(action);
@@ -89,9 +52,12 @@ namespace ViewSizeWpf
 
         #region IMainView implementation
 
+        public event EventHandler Load;
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+
+        public IMainModel Model { get; set; }
 
         public string SelectedFolder
         {
@@ -130,26 +96,7 @@ namespace ViewSizeWpf
 
         #endregion
 
-        #region IApplicationView
-
-        private event EventHandler ApplicationView_Closing;
-        event EventHandler IApplicationView.Closing
-        {
-            add => ApplicationView_Closing += value;
-            remove => ApplicationView_Closing -= value;
-        }
-        #endregion
-
         #region WPF Event Handlers
-        private void txtFolder_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Folder"));
-        }
-
-        private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
-        {
-            OnSelectFolderClick?.Invoke(this, e);
-        }
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
         {
@@ -163,12 +110,12 @@ namespace ViewSizeWpf
 
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var fileSystemEntries = _mainModel.Children;
+            var fileSystemEntries = Model.Children;
             if (fileSystemEntries != null)
             {
                 var point = e.GetPosition(treeMap);
                 var folder = fileSystemEntries.Find(point.ToPointD());
-                _mainModel.Selected = folder;
+                Model.Selected = folder;
             }
         }
 
@@ -181,11 +128,6 @@ namespace ViewSizeWpf
             }
 
             OnTreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(fileSystemEntry));
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            ApplicationView_Closing?.Invoke(this, e);
         }
 
         #endregion
@@ -204,7 +146,7 @@ namespace ViewSizeWpf
         {
             mnuFileCountTreeMap.IsChecked = false;
             mnuFileSizeTreeMap.IsChecked = true;
-            _mainModel.SortKey = SortKey.Size;
+            Model.SortKey = SortKey.Size;
         }
 
         private void FileCountTreeMap_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -216,7 +158,7 @@ namespace ViewSizeWpf
         {
             mnuFileCountTreeMap.IsChecked = true;
             mnuFileSizeTreeMap.IsChecked = false;
-            _mainModel.SortKey = SortKey.Count;
+            Model.SortKey = SortKey.Count;
         }
 
         private void ShowInExplorer_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -243,12 +185,12 @@ namespace ViewSizeWpf
 
         private void UpOneLevel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            _mainModel.Selected = _mainModel.Selected.Parent as FileSystemEntry;
+            Model.Selected = Model.Selected.Parent as FileSystemEntry;
         }
 
         private void UpOneLevel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var selected = _mainModel?.Selected;
+            var selected = Model?.Selected;
             e.CanExecute = selected != null && selected.Parent is FileSystemEntry;
         }
 

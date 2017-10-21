@@ -15,6 +15,13 @@ namespace ViewSizeWpf.Controls
     {
         private IMainModel _model;
 
+        public TreeMap()
+        {
+            Load?.Invoke(this, EventArgs.Empty);
+        }
+
+        public event EventHandler Load;
+
         public IMainModel Model
         {
             get

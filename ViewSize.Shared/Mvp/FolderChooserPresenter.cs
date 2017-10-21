@@ -9,20 +9,29 @@ namespace CRLFLabs.ViewSize.Mvp
     /// </summary>
     public class FolderChooserPresenter : PresenterBase<IFolderChooserView, IFolderChooserModel>
     {
-        public FolderChooserPresenter(IFolderChooserView view, IFolderChooserModel model, ISettingsManager settingsManager)
-            : base(view, model)
+        public FolderChooserPresenter(IFolderChooserView view, ISettingsManager settingsManager)
+            : base(view)
         {
             SettingsManager = settingsManager;
-            Model.Folder = SettingsManager.Settings.SelectedFolder;
-            Model.PropertyChanged += Model_PropertyChanged;
-            AttachToView();
         }
 
         private ISettingsManager SettingsManager { get; }
 
-        private void AttachToView()
+        protected override void OnViewLoad(object sender, EventArgs e)
         {
+            base.OnViewLoad(sender, e);
             View.OnSelectFolderClick += View_OnSelectFolderClick;
+        }
+
+        protected override IFolderChooserModel CreateModel()
+        {
+            var result = new FolderChooserModel
+            {
+                Folder = SettingsManager.Settings.SelectedFolder
+            };
+
+            result.PropertyChanged += Model_PropertyChanged;
+            return result;
         }
 
         private void View_OnSelectFolderClick(object sender, EventArgs e)

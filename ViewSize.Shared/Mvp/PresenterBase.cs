@@ -2,7 +2,7 @@
 namespace CRLFLabs.ViewSize.Mvp
 {
     public abstract class PresenterBase<TView>
-        where TView: class
+        where TView: class, IView
     {
         public PresenterBase(TView view)
         {
@@ -12,28 +12,35 @@ namespace CRLFLabs.ViewSize.Mvp
             }
 
             View = view;
+            view.Load += OnViewLoad;
+
+            // TODO delete this
             Registry.Instance.Register(view);
         }
 
         public TView View { get; }
+
+        protected virtual void OnViewLoad(object sender, EventArgs e)
+        {
+        }
     }
 
     public abstract class PresenterBase<TView, TModel> : PresenterBase<TView>
-        where TView: class
-        where TModel: class
+        where TModel : class
+        where TView : class, IView<TModel>
     {
-        public PresenterBase(TView view, TModel model)
-            : base(view)
+        public PresenterBase(TView view) : base(view)
         {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
-
-            Model = model;
-            Registry.Instance.Register(model);
         }
 
-        public TModel Model { get; }
+        protected TModel Model { get; private set; }
+        protected override void OnViewLoad(object sender, EventArgs e)
+        {
+            base.OnViewLoad(sender, e);
+            Model = CreateModel();
+            View.Model = Model;
+        }
+
+        protected abstract TModel CreateModel();
     }
 }

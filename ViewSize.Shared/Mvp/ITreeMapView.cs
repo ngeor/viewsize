@@ -8,7 +8,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Represents the view of the Tree Map control.
     /// </summary>
-    public interface ITreeMapView
+    public interface ITreeMapView : IView<IMainModel>
     {
         /// <summary>
         /// Raised when the view requires a redraw.

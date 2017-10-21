@@ -4,8 +4,11 @@ namespace CRLFLabs.ViewSize.Mvp
 {
     public interface IView
     {
-        void RunOnGuiThread(Action action);
-        void ShowError(string message);
-        void ShowError(Exception ex);
+        event EventHandler Load;
+    }
+
+    public interface IView<TModel> : IView
+    {
+        TModel Model { get; set; }
     }
 }

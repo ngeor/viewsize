@@ -8,7 +8,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Main view.
     /// </summary>
-    public interface IMainView : IView
+    public interface IMainView : IView<IMainModel>
     {
         /// <summary>
         /// Occurs when the user wants to start the folder scan.
@@ -33,5 +33,9 @@ namespace CRLFLabs.ViewSize.Mvp
         void SetDurationLabel(string durationLabel);
         void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry);
         void SetScanningItem(string path);
+
+        void RunOnGuiThread(Action action);
+        void ShowError(string message);
+        void ShowError(Exception ex);
     }
 }

@@ -20,31 +20,32 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <summary>
         /// Creates an instance of this class.
         /// </summary>
-        public MainPresenter(IMainView view, IMainModel model, IFolderScanner folderScanner, IFileUtils fileUtils)
-            : base(view, model)
+        public MainPresenter(IMainView view, IFolderScanner folderScanner, IFileUtils fileUtils)
+            : base(view)
         {
             FileUtils = fileUtils;
             FolderScanner = folderScanner;
             FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
-            AttachToModel();
-            AttachToView();
         }
 
         private IFolderScanner FolderScanner { get; }
         private IFileUtils FileUtils { get; }
 
-        private void AttachToView()
+        protected override void OnViewLoad(object sender, EventArgs e)
         {
+            base.OnViewLoad(sender, e);
             View.OnBeginScanClick += View_OnBeginScanClick;
             View.OnCancelScanClick += View_OnCancelScanClick;
             View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
             View.TreeMapView.RedrawNeeded += TreeMapView_RedrawNeeded;
         }
 
-        private void AttachToModel()
+        protected override IMainModel CreateModel()
         {
-            Model.PropertyChanging += Model_PropertyChanging;
-            Model.PropertyChanged += Model_PropertyChanged;
+            var result = new MainModel();
+            result.PropertyChanging += Model_PropertyChanging;
+            result.PropertyChanged += Model_PropertyChanged;
+            return result;
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)

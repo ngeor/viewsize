@@ -10,17 +10,6 @@ namespace CRLFLabs.ViewSize.Settings
         private const string Filename = "CRLFLabs.ViewSize.Settings.xml";
         private static readonly XmlSerializer serializer = new XmlSerializer(typeof(Settings));
 
-        #region Singleton
-        private static readonly Lazy<SettingsManager> _instance =
-            new Lazy<SettingsManager>(() => new SettingsManager());
-
-        public static ISettingsManager Instance => _instance.Value;
-
-        private SettingsManager()
-        {
-        }
-        #endregion
-
         #region Settings Holder
         private readonly Lazy<Settings> _settings = new Lazy<Settings>(() => Load());
         public Settings Settings => _settings.Value;

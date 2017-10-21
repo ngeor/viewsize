@@ -6,7 +6,7 @@
         xmlns:custom="clr-namespace:ViewSizeWpf"
         xmlns:local="clr-namespace:ViewSizeWpf.Controls"
         mc:Ignorable="d"
-        Title="ViewSize" Height="600" Width="800" Closing="Window_Closing">
+        Title="ViewSize" Height="600" Width="800">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static custom:MainWindow.ShowInExplorerCommand}"
                         CanExecute="ShowInExplorer_CanExecute"
@@ -43,8 +43,8 @@
         </Menu>
         <Grid DockPanel.Dock="Top">
             <Label x:Name="lblSelectFolder" Content="Select a folder to scan" HorizontalAlignment="Left" Margin="8,8,0,0" Height="26" VerticalAlignment="Top" Width="140" Padding="0"/>
-            <TextBox x:Name="txtFolder" Margin="153,8,37,0" Height="23" Text="" VerticalAlignment="Top" TextChanged="txtFolder_TextChanged" />
-            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,8,4,0" Click="btnSelectFolder_Click"/>
+            <TextBox x:Name="txtFolder" Margin="158,8,32,0" Height="23" Text="" VerticalAlignment="Top" />
+            <Button x:Name="btnSelectFolder" Content="..." Width="24" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,8,4,0"/>
         </Grid>
         <Grid DockPanel.Dock="Top">
             <Button x:Name="btnScan" Margin="8" Content="Scan" HorizontalAlignment="Right" VerticalAlignment="Top" Width="75" Click="btnScan_Click" />

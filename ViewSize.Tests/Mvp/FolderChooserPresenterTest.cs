@@ -10,7 +10,6 @@ namespace ViewSize.Tests.Mvp
     public class FolderChooserPresenterTest
     {
         private FolderChooserPresenter _presenter;
-        private Mock<IFolderChooserModel> _model;
         private Mock<IFolderChooserView> _view;
         private Mock<ISettingsManager> _settingsManager;
         private Settings _settings;
@@ -20,20 +19,19 @@ namespace ViewSize.Tests.Mvp
         {
             Registry.Instance.Clear();
             _view = new Mock<IFolderChooserView>();
-            _model = new Mock<IFolderChooserModel>();
             _settings = new Settings
             {
                 SelectedFolder = "settings value"
             };
             _settingsManager = new Mock<ISettingsManager>();
             _settingsManager.SetupGet(m => m.Settings).Returns(_settings);
-            _model.SetupProperty(m => m.Folder);
-            _model.Object.Folder = "value before settings";
+            _view.SetupProperty(v => v.Model);
             _presenter = new FolderChooserPresenter(
                 _view.Object,
-                _model.Object,
                 _settingsManager.Object
-            );    
+            );
+
+            _view.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]
@@ -46,7 +44,7 @@ namespace ViewSize.Tests.Mvp
             _view.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("some path", _model.Object.Folder);
+            Assert.AreEqual("some path", _view.Object.Model.Folder);
         }
 
         [Test]
@@ -59,7 +57,7 @@ namespace ViewSize.Tests.Mvp
             _view.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("settings value", _model.Object.Folder);
+            Assert.AreEqual("settings value", _view.Object.Model.Folder);
         }
     }
 }
