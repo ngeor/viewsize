@@ -8,6 +8,11 @@ namespace CRLFLabs.ViewSize.Mvp
 {
     public static class PresenterFactory
     {
+        public static void Create(object view)
+        {
+            Create(ResolverContainer.Resolver, view);
+        }
+
         public static void Create(Resolver resolver, object view)
         {
             var presenterAttributes = view.GetType().GetCustomAttributes(typeof(PresenterAttribute), false)

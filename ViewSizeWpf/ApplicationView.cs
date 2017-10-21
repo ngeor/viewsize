@@ -10,7 +10,7 @@ namespace ViewSizeWpf
         public ApplicationView(MainWindow mainWindow)
         {
             mainWindow.Closing += MainWindow_Closing;
-            PresenterFactory.Create(ResolverContainer.Resolver, this);
+            PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
         }
 

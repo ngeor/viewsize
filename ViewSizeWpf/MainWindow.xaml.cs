@@ -20,7 +20,7 @@ namespace ViewSizeWpf
         public MainWindow()
         {
             InitializeComponent();
-            PresenterFactory.Create(ResolverContainer.Resolver, this);
+            PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
 
             // we have a model after Load event

@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IoC\Resolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IoC\ResolverContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IoC\TypeMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntryCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
@@ -46,7 +47,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\Registry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\SortKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
   </ItemGroup>

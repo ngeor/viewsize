@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewSizeWpf
+namespace CRLFLabs.ViewSize.IoC
 {
-    static class ResolverContainer
+    public static class ResolverContainer
     {
         internal static readonly Resolver Resolver = ConfigureResolver();
 

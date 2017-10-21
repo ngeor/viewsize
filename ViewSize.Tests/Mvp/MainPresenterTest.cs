@@ -19,7 +19,6 @@ namespace ViewSize.Tests.Mvp
         [SetUp]
         public void SetUp()
         {
-            Registry.Instance.Clear();
             _viewMock = new Mock<IMainView>();
             _treeMapViewMock = new Mock<ITreeMapView>();
             _viewMock.SetupGet(v => v.TreeMapView).Returns(_treeMapViewMock.Object);

@@ -13,9 +13,6 @@ namespace CRLFLabs.ViewSize.Mvp
 
             View = view;
             view.Load += OnViewLoad;
-
-            // TODO delete this
-            Registry.Instance.Register(view);
         }
 
         public TView View { get; }

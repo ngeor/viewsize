@@ -16,7 +16,7 @@ namespace ViewSizeWpf
             MainWindow.txtFolder.TextChanged += TxtFolder_TextChanged;
 
             // start MVP
-            PresenterFactory.Create(ResolverContainer.Resolver, this);
+            PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
 
             // now we have a model
