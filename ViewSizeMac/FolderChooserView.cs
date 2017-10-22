@@ -34,7 +34,7 @@ namespace ViewSizeMac
 
         partial void OnSelectFolder(NSObject sender) => OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
 
-        private void SetupFolderChooserViewModel()
+        private void SetupFolderChooserView()
         {
             txtFolder.Changed += TxtFolder_Changed;
         }

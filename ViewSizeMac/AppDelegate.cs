@@ -2,7 +2,6 @@ using System;
 using AppKit;
 using CRLFLabs.ViewSize.Mvp;
 using Foundation;
-using CRLFLabs.ViewSize.Settings;
 using System.Linq;
 
 namespace ViewSizeMac

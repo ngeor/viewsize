@@ -1,7 +1,5 @@
 ﻿using CRLFLabs.ViewSize.Drawing;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -24,5 +22,8 @@ namespace CRLFLabs.ViewSize.Mvp
         /// Asks the view to redraw itself.
         /// </summary>
         void Redraw();
+
+        void SelectionChanging();
+        void SelectionChanged();
     }
 }

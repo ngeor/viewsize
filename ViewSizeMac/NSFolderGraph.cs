@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using AppKit;
 using CoreGraphics;
 using CRLFLabs.ViewSize.Drawing;
@@ -68,29 +65,7 @@ namespace ViewSizeMac
 
         public event EventHandler Load;
 
-        public IMainModel Model
-        {
-            get
-            {
-                return _model;
-            }
-            set
-            {
-                if (_model != null)
-                {
-                    Detach();
-                }
-
-                _model = value;
-
-                if (_model != null)
-                {
-                    Attach();
-                }
-
-                Redraw();
-            }
-        }
+        public IMainModel Model { get; set; }
 
         #region Drawing
         /// <summary>
@@ -286,41 +261,18 @@ namespace ViewSizeMac
             return new CGPoint(locationInWindow.X - rectInWindow.Left, locationInView.Y);
         }
 
-        private void Attach()
+        public void SelectionChanging()
         {
-            Model.PropertyChanging += Model_PropertyChanging;
-            Model.PropertyChanged += Model_PropertyChanged;
+            _oldSelectedRect = Model.Selected?.Bounds;
         }
 
-        private void Detach()
-        {
-            Model.PropertyChanged -= Model_PropertyChanged;
-            Model.PropertyChanging -= Model_PropertyChanging;
-        }
-
-        void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
-        {
-            if (e.PropertyName == MainModel.SelectedPropertyName)
-            {
-                _oldSelectedRect = Model.Selected?.Bounds;
-            }
-        }
-
-        void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        public void SelectionChanged()
         {
             // gets called when the selection of the treemap data model changes
             // we have the previously selected rect in _oldSelectedRect
-            switch (e.PropertyName)
-            {
-                case MainModel.SelectedPropertyName:
-                    SetNeedsDisplayInRect(_oldSelectedRect);
-                    _oldSelectedRect = null;
-                    SetNeedsDisplayInRect(Model.Selected?.Bounds);
-                    break;
-                case MainModel.ChildrenPropertyName:
-                    Redraw();
-                    break;
-            }
+            SetNeedsDisplayInRect(_oldSelectedRect);
+            _oldSelectedRect = null;
+            SetNeedsDisplayInRect(Model.Selected?.Bounds);
         }
 
         private void SetNeedsDisplayInRect(RectangleD? bounds)

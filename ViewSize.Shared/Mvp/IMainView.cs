@@ -28,6 +28,7 @@ namespace CRLFLabs.ViewSize.Mvp
         ITreeMapView TreeMapView { get; }
 
         void EnableUI(bool enable);
+        void SetTreeViewContents();
 
         void SetDurationLabel(string durationLabel);
         void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry);

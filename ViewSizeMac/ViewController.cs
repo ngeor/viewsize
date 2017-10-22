@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AppKit;
-using CRLFLabs.ViewSize;
 using Foundation;
-using CRLFLabs.ViewSize.Drawing;
-using CRLFLabs.ViewSize.TreeMap;
 using CRLFLabs.ViewSize.Mvp;
-using CRLFLabs.ViewSize.Settings;
 using CRLFLabs.ViewSize.IO;
 
 namespace ViewSizeMac
@@ -59,9 +52,8 @@ namespace ViewSizeMac
             Load?.Invoke(this, EventArgs.Empty);
 
             // we have a model
-            Model.PropertyChanged += _mainModel_PropertyChanged;
-            folderGraph.Model = Model;
-            SetupFolderChooserViewModel();
+            folderGraph.Model = Model; // TODO: remove after implementing TreeMapPresenter
+            SetupFolderChooserView();
         }
 
         public override NSObject RepresentedObject
@@ -129,13 +121,10 @@ namespace ViewSizeMac
 
         public void ShowError(string message) => MessageBox.ShowMessage(message);
 
-        void _mainModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void SetTreeViewContents()
         {
-            if (e.PropertyName == MainModel.ChildrenPropertyName)
-            {
-                var dataSource = new FolderOutlineDataSource(Model.Children);
-                outlineView.DataSource = dataSource;
-            }
+            var dataSource = new FolderOutlineDataSource(Model.Children);
+            outlineView.DataSource = dataSource;
         }
 
         public void SetScanningItem(string path) => lblStatus.StringValue = path;

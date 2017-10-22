@@ -131,6 +131,12 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
         {
+            switch (e.PropertyName)
+            {
+                case MainModel.SelectedPropertyName:
+                    View.TreeMapView.SelectionChanging();
+                    break;
+            }
         }
 
         void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -139,13 +145,14 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 case MainModel.SelectedPropertyName:
                     View.SetSelectedTreeViewItem(Model.Selected);
-                    View.TreeMapView.Redraw();
+                    View.TreeMapView.SelectionChanged();
                     break;
                 case MainModel.SortKeyPropertyName:
                     ReCalculateTreeMap(true);
                     break;
                 case MainModel.ChildrenPropertyName:
                     View.TreeMapView.Redraw();
+                    View.SetTreeViewContents();
                     break;
             }
         }
