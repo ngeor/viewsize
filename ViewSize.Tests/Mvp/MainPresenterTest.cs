@@ -15,6 +15,7 @@ namespace ViewSize.Tests.Mvp
         private Mock<ITreeMapView> _treeMapViewMock;
         private Mock<IFolderScanner> _folderScannerMock;
         private Mock<IFileUtils> _fileUtilsMock;
+        private MainModel _model;
 
         [SetUp]
         public void SetUp()
@@ -26,6 +27,7 @@ namespace ViewSize.Tests.Mvp
             _fileUtilsMock = new Mock<IFileUtils>();
             _presenter = new MainPresenter(
                 _viewMock.Object,
+                _model = new MainModel(),
                 _folderScannerMock.Object,
                 _fileUtilsMock.Object);
 
@@ -36,7 +38,7 @@ namespace ViewSize.Tests.Mvp
         public void OnBeginScan_NoFolderSelected_ShouldShowError()
         {
             // arrange
-            _viewMock.SetupGet(v => v.SelectedFolder).Returns("");
+            _model.Folder = "";
 
             // act
             _viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
@@ -49,7 +51,7 @@ namespace ViewSize.Tests.Mvp
         public void OnBeginScan_SelectedFolderDoesNotExist_ShouldShowError()
         {
             // arrange
-            _viewMock.SetupGet(v => v.SelectedFolder).Returns("test");
+            _model.Folder = "test";
             _fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
 
             // act

@@ -10,13 +10,29 @@ namespace CRLFLabs.ViewSize.Mvp
         public const string SortKeyPropertyName = "SortKey";
         public const string ChildrenPropertyName = "Children";
         public const string SelectedPropertyName = "Selected";
+        public const string FolderPropertyName = "Folder";
 
+        private string _folder;
         private SortKey _sortKey;
         private IReadOnlyList<FileSystemEntry> _children;
         private FileSystemEntry _selected;
 
         public event PropertyChangingEventHandler PropertyChanging;
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Folder
+        {
+            get => _folder;
+            set
+            {
+                if (_folder != value)
+                {
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(FolderPropertyName));
+                    _folder = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(FolderPropertyName));
+                }
+            }
+        }
 
         public SortKey SortKey
         {

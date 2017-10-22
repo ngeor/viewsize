@@ -1,14 +1,12 @@
 ﻿using CRLFLabs.ViewSize.IO;
-using CRLFLabs.ViewSize.IoC;
 using CRLFLabs.ViewSize.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CRLFLabs.ViewSize.Mvp;
 
 namespace CRLFLabs.ViewSize.IoC
 {
+    /// <summary>
+    /// Contains the resolver of the application.
+    /// </summary>
     public static class ResolverContainer
     {
         internal static readonly Resolver Resolver = ConfigureResolver();
@@ -16,11 +14,10 @@ namespace CRLFLabs.ViewSize.IoC
         private static Resolver ConfigureResolver()
         {
             var resolver = new Resolver();
-
-            // TODO move this common part to Shared
             resolver.Map<IFileUtils, FileUtils>();
-            resolver.Map<ISettingsManager, SettingsManager>(true);
+            resolver.Map<ISettingsManager, SettingsManager>(singleton: true);
             resolver.Map<IFolderScanner, FolderScanner>();
+            resolver.Map<IMainModel, MainModel>(singleton: true);
             return resolver;
         }
     }

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CRLFLabs.ViewSize.IoC
 {
     public class Resolver
     {
-        private Dictionary<Type, TypeMapping> _typeMappings = new Dictionary<Type, TypeMapping>();
-        private Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
-        private Dictionary<Type, object> _externalInstances = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, TypeMapping> _typeMappings = new Dictionary<Type, TypeMapping>();
+        private readonly Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> _externalInstances = new Dictionary<Type, object>();
 
         public void Map(Type existingType, object existingInstance)
         {

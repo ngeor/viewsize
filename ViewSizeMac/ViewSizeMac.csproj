@@ -88,12 +88,12 @@
     <Compile Include="DrawingConversions.cs" />
     <Compile Include="MessageBox.cs" />
     <Compile Include="FileSystemEntry.cs" />
-    <Compile Include="FolderChooserModel.cs" />
     <Compile Include="GraphicsImpl.cs" />
     <Compile Include="AppDelegate.designer.cs">
       <DependentUpon>AppDelegate.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageHolder.cs" />
+    <Compile Include="FolderChooserView.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />

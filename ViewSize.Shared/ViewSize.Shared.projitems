@@ -21,7 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IoC\TypeMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntryCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\FolderChooserModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />
@@ -32,7 +31,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\FolderChooserPresenter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EventThrottler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ApplicationPresenter.cs" />
@@ -49,6 +47,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\SortKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\MenuPresenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

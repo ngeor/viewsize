@@ -27,6 +27,7 @@ namespace ViewSize.Tests.Mvp
             _view.SetupProperty(v => v.Model);
             _presenter = new FolderChooserPresenter(
                 _view.Object,
+                Mock.Of<IMainModel>(),
                 _settingsManager.Object
             );
 

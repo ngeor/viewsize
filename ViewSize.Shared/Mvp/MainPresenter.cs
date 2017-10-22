@@ -20,12 +20,15 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <summary>
         /// Creates an instance of this class.
         /// </summary>
-        public MainPresenter(IMainView view, IFolderScanner folderScanner, IFileUtils fileUtils)
-            : base(view)
+        public MainPresenter(IMainView view, IMainModel model, IFolderScanner folderScanner, IFileUtils fileUtils)
+            : base(view, model)
         {
             FileUtils = fileUtils;
             FolderScanner = folderScanner;
             FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
+
+            Model.PropertyChanging += Model_PropertyChanging;
+            Model.PropertyChanged += Model_PropertyChanged;
         }
 
         private IFolderScanner FolderScanner { get; }
@@ -40,17 +43,9 @@ namespace CRLFLabs.ViewSize.Mvp
             View.TreeMapView.RedrawNeeded += TreeMapView_RedrawNeeded;
         }
 
-        protected override IMainModel CreateModel()
-        {
-            var result = new MainModel();
-            result.PropertyChanging += Model_PropertyChanging;
-            result.PropertyChanged += Model_PropertyChanged;
-            return result;
-        }
-
         void View_OnBeginScanClick(object sender, EventArgs e)
         {
-            string path = View.SelectedFolder;
+            string path = Model.Folder;
             if (string.IsNullOrWhiteSpace(path))
             {
                 View.ShowError("No folder selected!");
@@ -100,6 +95,7 @@ namespace CRLFLabs.ViewSize.Mvp
                         _lastBounds = bounds;
                         _lastSortKey = Model.SortKey;
 
+                        Model.Selected = null;
                         Model.Children = topLevelFolders;
                     });
                 }

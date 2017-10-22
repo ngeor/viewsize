@@ -8,18 +8,34 @@ using System.Linq;
 namespace ViewSizeMac
 {
     [Register("AppDelegate")]
-    public partial class AppDelegate : NSApplicationDelegate, IApplicationView
+    [Presenter(typeof(ApplicationPresenter))]
+    [Presenter(typeof(MenuPresenter))]
+    public partial class AppDelegate : NSApplicationDelegate, IApplicationView, IMenuView
     {
-        public AppDelegate()
+        public event EventHandler Load;
+        public event EventHandler Closing;
+        public event EventHandler FileSizeTreeMapClick;
+        public event EventHandler FileCountTreeMapClick;
+
+        public bool IsFileSizeTreeMapChecked
         {
-            new ApplicationPresenter(this, SettingsManager.Instance);
+            get => mnuFileSizeTreeMap.State == NSCellStateValue.On;
+            set => mnuFileSizeTreeMap.State = value ? NSCellStateValue.On : NSCellStateValue.Off;
         }
 
-        public event EventHandler Closing;
+        public bool IsFileCountTreeMapChecked
+        {
+            get => mnuFileCountTreeMap.State == NSCellStateValue.On;
+            set => mnuFileCountTreeMap.State = value ? NSCellStateValue.On : NSCellStateValue.Off;
+        }
+
+        public IMainModel Model { get; set; }
 
         public override void DidFinishLaunching(NSNotification notification)
         {
             // Insert code here to initialize your application
+            PresenterFactory.Create(this);
+            Load?.Invoke(this, EventArgs.Empty);
             mnuFileSizeTreeMap.State = NSCellStateValue.On;
         }
 
@@ -44,19 +60,13 @@ namespace ViewSizeMac
         [Export("fileSizeTreeMap:")]
         void OnFileSizeTreeMap(NSObject sender)
         {
-            mnuFileSizeTreeMap.State = NSCellStateValue.On;
-            mnuFileCountTreeMap.State = NSCellStateValue.Off;
-            var model = Registry.Instance.Get<IMainModel>();
-            model.SortKey = CRLFLabs.ViewSize.IO.SortKey.Size;
+            FileSizeTreeMapClick.Invoke(this, EventArgs.Empty);
         }
 
         [Export("fileCountTreeMap:")]
         void OnFileCountTreeMap(NSObject sender)
         {
-            mnuFileCountTreeMap.State = NSCellStateValue.On;
-            mnuFileSizeTreeMap.State = NSCellStateValue.Off;
-            var model = Registry.Instance.Get<IMainModel>();
-            model.SortKey = CRLFLabs.ViewSize.IO.SortKey.Count;
+            FileCountTreeMapClick.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -67,8 +77,7 @@ namespace ViewSizeMac
         /// <param name="filename">Filename.</param>
         public override bool OpenFile(NSApplication sender, string filename)
         {
-            var model = Registry.Instance.Get<IFolderChooserModel>();
-            model.Folder = filename;
+            Model.Folder = filename;
             ShowMainWindow();
             return true;
         }

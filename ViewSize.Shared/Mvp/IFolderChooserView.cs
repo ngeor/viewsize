@@ -5,7 +5,7 @@ namespace CRLFLabs.ViewSize.Mvp
     /// <summary>
     /// Folder chooser view.
     /// </summary>
-    public interface IFolderChooserView : IView<IFolderChooserModel>
+    public interface IFolderChooserView : IView<IMainModel>
     {
         /// <summary>
         /// Occurs when the user clicks the select folder button.

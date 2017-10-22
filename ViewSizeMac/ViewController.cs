@@ -13,12 +13,9 @@ using CRLFLabs.ViewSize.IO;
 
 namespace ViewSizeMac
 {
-    public partial class ViewController : NSViewController, IMainView, IFolderChooserView
+    [Presenter(typeof(MainPresenter))]
+    public partial class ViewController : NSViewController, IMainView
     {
-        private MainPresenter _mainPresenter;
-        private MainModel _mainModel;
-        private FolderChooserPresenter _folderChooserPresenter;
-
         public ViewController(IntPtr handle) : base(handle)
         {
             TroubleshootNativeCrashes();
@@ -45,7 +42,6 @@ namespace ViewSizeMac
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            CreatePresenters();
 
             // create and assign the outline delegate.
             // since this does not depend on the datasource,
@@ -57,27 +53,15 @@ namespace ViewSizeMac
                 OnTreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(selectedEntry));
             };
             outlineView.Delegate = folderOutlineDelegate;
-        }
 
-        private void CreatePresenters()
-        {
-            var fileUtils = new FileUtils();
-            _mainModel = new MainModel();
-            _mainPresenter = new MainPresenter(
-                this,
-                _mainModel,
-                new FolderScanner(fileUtils),
-                fileUtils
-            );
-            _folderChooserPresenter = new FolderChooserPresenter(
-                this,
-                new FolderChooserModel(txtFolder),
-                SettingsManager.Instance
-            );
+            // setup MVP
+            PresenterFactory.Create(this);
+            Load?.Invoke(this, EventArgs.Empty);
 
-            _mainModel.PropertyChanged += _mainModel_PropertyChanged;
-
-            folderGraph.Model = _mainModel;
+            // we have a model
+            Model.PropertyChanged += _mainModel_PropertyChanged;
+            folderGraph.Model = Model;
+            SetupFolderChooserViewModel();
         }
 
         public override NSObject RepresentedObject
@@ -95,12 +79,11 @@ namespace ViewSizeMac
 
         #region Cocoa Actions
 
-        partial void OnSelectFolder(NSObject sender) => OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
         partial void OnScan(NSObject sender) => OnBeginScanClick?.Invoke(this, EventArgs.Empty);
         partial void OnCancelScan(NSObject sender) => OnCancelScanClick?.Invoke(this, EventArgs.Empty);
         partial void OnShowInFinder(NSObject sender)
         {
-            var selected = _mainModel.Selected;
+            var selected = Model.Selected;
             if (selected == null)
             {
                 return;
@@ -118,9 +101,11 @@ namespace ViewSizeMac
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+        public event EventHandler Load;
 
         public ITreeMapView TreeMapView => folderGraph;
-        string IMainView.SelectedFolder => txtFolder.StringValue;
+        public string SelectedFolder => txtFolder.StringValue;
+        public IMainModel Model { get; set; }
 
         public void EnableUI(bool enable)
         {
@@ -148,7 +133,7 @@ namespace ViewSizeMac
         {
             if (e.PropertyName == MainModel.ChildrenPropertyName)
             {
-                var dataSource = new FolderOutlineDataSource(_mainModel.Children);
+                var dataSource = new FolderOutlineDataSource(Model.Children);
                 outlineView.DataSource = dataSource;
             }
         }
@@ -183,28 +168,7 @@ namespace ViewSizeMac
 
         #endregion
 
-        #region IFolderChooserView
-
-        public event EventHandler OnSelectFolderClick;
-
-        public string SelectFolder()
-        {
-            var dlg = NSOpenPanel.OpenPanel;
-            dlg.CanChooseFiles = false;
-            dlg.CanChooseDirectories = true;
-            dlg.CanCreateDirectories = false;
-            if (dlg.RunModal() == 1)
-            {
-                // TODO move this to the presenter
-                NSDocumentController.SharedDocumentController.NoteNewRecentDocumentURL(dlg.Url);
-                return dlg.Url.Path;
-            }
-
-            return null;
-        }
-
-        #endregion
-
+        // used by AppDelegate. TODO: find a better way?
         internal void TriggerSelectFolderClick()
         {
             OnSelectFolder(null);
@@ -214,7 +178,7 @@ namespace ViewSizeMac
         public void UpOneLevel(NSObject sender)
         {
             // TODO move to presenter
-            var selected = _mainModel.Selected;
+            var selected = Model.Selected;
             if (selected == null)
             {
                 return;
@@ -223,7 +187,7 @@ namespace ViewSizeMac
             var parent = selected.Parent as FileSystemEntry;
             if (parent != null)
             {
-                _mainModel.Selected = parent;
+                Model.Selected = parent;
             }
         }
 

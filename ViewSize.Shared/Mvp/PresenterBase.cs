@@ -26,18 +26,17 @@ namespace CRLFLabs.ViewSize.Mvp
         where TModel : class
         where TView : class, IView<TModel>
     {
-        public PresenterBase(TView view) : base(view)
+        public PresenterBase(TView view, TModel model) : base(view)
         {
+            Model = model;
         }
 
-        protected TModel Model { get; private set; }
+        protected TModel Model { get; }
+
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            Model = CreateModel();
             View.Model = Model;
         }
-
-        protected abstract TModel CreateModel();
     }
 }

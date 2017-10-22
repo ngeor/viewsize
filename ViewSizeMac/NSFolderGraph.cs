@@ -61,9 +61,12 @@ namespace ViewSizeMac
         {
             WantsLayer = true;
             LayerContentsRedrawPolicy = NSViewLayerContentsRedrawPolicy.DuringViewResize;
+            Load?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion
+
+        public event EventHandler Load;
 
         public IMainModel Model
         {

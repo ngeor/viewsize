@@ -25,7 +25,6 @@ namespace CRLFLabs.ViewSize.Mvp
         /// </summary>
         event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
-        string SelectedFolder { get; }
         ITreeMapView TreeMapView { get; }
 
         void EnableUI(bool enable);
