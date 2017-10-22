@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CRLFLabs.ViewSize.IO
+namespace CRLFLabs.ViewSizeWpf.Common
 {
     public static class Interop
     {

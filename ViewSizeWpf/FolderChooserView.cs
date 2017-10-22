@@ -18,17 +18,19 @@ namespace ViewSizeWpf
             // start MVP
             PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
-
-            // now we have a model
-            mainWindow.txtFolder.Text = Model.Folder;
-            Model.PropertyChanged += Model_PropertyChanged;
         }
 
-        public IFolderChooserModel Model { get; set; }
+        public IMainModel Model { get; set; }
         private MainWindow MainWindow { get; }
 
         public event EventHandler OnSelectFolderClick;
         public event EventHandler Load;
+
+        public string Folder
+        {
+            get => MainWindow.txtFolder.Text;
+            set => MainWindow.txtFolder.Text = value;
+        }
 
         public string SelectFolder()
         {
@@ -47,11 +49,6 @@ namespace ViewSizeWpf
         private void BtnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
             OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            MainWindow.txtFolder.Text = Model.Folder;
         }
 
         private void TxtFolder_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)

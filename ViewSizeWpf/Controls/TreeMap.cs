@@ -8,6 +8,7 @@ using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.TreeMap;
 using System.ComponentModel;
 using CRLFLabs.ViewSize.Mvp;
+using CRLFLabs.ViewSizeWpf.Common;
 
 namespace ViewSizeWpf.Controls
 {

@@ -1,5 +1,6 @@
 ﻿using CRLFLabs.ViewSize;
 using CRLFLabs.ViewSize.Drawing;
+using CRLFLabs.ViewSizeWpf.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

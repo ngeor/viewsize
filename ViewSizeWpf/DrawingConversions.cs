@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ViewSizeWpf
+namespace CRLFLabs.ViewSizeWpf
 {
     /// <summary>
     /// Converts geometric objects from the CRLFLabs shared namespace into the WPF/GDI (and vice versa).

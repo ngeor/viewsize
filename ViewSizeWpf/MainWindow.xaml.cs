@@ -3,6 +3,7 @@ using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.Settings;
 using CRLFLabs.ViewSize.TreeMap;
+using CRLFLabs.ViewSizeWpf;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

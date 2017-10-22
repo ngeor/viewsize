@@ -2,7 +2,7 @@
 using System.Drawing.Drawing2D;
 using CRLFLabs.ViewSize.Drawing;
 
-namespace ViewSizeWpf.Controls
+namespace CRLFLabs.ViewSizeWpf.Common
 {
     class GdiGraphics : IGraphics
     {
