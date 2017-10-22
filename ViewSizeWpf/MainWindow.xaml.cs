@@ -1,11 +1,7 @@
-﻿using CRLFLabs.ViewSize.Drawing;
-using CRLFLabs.ViewSize.IO;
+﻿using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
-using CRLFLabs.ViewSize.Settings;
-using CRLFLabs.ViewSize.TreeMap;
 using CRLFLabs.ViewSizeWpf;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
@@ -16,7 +12,8 @@ namespace ViewSizeWpf
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     [Presenter(typeof(MainPresenter))]
-    public partial class MainWindow : Window, IMainView
+    [Presenter(typeof(MenuPresenter))]
+    public partial class MainWindow : Window, IMainView, IMenuView
     {
         public MainWindow()
         {
@@ -45,6 +42,7 @@ namespace ViewSizeWpf
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+
 
         public IMainModel Model { get; set; }
 
@@ -128,9 +126,7 @@ namespace ViewSizeWpf
 
         private void FileSizeTreeMap_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            mnuFileCountTreeMap.IsChecked = false;
-            mnuFileSizeTreeMap.IsChecked = true;
-            Model.SortKey = SortKey.Size;
+            FileSizeTreeMapClick?.Invoke(this, e);
         }
 
         private void FileCountTreeMap_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -140,9 +136,7 @@ namespace ViewSizeWpf
 
         private void FileCountTreeMap_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            mnuFileCountTreeMap.IsChecked = true;
-            mnuFileSizeTreeMap.IsChecked = false;
-            Model.SortKey = SortKey.Count;
+            FileCountTreeMapClick?.Invoke(this, e);
         }
 
         private void ShowInExplorer_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -182,5 +176,22 @@ namespace ViewSizeWpf
         {
             Close();
         }
+
+        #region IMenuView
+        public event EventHandler FileSizeTreeMapClick;
+        public event EventHandler FileCountTreeMapClick;
+
+        public bool IsFileSizeTreeMapChecked
+        {
+            get => mnuFileSizeTreeMap.IsChecked;
+            set => mnuFileSizeTreeMap.IsChecked = value;
+        }
+
+        public bool IsFileCountTreeMapChecked
+        {
+            get => mnuFileCountTreeMap.IsChecked;
+            set => mnuFileCountTreeMap.IsChecked = value;
+        }
+        #endregion
     }
 }
