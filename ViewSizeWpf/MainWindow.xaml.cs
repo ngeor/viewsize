@@ -43,6 +43,10 @@ namespace ViewSizeWpf
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
+        public void SetTreeViewContents()
+        {
+            // not needed for Windows, treeView.DataContext = Model is done once in the constructor
+        }
 
         public IMainModel Model { get; set; }
 

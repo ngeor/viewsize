@@ -62,6 +62,17 @@ namespace ViewSizeWpf.Controls
             InvalidateVisual();
         }
 
+        public void SelectionChanging()
+        {
+
+        }
+
+        public void SelectionChanged()
+        {
+            // on windows we just do a full redraw
+            Redraw();
+        }
+
         #endregion
     }
 }
