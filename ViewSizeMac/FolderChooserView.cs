@@ -10,6 +10,12 @@ namespace ViewSizeMac
     {
         public event EventHandler OnSelectFolderClick;
 
+        string IFolderChooserView.Folder
+        {
+            get => txtFolder.StringValue;
+            set => txtFolder.StringValue = value;
+        }
+
         public string SelectFolder()
         {
             var dlg = NSOpenPanel.OpenPanel;
@@ -31,14 +37,6 @@ namespace ViewSizeMac
         private void SetupFolderChooserViewModel()
         {
             txtFolder.Changed += TxtFolder_Changed;
-            txtFolder.StringValue = Model.Folder;
-            Model.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName == MainModel.FolderPropertyName)
-                {
-                    txtFolder.StringValue = Model.Folder;
-                }
-            };
         }
 
         void TxtFolder_Changed(object sender, EventArgs e)

@@ -23,6 +23,7 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             base.OnViewLoad(sender, e);
             View.OnSelectFolderClick += View_OnSelectFolderClick;
+            View.Folder = Model.Folder;
         }
 
         private void View_OnSelectFolderClick(object sender, EventArgs e)
@@ -36,7 +37,11 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            SettingsManager.Settings.SelectedFolder = Model.Folder;
+            if (e.PropertyName == MainModel.FolderPropertyName)
+            {
+                View.Folder = Model.Folder;
+                SettingsManager.Settings.SelectedFolder = Model.Folder;
+            }
         }
     }
 }
