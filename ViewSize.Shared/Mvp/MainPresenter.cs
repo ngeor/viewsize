@@ -139,9 +139,13 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 case MainModel.SelectedPropertyName:
                     View.SetSelectedTreeViewItem(Model.Selected);
+                    View.TreeMapView.Redraw();
                     break;
                 case MainModel.SortKeyPropertyName:
                     ReCalculateTreeMap(true);
+                    break;
+                case MainModel.ChildrenPropertyName:
+                    View.TreeMapView.Redraw();
                     break;
             }
         }

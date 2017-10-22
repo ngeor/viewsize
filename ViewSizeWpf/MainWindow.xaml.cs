@@ -24,15 +24,14 @@ namespace ViewSizeWpf
             PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
 
-            // we have a model after Load event
-            Model.PropertyChanged += MainModel_PropertyChanged;
+            // TODO: delete after implementing TreeMapPresenter
             treeMap.Model = Model;
-
+            treeView.DataContext = Model;
             new FolderChooserView(this);
             new ApplicationView(this);
         }
 
-        #region IView implementation
+        #region IMainView implementation
         public void RunOnGuiThread(Action action) => Dispatcher.Invoke(action);
 
         public void ShowError(Exception ex) => ShowError(ex.Message + ex.StackTrace);
@@ -41,29 +40,13 @@ namespace ViewSizeWpf
         {
             MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-        #endregion
-
-        private void MainModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == MainModel.ChildrenPropertyName)
-            {
-                treeView.DataContext = ((MainModel)sender);
-            }
-        }
-
-        #region IMainView implementation
-
+        
         public event EventHandler Load;
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
         public IMainModel Model { get; set; }
-
-        public string SelectedFolder
-        {
-            get { return txtFolder.Text; }
-        }
 
         public void EnableUI(bool enable)
         {

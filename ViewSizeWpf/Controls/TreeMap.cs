@@ -14,8 +14,6 @@ namespace ViewSizeWpf.Controls
 {
     public class TreeMap : FrameworkElement, ITreeMapView
     {
-        private IMainModel _model;
-
         public TreeMap()
         {
             Load?.Invoke(this, EventArgs.Empty);
@@ -23,46 +21,9 @@ namespace ViewSizeWpf.Controls
 
         public event EventHandler Load;
 
-        public IMainModel Model
-        {
-            get
-            {
-                return _model;
-            }
-            set
-            {
-                Detach(_model);
-                _model = value;
-                Attach(_model);
-                InvalidateVisual();
-            }
-        }
+        public IMainModel Model { get; set; }
 
         public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
-
-        private void Attach(IMainModel model)
-        {
-            if (model != null)
-            {
-                model.PropertyChanged += Model_PropertyChanged;
-            }
-        }
-
-        private void Detach(IMainModel model)
-        {
-            if (model != null)
-            {
-                model.PropertyChanged -= Model_PropertyChanged;
-            }
-        }
-
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == MainModel.ChildrenPropertyName || e.PropertyName == MainModel.SelectedPropertyName)
-            {
-                InvalidateVisual();
-            }
-        }
 
         public event EventHandler RedrawNeeded;
 
