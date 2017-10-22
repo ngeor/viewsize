@@ -13,10 +13,6 @@ namespace CRLFLabs.ViewSize.Mvp
     /// </summary>
     public class MainPresenter : PresenterBase<IMainView, IMainModel>
     {
-        private bool _isScanning;
-        private RectangleD _lastBounds;
-        private SortKey _lastSortKey;
-
         /// <summary>
         /// Creates an instance of this class.
         /// </summary>
@@ -40,7 +36,6 @@ namespace CRLFLabs.ViewSize.Mvp
             View.OnBeginScanClick += View_OnBeginScanClick;
             View.OnCancelScanClick += View_OnCancelScanClick;
             View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
-            View.TreeMapView.RedrawNeeded += TreeMapView_RedrawNeeded;
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)
@@ -58,18 +53,15 @@ namespace CRLFLabs.ViewSize.Mvp
                 return;
             }
 
-            _isScanning = true;
+            Model.IsScanning = true;
             View.EnableUI(false);
-            var bounds = View.TreeMapView.BoundsD;
-            var treeMapWidth = bounds.Width;
-            var treeMapHeight = bounds.Height;
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             // progress task
             Task.Run(async () =>
             {
-                while (_isScanning)
+                while (Model.IsScanning)
                 {
                     View.RunOnGuiThread(() =>
                     {
@@ -85,18 +77,13 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 try
                 {
-                    var topLevelFolders = FolderScanner.Scan(path);
-                    var renderer = new Renderer(bounds, topLevelFolders, Model.SortKey);
-                    renderer.Render();
+                    // this is picked up by TreeMapPresenter
+                    Model.TopLevelFolders = FolderScanner.Scan(path);
                     stopwatch.Stop();
                     View.RunOnGuiThread(() =>
                     {
-                        // capture these two for recalculate
-                        _lastBounds = bounds;
-                        _lastSortKey = Model.SortKey;
-
                         Model.Selected = null;
-                        Model.Children = topLevelFolders;
+                        Model.Children = Model.TopLevelFolders;
                     });
                 }
                 catch (Exception ex)
@@ -105,9 +92,9 @@ namespace CRLFLabs.ViewSize.Mvp
                 }
                 finally
                 {
-                    _isScanning = false;
                     View.RunOnGuiThread(() =>
                     {
+                        Model.IsScanning = false;
                         View.EnableUI(true);
                     });
                 }
@@ -124,19 +111,8 @@ namespace CRLFLabs.ViewSize.Mvp
             Model.Selected = e.FileSystemEntry;
         }
 
-        void TreeMapView_RedrawNeeded(object sender, EventArgs e)
-        {
-            ReCalculateTreeMap(false);
-        }
-
         void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
         {
-            switch (e.PropertyName)
-            {
-                case MainModel.SelectedPropertyName:
-                    View.TreeMapView.SelectionChanging();
-                    break;
-            }
         }
 
         void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -145,13 +121,8 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 case MainModel.SelectedPropertyName:
                     View.SetSelectedTreeViewItem(Model.Selected);
-                    View.TreeMapView.SelectionChanged();
-                    break;
-                case MainModel.SortKeyPropertyName:
-                    ReCalculateTreeMap(true);
                     break;
                 case MainModel.ChildrenPropertyName:
-                    View.TreeMapView.Redraw();
                     View.SetTreeViewContents();
                     break;
             }
@@ -163,32 +134,6 @@ namespace CRLFLabs.ViewSize.Mvp
             {
                 View.SetScanningItem(e.FileSystemEntry.Path);
             });
-        }
-
-        private void ReCalculateTreeMap(bool forceRedraw)
-        {
-            if (Model.Children == null)
-            {
-                // no data yet
-                return;
-            }
-
-            var bounds = View.TreeMapView.BoundsD;
-            if (bounds.Size == _lastBounds.Size && Model.SortKey == _lastSortKey)
-            {
-                return;
-            }
-
-            _lastBounds = bounds;
-            _lastSortKey = Model.SortKey;
-
-            var renderer = new Renderer(bounds, Model.Children, Model.SortKey);
-            renderer.Render();
-
-            if (forceRedraw)
-            {
-                View.TreeMapView.Redraw();
-            }
         }
     }
 }

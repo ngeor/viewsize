@@ -12,7 +12,6 @@ namespace ViewSize.Tests.Mvp
     {
         private MainPresenter _presenter;
         private Mock<IMainView> _viewMock;
-        private Mock<ITreeMapView> _treeMapViewMock;
         private Mock<IFolderScanner> _folderScannerMock;
         private Mock<IFileUtils> _fileUtilsMock;
         private MainModel _model;
@@ -21,8 +20,6 @@ namespace ViewSize.Tests.Mvp
         public void SetUp()
         {
             _viewMock = new Mock<IMainView>();
-            _treeMapViewMock = new Mock<ITreeMapView>();
-            _viewMock.SetupGet(v => v.TreeMapView).Returns(_treeMapViewMock.Object);
             _folderScannerMock = new Mock<IFolderScanner>();
             _fileUtilsMock = new Mock<IFileUtils>();
             _presenter = new MainPresenter(

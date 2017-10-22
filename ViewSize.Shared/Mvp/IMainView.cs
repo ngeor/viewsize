@@ -1,6 +1,4 @@
-﻿using CRLFLabs.ViewSize.Drawing;
-using CRLFLabs.ViewSize.TreeMap;
-using System;
+﻿using System;
 using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -24,8 +22,6 @@ namespace CRLFLabs.ViewSize.Mvp
         /// Occurs when the user has selected a file system entry on the tree view.
         /// </summary>
         event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
-
-        ITreeMapView TreeMapView { get; }
 
         void EnableUI(bool enable);
         void SetTreeViewContents();

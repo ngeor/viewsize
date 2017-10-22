@@ -52,7 +52,6 @@ namespace ViewSizeMac
             Load?.Invoke(this, EventArgs.Empty);
 
             // we have a model
-            folderGraph.Model = Model; // TODO: remove after implementing TreeMapPresenter
             SetupFolderChooserView();
         }
 
@@ -95,7 +94,6 @@ namespace ViewSizeMac
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
         public event EventHandler Load;
 
-        public ITreeMapView TreeMapView => folderGraph;
         public string SelectedFolder => txtFolder.StringValue;
         public IMainModel Model { get; set; }
 

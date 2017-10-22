@@ -49,6 +49,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MenuPresenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\TreeMapPresenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

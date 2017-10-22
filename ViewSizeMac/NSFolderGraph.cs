@@ -13,13 +13,9 @@ namespace ViewSizeMac
     /// Custom control that renders a tree map graph.
     /// </summary>
     [Register("NSFolderGraph")]
+    [Presenter(typeof(TreeMapPresenter))]
     public class NSFolderGraph : NSControl, ITreeMapView
     {
-        /// <summary>
-        /// The main model.
-        /// </summary>
-        private IMainModel _model;
-
         /// <summary>
         /// Holds the bounds of the previously selected area.
         /// Used to repaint more efficiently when selection changes.
@@ -58,6 +54,7 @@ namespace ViewSizeMac
         {
             WantsLayer = true;
             LayerContentsRedrawPolicy = NSViewLayerContentsRedrawPolicy.DuringViewResize;
+            PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
         }
 
