@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IoC\TypeMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntryCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\CanExecuteEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />

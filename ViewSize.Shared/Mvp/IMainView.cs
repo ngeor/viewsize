@@ -23,6 +23,9 @@ namespace CRLFLabs.ViewSize.Mvp
         /// </summary>
         event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
+        event EventHandler UpOneLevelClick;
+        event EventHandler<CanExecuteEventArgs> UpOneLevelCanExecute;
+
         void EnableUI(bool enable);
         void SetTreeViewContents();
 

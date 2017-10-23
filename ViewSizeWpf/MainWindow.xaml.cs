@@ -40,6 +40,8 @@ namespace ViewSizeWpf
         public event EventHandler OnBeginScanClick;
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+        public event EventHandler UpOneLevelClick;
+        public event EventHandler<CanExecuteEventArgs> UpOneLevelCanExecute;
 
         public void SetTreeViewContents()
         {
@@ -163,13 +165,14 @@ namespace ViewSizeWpf
 
         private void UpOneLevel_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Model.Selected = Model.Selected.Parent as FileSystemEntry;
+            UpOneLevelClick?.Invoke(this, e);
         }
 
         private void UpOneLevel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            var selected = Model?.Selected;
-            e.CanExecute = selected != null && selected.Parent is FileSystemEntry;
+            var args = new CanExecuteEventArgs();
+            UpOneLevelCanExecute?.Invoke(this, args);
+            e.CanExecute = args.CanExecute;
         }
 
         private void CloseCommand_Executed(object sender, ExecutedRoutedEventArgs e)

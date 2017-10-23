@@ -36,6 +36,18 @@ namespace CRLFLabs.ViewSize.Mvp
             View.OnBeginScanClick += View_OnBeginScanClick;
             View.OnCancelScanClick += View_OnCancelScanClick;
             View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
+            View.UpOneLevelClick += View_UpOneLevelClick;
+            View.UpOneLevelCanExecute += View_UpOneLevelCanExecute;
+        }
+
+        private void View_UpOneLevelCanExecute(object sender, CanExecuteEventArgs e)
+        {
+            e.CanExecute = Model.Selected?.Parent != null;
+        }
+
+        private void View_UpOneLevelClick(object sender, EventArgs e)
+        {
+            Model.Selected = Model.Selected.Parent;
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)
