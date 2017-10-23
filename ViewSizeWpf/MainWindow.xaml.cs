@@ -21,8 +21,6 @@ namespace ViewSizeWpf
             PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
 
-            // TODO: delete after implementing TreeMapPresenter
-            treeMap.Model = Model;
             treeView.DataContext = Model;
             new FolderChooserView(this);
             new ApplicationView(this);
@@ -59,8 +57,6 @@ namespace ViewSizeWpf
             progressBar.IsIndeterminate = !enable;
             Cursor = enable ? Cursors.Arrow : Cursors.Wait;
         }
-
-        public ITreeMapView TreeMapView => treeMap;
 
         public void SetScanningItem(string path) => lblStatus.Content = path;
         public void SetDurationLabel(string durationLabel) => lblDuration.Content = durationLabel;

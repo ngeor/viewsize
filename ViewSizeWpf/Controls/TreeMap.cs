@@ -12,10 +12,12 @@ using CRLFLabs.ViewSizeWpf.Common;
 
 namespace ViewSizeWpf.Controls
 {
+    [Presenter(typeof(TreeMapPresenter))]
     public class TreeMap : FrameworkElement, ITreeMapView
     {
         public TreeMap()
         {
+            PresenterFactory.Create(this);
             Load?.Invoke(this, EventArgs.Empty);
         }
 
@@ -26,7 +28,6 @@ namespace ViewSizeWpf.Controls
         public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
 
         public event EventHandler RedrawNeeded;
-
 
         #region Rendering
 
