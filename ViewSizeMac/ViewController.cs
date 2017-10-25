@@ -93,6 +93,8 @@ namespace ViewSizeMac
         public event EventHandler OnCancelScanClick;
         public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
         public event EventHandler Load;
+        public event EventHandler UpOneLevelClick;
+        public event EventHandler<CanExecuteEventArgs> UpOneLevelCanExecute;
 
         public string SelectedFolder => txtFolder.StringValue;
         public IMainModel Model { get; set; }
@@ -164,18 +166,7 @@ namespace ViewSizeMac
         [Action("upOneLevel:")]
         public void UpOneLevel(NSObject sender)
         {
-            // TODO move to presenter
-            var selected = Model.Selected;
-            if (selected == null)
-            {
-                return;
-            }
-
-            var parent = selected.Parent as FileSystemEntry;
-            if (parent != null)
-            {
-                Model.Selected = parent;
-            }
+            UpOneLevelClick?.Invoke(this, EventArgs.Empty);
         }
 
         private void ShowExceptionAlert(Exception ex)

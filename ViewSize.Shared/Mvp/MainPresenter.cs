@@ -47,7 +47,12 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void View_UpOneLevelClick(object sender, EventArgs e)
         {
-            Model.Selected = Model.Selected.Parent;
+            var parent = Model.Selected?.Parent;
+            if (parent != null)
+            {
+                // need to check if it is null because on Mac the CanExecute event is not being used
+                Model.Selected = parent;
+            }
         }
 
         void View_OnBeginScanClick(object sender, EventArgs e)

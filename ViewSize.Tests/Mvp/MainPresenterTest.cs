@@ -57,5 +57,46 @@ namespace ViewSize.Tests.Mvp
             // assert
             _viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
         }
+
+        [Test]
+        public void UpOneLevel_NoSelected_DoesNothing()
+        {
+            // arrange
+
+            // act
+            _viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+
+            // assert
+            Assert.IsNull(_model.Selected);
+        }
+
+        [Test]
+        public void UpOneLevel_NoParent_DoesNothing()
+        {
+            // arrange
+            var selected = new FileSystemEntry("test", null);
+            _model.Selected = selected;
+
+            // act
+            _viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+
+            // assert
+            Assert.AreSame(selected, _model.Selected);
+        }
+
+        [Test]
+        public void UpOneLevel_WithParent_SelectsParent()
+        {
+            // arrange
+            var parent = new FileSystemEntry("test", null);
+            var selected = new FileSystemEntry("child", parent);
+            _model.Selected = selected;
+
+            // act
+            _viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+
+            // assert
+            Assert.AreSame(parent, _model.Selected);
+        }
     }
 }
