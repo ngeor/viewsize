@@ -53,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MenuPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ICommandBus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\CommandBus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\RecentFileEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

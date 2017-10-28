@@ -16,6 +16,7 @@ namespace ViewSizeMac
         public event EventHandler FileSizeTreeMapClick;
         public event EventHandler FileCountTreeMapClick;
         public event EventHandler FileOpenClick;
+        public event EventHandler<RecentFileEventArgs> OpenRecentFileClick;
 
         public bool IsFileSizeTreeMapChecked
         {
@@ -76,8 +77,7 @@ namespace ViewSizeMac
         /// <param name="filename">Filename.</param>
         public override bool OpenFile(NSApplication sender, string filename)
         {
-            Model.Folder = filename;
-            ShowMainWindow();
+            OpenRecentFileClick(this, new RecentFileEventArgs(filename));
             return true;
         }
 

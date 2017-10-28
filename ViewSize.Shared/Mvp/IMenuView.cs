@@ -6,6 +6,7 @@ namespace CRLFLabs.ViewSize.Mvp
         event EventHandler FileSizeTreeMapClick;
         event EventHandler FileCountTreeMapClick;
         event EventHandler FileOpenClick;
+        event EventHandler<RecentFileEventArgs> OpenRecentFileClick;
 
         bool IsFileSizeTreeMapChecked { get; set; }
         bool IsFileCountTreeMapChecked { get; set; }

@@ -19,6 +19,7 @@ namespace CRLFLabs.ViewSize.Mvp
             View.FileSizeTreeMapClick += View_FileSizeTreeMapClick;
             View.FileCountTreeMapClick += View_FileCountTreeMapClick;
             View.FileOpenClick += View_FileOpenClick;
+            View.OpenRecentFileClick += View_OpenRecentFileClick;
         }
 
         void View_FileSizeTreeMapClick(object sender, EventArgs e)
@@ -38,6 +39,12 @@ namespace CRLFLabs.ViewSize.Mvp
         void View_FileOpenClick(object sender, EventArgs e)
         {
             CommandBus.Publish("SelectFolder");
+            View.ShowMainWindow();
+        }
+
+        void View_OpenRecentFileClick(object sender, RecentFileEventArgs e)
+        {
+            Model.Folder = e.Filename;
             View.ShowMainWindow();
         }
     }

@@ -40,5 +40,19 @@ namespace ViewSize.Tests.Mvp
             _viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
             _commandBusMock.Verify(v => v.Publish("SelectFolder"));
         }
+
+        [Test]
+        public void OpenRecentFileClick_ShowsMainWindow()
+        {
+            _viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
+            _viewMock.Verify(v => v.ShowMainWindow());
+        }
+
+        [Test]
+        public void OpenRecentFileClick_SetsModelFolder()
+        {
+            _viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
+            Assert.AreEqual("file", _mainModel.Folder);
+        }
     }
 }
