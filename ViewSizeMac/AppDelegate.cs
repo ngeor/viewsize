@@ -15,6 +15,7 @@ namespace ViewSizeMac
         public event EventHandler Closing;
         public event EventHandler FileSizeTreeMapClick;
         public event EventHandler FileCountTreeMapClick;
+        public event EventHandler FileOpenClick;
 
         public bool IsFileSizeTreeMapChecked
         {
@@ -52,8 +53,7 @@ namespace ViewSizeMac
         [Export("openDocument:")]
         void OnOpenDocument(NSObject sender)
         {
-            FindViewController().TriggerSelectFolderClick();
-            ShowMainWindow();
+            FileOpenClick?.Invoke(this, EventArgs.Empty);
         }
 
         [Export("fileSizeTreeMap:")]
@@ -81,15 +81,7 @@ namespace ViewSizeMac
             return true;
         }
 
-        private ViewController FindViewController()
-        {
-            var q =
-                from w in NSApplication.SharedApplication.Windows
-                select w.ContentViewController as ViewController;
-            return q.FirstOrDefault();
-        }
-
-        private void ShowMainWindow()
+        public void ShowMainWindow()
         {
             var q =
                 from w in NSApplication.SharedApplication.Windows

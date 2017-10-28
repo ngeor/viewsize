@@ -18,6 +18,7 @@ namespace CRLFLabs.ViewSize.IoC
             resolver.Map<ISettingsManager, SettingsManager>(singleton: true);
             resolver.Map<IFolderScanner, FolderScanner>();
             resolver.Map<IMainModel, MainModel>(singleton: true);
+            resolver.Map<ICommandBus, CommandBus>(singleton: true);
             return resolver;
         }
     }

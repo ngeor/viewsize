@@ -85,6 +85,13 @@ namespace ViewSizeMac
                 new NSUrl(selected.Path, selected.IsDirectory)
             });
         }
+
+        [Action("upOneLevel:")]
+        public void UpOneLevel(NSObject sender)
+        {
+            UpOneLevelClick?.Invoke(this, EventArgs.Empty);
+        }
+
         #endregion
 
         #region IMainView
@@ -156,18 +163,6 @@ namespace ViewSizeMac
         }
 
         #endregion
-
-        // used by AppDelegate. TODO: find a better way?
-        internal void TriggerSelectFolderClick()
-        {
-            OnSelectFolder(null);
-        }
-
-        [Action("upOneLevel:")]
-        public void UpOneLevel(NSObject sender)
-        {
-            UpOneLevelClick?.Invoke(this, EventArgs.Empty);
-        }
 
         private void ShowExceptionAlert(Exception ex)
         {

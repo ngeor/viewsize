@@ -10,54 +10,70 @@ namespace ViewSize.Tests.Mvp
     public class FolderChooserPresenterTest
     {
         private FolderChooserPresenter _presenter;
-        private Mock<IFolderChooserView> _view;
-        private Mock<ISettingsManager> _settingsManager;
+        private Mock<IFolderChooserView> _viewMock;
+        private Mock<ISettingsManager> _settingsManagerMock;
         private Settings _settings;
+        private CommandBus _commandBus;
 
         [SetUp]
         public void SetUp()
         {
-            _view = new Mock<IFolderChooserView>();
+            _viewMock = new Mock<IFolderChooserView>();
             _settings = new Settings
             {
                 SelectedFolder = "settings value"
             };
-            _settingsManager = new Mock<ISettingsManager>();
-            _settingsManager.SetupGet(m => m.Settings).Returns(_settings);
-            _view.SetupProperty(v => v.Model);
+            _settingsManagerMock = new Mock<ISettingsManager>();
+            _settingsManagerMock.SetupGet(m => m.Settings).Returns(_settings);
+            _viewMock.SetupProperty(v => v.Model);
+            _commandBus = new CommandBus();
             _presenter = new FolderChooserPresenter(
-                _view.Object,
+                _viewMock.Object,
                 Mock.Of<IMainModel>(),
-                _settingsManager.Object
+                _settingsManagerMock.Object,
+                _commandBus
             );
 
-            _view.Raise(v => v.Load += null, EventArgs.Empty);
+            _viewMock.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]
         public void OnSelectFolder_WhenViewReturnsFolder_ShouldUpdateModel()
         {
             // arrange
-            _view.Setup(v => v.SelectFolder()).Returns("some path");
+            _viewMock.Setup(v => v.SelectFolder()).Returns("some path");
 
             // act
-            _view.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
+            _viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("some path", _view.Object.Model.Folder);
+            Assert.AreEqual("some path", _viewMock.Object.Model.Folder);
         }
 
         [Test]
         public void OnSelectFolder_WhenViewReturnsNull_ShouldNotUpdateModel()
         {
             // arrange
-            _view.Setup(v => v.SelectFolder()).Returns((string)null);
+            _viewMock.Setup(v => v.SelectFolder()).Returns((string)null);
 
             // act
-            _view.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
+            _viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("settings value", _view.Object.Model.Folder);
+            Assert.AreEqual("settings value", _viewMock.Object.Model.Folder);
+        }
+
+        [Test]
+        public void PublishCommand_UpdatesModel()
+        {
+            // arrange
+            _viewMock.Setup(v => v.SelectFolder()).Returns("some path");
+
+            // act
+            _commandBus.Publish("SelectFolder");
+
+            // assert
+            Assert.AreEqual("some path", _viewMock.Object.Model.Folder);
         }
     }
 }

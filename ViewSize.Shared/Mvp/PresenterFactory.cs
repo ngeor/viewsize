@@ -44,8 +44,11 @@ namespace CRLFLabs.ViewSize.Mvp
                 throw new InvalidOperationException($"View is not of expected type {viewType}");
             }
 
+            // map the view object to the view type, so that resolver will now what to do with view type
             resolver.Map(viewType, view);
-            resolver.Resolve(presenterType); // ignore presenter object returned here
+
+            // create presenter (ignore presenter object returned)
+            resolver.Resolve(presenterType);
         }
     }
 }

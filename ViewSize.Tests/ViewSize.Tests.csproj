@@ -62,6 +62,8 @@
     <Compile Include="Mvp\MainPresenterTest.cs" />
     <Compile Include="IO\FileSystemEntryTest.cs" />
     <Compile Include="IO\FolderScannerTest.cs" />
+    <Compile Include="Mvp\CommandBusTest.cs" />
+    <Compile Include="Mvp\MenuPresenterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
