@@ -1,8 +1,10 @@
-﻿using CRLFLabs.ViewSize.IoC;
+﻿// <copyright file="PresenterFactory.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using CRLFLabs.ViewSize.IoC;
 
 namespace CRLFLabs.ViewSize.Mvp
 {

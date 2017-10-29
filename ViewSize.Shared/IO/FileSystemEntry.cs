@@ -1,13 +1,17 @@
-﻿using CRLFLabs.ViewSize.Drawing;
+﻿// <copyright file="FileSystemEntry.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.IO
 {
     public partial class FileSystemEntry
     {
-        private readonly List<FileSystemEntry> _children = new List<FileSystemEntry>();
+        private readonly List<FileSystemEntry> children = new List<FileSystemEntry>();
 
         public FileSystemEntry(string path, FileSystemEntry parent)
         {
@@ -16,32 +20,37 @@ namespace CRLFLabs.ViewSize.IO
                 throw new ArgumentNullException(nameof(path));
             }
 
-            Path = path;
-            Parent = parent;
-            AddToChildrenOfParent();
+            this.Path = path;
+            this.Parent = parent;
+            this.AddToChildrenOfParent();
         }
 
         // core properties
         public string Path { get; }
+
         public long OwnSize { get; set; }
+
         public bool IsDirectory { get; set; }
 
         // computed
         // virtual for unit tests
         public virtual long TotalSize { get; private set; }
+
         public double Percentage { get; set; }
+
         public long FileCount { get; private set; }
 
         // relationships
         public FileSystemEntry Parent { get; }
 
         // virtual for unit tests
-        public virtual IReadOnlyList<FileSystemEntry> Children => _children;
+        public virtual IReadOnlyList<FileSystemEntry> Children => this.children;
 
-        public bool IsTopLevel => Parent == null;
+        public bool IsTopLevel => this.Parent == null;
 
         // UI
         public string DisplayText { get; set; }
+
         public string DisplaySize { get; set; }
 
         // TreeMap
@@ -49,7 +58,7 @@ namespace CRLFLabs.ViewSize.IO
 
         public override string ToString()
         {
-            return $"[FileSystemEntry: Path={Path}]";
+            return $"[FileSystemEntry: Path={this.Path}]";
         }
 
         /// <summary>
@@ -75,7 +84,7 @@ namespace CRLFLabs.ViewSize.IO
 
         public IEnumerable<FileSystemEntry> Ancestors()
         {
-            var parent = Parent as FileSystemEntry;
+            var parent = this.Parent as FileSystemEntry;
             if (parent == null)
             {
                 return Enumerable.Empty<FileSystemEntry>();
@@ -88,16 +97,16 @@ namespace CRLFLabs.ViewSize.IO
 
         internal void AdjustTotalSizeAndSortChildren()
         {
-            if (!IsDirectory)
+            if (!this.IsDirectory)
             {
-                TotalSize = OwnSize;
-                FileCount = 1;
+                this.TotalSize = this.OwnSize;
+                this.FileCount = 1;
                 return;
             }
 
-            TotalSize = _children.Select(c => c.TotalSize).Sum();
-            FileCount = _children.Select(c => c.FileCount).Sum();
-            _children.Sort((x, y) =>
+            this.TotalSize = this.children.Select(c => c.TotalSize).Sum();
+            this.FileCount = this.children.Select(c => c.FileCount).Sum();
+            this.children.Sort((x, y) =>
             {
                 if (x.TotalSize > y.TotalSize)
                 {
@@ -116,7 +125,7 @@ namespace CRLFLabs.ViewSize.IO
 
         private void AddToChildrenOfParent()
         {
-            Parent?._children.Add(this);
+            this.Parent?.children.Add(this);
         }
     }
 }

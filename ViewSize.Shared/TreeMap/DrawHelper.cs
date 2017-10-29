@@ -1,9 +1,13 @@
-﻿using System;
+﻿// <copyright file="DrawHelper.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
-using System.Collections.Generic;
 using CRLFLabs.ViewSize.Mvp;
 
 namespace CRLFLabs.ViewSize.TreeMap
@@ -20,8 +24,8 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <param name="needsToDraw">A function that can determin if a rectangle needs drawing.</param>
         public DrawHelper(IGraphics graphics, Func<RectangleD, bool> needsToDraw)
         {
-            Graphics = graphics;
-            NeedsToDraw = needsToDraw;
+            this.Graphics = graphics;
+            this.NeedsToDraw = needsToDraw;
         }
 
         public IGraphics Graphics { get; }
@@ -38,7 +42,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (model == null || model.Children == null)
             {
                 // clear rect
-                Graphics.FillRect(Colors.White, dirtyRect);
+                this.Graphics.FillRect(Colors.White, dirtyRect);
                 return;
             }
 
@@ -46,12 +50,12 @@ namespace CRLFLabs.ViewSize.TreeMap
 
             if (drawContents)
             {
-                DrawChildren(model.Children, selected, 0);
+                this.DrawChildren(model.Children, selected, 0);
             }
 
             if (drawSelected)
             {
-                DrawSelected(selected);
+                this.DrawSelected(selected);
             }
         }
 
@@ -60,7 +64,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (selected != null)
             {
                 var rect = selected.Bounds;
-                Graphics.DrawRect(Colors.Yellow, rect, 2);
+                this.Graphics.DrawRect(Colors.Yellow, rect, 2);
             }
         }
 
@@ -69,20 +73,20 @@ namespace CRLFLabs.ViewSize.TreeMap
             FileSystemEntry selected,
             int level)
         {
-            //if (level > 7)
-            //{
+            // if (level > 7)
+            // {
             //    return;
-            //}
+            // }
             foreach (var entry in elements)
             {
-                Draw(entry, selected, level + 1);
+                this.Draw(entry, selected, level + 1);
             }
         }
 
         private void Draw(FileSystemEntry entry, FileSystemEntry selected, int level)
         {
             var rect = entry.Bounds;
-            if (!NeedsToDraw(rect))
+            if (!this.NeedsToDraw(rect))
             {
                 return;
             }
@@ -90,31 +94,31 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (entry.Children.Any())
             {
                 // recursion
-                DrawChildren(entry.Children, selected, level);
-                Graphics.DrawRect(Colors.Black, rect);
+                this.DrawChildren(entry.Children, selected, level);
+                this.Graphics.DrawRect(Colors.Black, rect);
             }
             else
             {
-                DrawFill(entry, rect, selected, level);
+                this.DrawFill(entry, rect, selected, level);
             }
         }
 
         private void DrawFill(FileSystemEntry entry, RectangleD rect, FileSystemEntry selected, int level)
         {
-            var fillColor = SelectFillColor(entry);
+            var fillColor = this.SelectFillColor(entry);
             var lightColor = fillColor.Lighter().Lighter();
-            Graphics.FillRect(fillColor, rect);
+            this.Graphics.FillRect(fillColor, rect);
 
             if (rect.Width >= 5 && rect.Height >= 5)
             {
                 var parent = entry.Parent as FileSystemEntry;
                 if (parent != null)
                 {
-                    Graphics.FillEllipseGradient(lightColor, fillColor, rect, parent.Bounds.Center);
+                    this.Graphics.FillEllipseGradient(lightColor, fillColor, rect, parent.Bounds.Center);
                 }
                 else
                 {
-                    Graphics.FillEllipseGradient(lightColor, fillColor, rect);
+                    this.Graphics.FillEllipseGradient(lightColor, fillColor, rect);
                 }
             }
         }

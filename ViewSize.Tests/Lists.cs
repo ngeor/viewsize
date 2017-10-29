@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// <copyright file="Lists.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ViewSize.Tests
@@ -16,5 +20,4 @@ namespace ViewSize.Tests
             return elements.ToList();
         }
     }
-
 }

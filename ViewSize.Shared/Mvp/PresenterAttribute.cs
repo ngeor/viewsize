@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="PresenterAttribute.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -9,7 +11,7 @@ namespace CRLFLabs.ViewSize.Mvp
     {
         public PresenterAttribute(Type presenterType)
         {
-            PresenterType = presenterType;
+            this.PresenterType = presenterType;
         }
 
         public Type PresenterType { get; }

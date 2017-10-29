@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="PointD.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace CRLFLabs.ViewSize.Drawing
 {
@@ -9,28 +13,29 @@ namespace CRLFLabs.ViewSize.Drawing
     {
         public PointD(double x, double y)
         {
-            X = x;
-            Y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         public double X { get; }
+
         public double Y { get; }
 
         public override bool Equals(object obj)
         {
-            return (obj is PointD point) && Equals(point);
+            return obj is PointD point && this.Equals(point);
         }
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode();
+            return this.X.GetHashCode() ^ this.Y.GetHashCode();
         }
 
-        public override string ToString() => $"({X}, {Y})";
+        public override string ToString() => $"({this.X}, {this.Y})";
 
         public bool Equals(PointD other)
         {
-            return X == other.X && Y == other.Y;
+            return this.X == other.X && this.Y == other.Y;
         }
 
         public static bool operator ==(PointD left, PointD right)
@@ -43,12 +48,12 @@ namespace CRLFLabs.ViewSize.Drawing
             return !(left == right);
         }
 
-        public static PointD operator + (PointD left, PointD right)
+        public static PointD operator +(PointD left, PointD right)
         {
-            return new PointD(left.X + right.X, left.Y + right.Y);    
+            return new PointD(left.X + right.X, left.Y + right.Y);
         }
 
-        public static PointD operator - (PointD left, PointD right)
+        public static PointD operator -(PointD left, PointD right)
         {
             return new PointD(left.X - right.X, left.Y - right.Y);
         }

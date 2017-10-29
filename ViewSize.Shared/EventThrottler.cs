@@ -1,24 +1,29 @@
-﻿using System;
+﻿// <copyright file="EventThrottler.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
+
 namespace CRLFLabs.ViewSize
 {
     public class EventThrottler<T> where T : EventArgs
     {
-        private DateTime _lastEvent = DateTime.MinValue;
-        private readonly TimeSpan _threshold;
-        private readonly EventHandler<T> _eventHandler;
+        private DateTime lastEvent = DateTime.MinValue;
+        private readonly TimeSpan threshold;
+        private readonly EventHandler<T> eventHandler;
 
         public EventThrottler(EventHandler<T> eventHandler, TimeSpan threshold)
         {
-            _eventHandler = eventHandler;
-            _threshold = threshold;
+            this.eventHandler = eventHandler;
+            this.threshold = threshold;
         }
 
         private bool ShouldFireEvent()
         {
             var now = DateTime.UtcNow;
-            if (_lastEvent == DateTime.MinValue || now - _lastEvent > _threshold)
+            if (this.lastEvent == DateTime.MinValue || now - this.lastEvent > this.threshold)
             {
-                _lastEvent = now;
+                this.lastEvent = now;
                 return true;
             }
 
@@ -27,9 +32,9 @@ namespace CRLFLabs.ViewSize
 
         public void ThrottledEventHandler(object sender, T args)
         {
-            if (ShouldFireEvent())
+            if (this.ShouldFireEvent())
             {
-                _eventHandler(sender, args);
+                this.eventHandler(sender, args);
             }
         }
 

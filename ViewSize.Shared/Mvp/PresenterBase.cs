@@ -1,8 +1,13 @@
-﻿using System;
+﻿// <copyright file="PresenterBase.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
+
 namespace CRLFLabs.ViewSize.Mvp
 {
     public abstract class PresenterBase<TView>
-        where TView: class, IView
+        where TView : class, IView
     {
         public PresenterBase(TView view)
         {
@@ -11,8 +16,8 @@ namespace CRLFLabs.ViewSize.Mvp
                 throw new ArgumentNullException(nameof(view));
             }
 
-            View = view;
-            view.Load += OnViewLoad;
+            this.View = view;
+            view.Load += this.OnViewLoad;
         }
 
         public TView View { get; }
@@ -26,9 +31,10 @@ namespace CRLFLabs.ViewSize.Mvp
         where TModel : class
         where TView : class, IView<TModel>
     {
-        public PresenterBase(TView view, TModel model) : base(view)
+        public PresenterBase(TView view, TModel model)
+            : base(view)
         {
-            Model = model;
+            this.Model = model;
         }
 
         protected TModel Model { get; }
@@ -36,7 +42,7 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            View.Model = Model;
+            this.View.Model = this.Model;
         }
     }
 }

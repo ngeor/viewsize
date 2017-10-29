@@ -1,5 +1,8 @@
-﻿using System;
-using CRLFLabs.ViewSize;
+﻿// <copyright file="MainPresenterTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
 using Moq;
@@ -10,52 +13,52 @@ namespace ViewSize.Tests.Mvp
     [TestFixture]
     public class MainPresenterTest
     {
-        private MainPresenter _presenter;
-        private Mock<IMainView> _viewMock;
-        private Mock<IFolderScanner> _folderScannerMock;
-        private Mock<IFileUtils> _fileUtilsMock;
-        private MainModel _model;
+        private MainPresenter presenter;
+        private Mock<IMainView> viewMock;
+        private Mock<IFolderScanner> folderScannerMock;
+        private Mock<IFileUtils> fileUtilsMock;
+        private MainModel model;
 
         [SetUp]
         public void SetUp()
         {
-            _viewMock = new Mock<IMainView>();
-            _folderScannerMock = new Mock<IFolderScanner>();
-            _fileUtilsMock = new Mock<IFileUtils>();
-            _presenter = new MainPresenter(
-                _viewMock.Object,
-                _model = new MainModel(),
-                _folderScannerMock.Object,
-                _fileUtilsMock.Object);
+            this.viewMock = new Mock<IMainView>();
+            this.folderScannerMock = new Mock<IFolderScanner>();
+            this.fileUtilsMock = new Mock<IFileUtils>();
+            this.presenter = new MainPresenter(
+                this.viewMock.Object,
+                this.model = new MainModel(),
+                this.folderScannerMock.Object,
+                this.fileUtilsMock.Object);
 
-            _viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]
         public void OnBeginScan_NoFolderSelected_ShouldShowError()
         {
             // arrange
-            _model.Folder = "";
+            this.model.Folder = string.Empty;
 
             // act
-            _viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
 
             // assert
-            _viewMock.Verify(v => v.ShowError("No folder selected!"));
+            this.viewMock.Verify(v => v.ShowError("No folder selected!"));
         }
 
         [Test]
         public void OnBeginScan_SelectedFolderDoesNotExist_ShouldShowError()
         {
             // arrange
-            _model.Folder = "test";
-            _fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
+            this.model.Folder = "test";
+            this.fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
 
             // act
-            _viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
 
             // assert
-            _viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
+            this.viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
         }
 
         [Test]
@@ -64,10 +67,10 @@ namespace ViewSize.Tests.Mvp
             // arrange
 
             // act
-            _viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
 
             // assert
-            Assert.IsNull(_model.Selected);
+            Assert.IsNull(this.model.Selected);
         }
 
         [Test]
@@ -75,13 +78,13 @@ namespace ViewSize.Tests.Mvp
         {
             // arrange
             var selected = new FileSystemEntry("test", null);
-            _model.Selected = selected;
+            this.model.Selected = selected;
 
             // act
-            _viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreSame(selected, _model.Selected);
+            Assert.AreSame(selected, this.model.Selected);
         }
 
         [Test]
@@ -90,13 +93,13 @@ namespace ViewSize.Tests.Mvp
             // arrange
             var parent = new FileSystemEntry("test", null);
             var selected = new FileSystemEntry("child", parent);
-            _model.Selected = selected;
+            this.model.Selected = selected;
 
             // act
-            _viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreSame(parent, _model.Selected);
+            Assert.AreSame(parent, this.model.Selected);
         }
     }
 }

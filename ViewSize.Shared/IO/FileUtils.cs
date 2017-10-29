@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="FileUtils.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -59,7 +63,7 @@ namespace CRLFLabs.ViewSize.IO
         {
             try
             {
-                if (!IsDirectory(path))
+                if (!this.IsDirectory(path))
                 {
                     return null;
                 }

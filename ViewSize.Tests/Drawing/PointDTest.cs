@@ -1,17 +1,16 @@
-﻿using CRLFLabs.ViewSize.Drawing;
+﻿// <copyright file="PointDTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using CRLFLabs.ViewSize.Drawing;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ViewSize.Tests.Drawing
 {
     public class PointDTest
     {
-        [TestCase(1,2)]
-        [TestCase(2,1)]
+        [TestCase(1, 2)]
+        [TestCase(2, 1)]
         public void CreatePoint(int x, int y)
         {
             var point = new PointD(x, y);

@@ -1,7 +1,10 @@
-﻿using CRLFLabs.ViewSize.Drawing;
-using System;
+﻿// <copyright file="FileSystemEntryCollectionExtensions.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System.Collections.Generic;
 using System.Linq;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.IO
 {

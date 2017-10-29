@@ -1,4 +1,7 @@
-﻿using System;
+﻿// <copyright file="SortKey.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 namespace CRLFLabs.ViewSize.IO
 {
     /// <summary>

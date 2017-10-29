@@ -1,4 +1,8 @@
-﻿using CRLFLabs.ViewSize.Drawing;
+﻿// <copyright file="SizeDTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using CRLFLabs.ViewSize.Drawing;
 using NUnit.Framework;
 
 namespace ViewSize.Tests.Drawing

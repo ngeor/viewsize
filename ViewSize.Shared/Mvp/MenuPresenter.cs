@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="MenuPresenter.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -8,7 +12,7 @@ namespace CRLFLabs.ViewSize.Mvp
         public MenuPresenter(IMenuView view, IMainModel model, ICommandBus commandBus)
             : base(view, model)
         {
-            CommandBus = commandBus;
+            this.CommandBus = commandBus;
         }
 
         private ICommandBus CommandBus { get; }
@@ -16,36 +20,36 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            View.FileSizeTreeMapClick += View_FileSizeTreeMapClick;
-            View.FileCountTreeMapClick += View_FileCountTreeMapClick;
-            View.FileOpenClick += View_FileOpenClick;
-            View.OpenRecentFileClick += View_OpenRecentFileClick;
+            this.View.FileSizeTreeMapClick += this.View_FileSizeTreeMapClick;
+            this.View.FileCountTreeMapClick += this.View_FileCountTreeMapClick;
+            this.View.FileOpenClick += this.View_FileOpenClick;
+            this.View.OpenRecentFileClick += this.View_OpenRecentFileClick;
         }
 
-        void View_FileSizeTreeMapClick(object sender, EventArgs e)
+        private void View_FileSizeTreeMapClick(object sender, EventArgs e)
         {
-            View.IsFileSizeTreeMapChecked = true;
-            View.IsFileCountTreeMapChecked = false;
-            Model.SortKey = SortKey.Size;
+            this.View.IsFileSizeTreeMapChecked = true;
+            this.View.IsFileCountTreeMapChecked = false;
+            this.Model.SortKey = SortKey.Size;
         }
 
-        void View_FileCountTreeMapClick(object sender, EventArgs e)
+        private void View_FileCountTreeMapClick(object sender, EventArgs e)
         {
-            View.IsFileSizeTreeMapChecked = false;
-            View.IsFileCountTreeMapChecked = true;
-            Model.SortKey = SortKey.Count;
+            this.View.IsFileSizeTreeMapChecked = false;
+            this.View.IsFileCountTreeMapChecked = true;
+            this.Model.SortKey = SortKey.Count;
         }
 
-        void View_FileOpenClick(object sender, EventArgs e)
+        private void View_FileOpenClick(object sender, EventArgs e)
         {
-            CommandBus.Publish("SelectFolder");
-            View.ShowMainWindow();
+            this.CommandBus.Publish("SelectFolder");
+            this.View.ShowMainWindow();
         }
 
-        void View_OpenRecentFileClick(object sender, RecentFileEventArgs e)
+        private void View_OpenRecentFileClick(object sender, RecentFileEventArgs e)
         {
-            Model.Folder = e.Filename;
-            View.ShowMainWindow();
+            this.Model.Folder = e.Filename;
+            this.View.ShowMainWindow();
         }
     }
 }

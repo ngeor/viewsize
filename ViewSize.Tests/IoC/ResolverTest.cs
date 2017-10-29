@@ -1,10 +1,10 @@
-﻿using CRLFLabs.ViewSize.IoC;
-using NUnit.Framework;
+﻿// <copyright file="ResolverTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CRLFLabs.ViewSize.IoC;
+using NUnit.Framework;
 
 namespace ViewSize.Tests.IoC
 {
@@ -145,19 +145,17 @@ namespace ViewSize.Tests.IoC
 
     public interface ISimple
     {
-
     }
 
     public class Simple : ISimple
     {
-
     }
 
     public class OwnsSimple
     {
         public OwnsSimple(Simple dependency)
         {
-            Dependency = dependency;
+            this.Dependency = dependency;
         }
 
         public Simple Dependency { get; }
@@ -167,7 +165,7 @@ namespace ViewSize.Tests.IoC
     {
         public OwnsISimple(ISimple dependency)
         {
-            Dependency = dependency;
+            this.Dependency = dependency;
         }
 
         public ISimple Dependency { get; }

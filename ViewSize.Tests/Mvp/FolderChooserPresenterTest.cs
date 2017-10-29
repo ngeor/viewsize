@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="FolderChooserPresenterTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.Settings;
 using Moq;
@@ -9,71 +13,70 @@ namespace ViewSize.Tests.Mvp
     [TestFixture]
     public class FolderChooserPresenterTest
     {
-        private FolderChooserPresenter _presenter;
-        private Mock<IFolderChooserView> _viewMock;
-        private Mock<ISettingsManager> _settingsManagerMock;
-        private Settings _settings;
-        private CommandBus _commandBus;
+        private FolderChooserPresenter presenter;
+        private Mock<IFolderChooserView> viewMock;
+        private Mock<ISettingsManager> settingsManagerMock;
+        private Settings settings;
+        private CommandBus commandBus;
 
         [SetUp]
         public void SetUp()
         {
-            _viewMock = new Mock<IFolderChooserView>();
-            _settings = new Settings
+            this.viewMock = new Mock<IFolderChooserView>();
+            this.settings = new Settings
             {
                 SelectedFolder = "settings value"
             };
-            _settingsManagerMock = new Mock<ISettingsManager>();
-            _settingsManagerMock.SetupGet(m => m.Settings).Returns(_settings);
-            _viewMock.SetupProperty(v => v.Model);
-            _commandBus = new CommandBus();
-            _presenter = new FolderChooserPresenter(
-                _viewMock.Object,
+            this.settingsManagerMock = new Mock<ISettingsManager>();
+            this.settingsManagerMock.SetupGet(m => m.Settings).Returns(this.settings);
+            this.viewMock.SetupProperty(v => v.Model);
+            this.commandBus = new CommandBus();
+            this.presenter = new FolderChooserPresenter(
+                this.viewMock.Object,
                 Mock.Of<IMainModel>(),
-                _settingsManagerMock.Object,
-                _commandBus
-            );
+                this.settingsManagerMock.Object,
+                this.commandBus);
 
-            _viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]
         public void OnSelectFolder_WhenViewReturnsFolder_ShouldUpdateModel()
         {
             // arrange
-            _viewMock.Setup(v => v.SelectFolder()).Returns("some path");
+            this.viewMock.Setup(v => v.SelectFolder()).Returns("some path");
 
             // act
-            _viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("some path", _viewMock.Object.Model.Folder);
+            Assert.AreEqual("some path", this.viewMock.Object.Model.Folder);
         }
 
         [Test]
         public void OnSelectFolder_WhenViewReturnsNull_ShouldNotUpdateModel()
         {
             // arrange
-            _viewMock.Setup(v => v.SelectFolder()).Returns((string)null);
+            this.viewMock.Setup(v => v.SelectFolder()).Returns((string)null);
 
             // act
-            _viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
+            this.viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("settings value", _viewMock.Object.Model.Folder);
+            Assert.AreEqual("settings value", this.viewMock.Object.Model.Folder);
         }
 
         [Test]
         public void PublishCommand_UpdatesModel()
         {
             // arrange
-            _viewMock.Setup(v => v.SelectFolder()).Returns("some path");
+            this.viewMock.Setup(v => v.SelectFolder()).Returns("some path");
 
             // act
-            _commandBus.Publish("SelectFolder");
+            this.commandBus.Publish("SelectFolder");
 
             // assert
-            Assert.AreEqual("some path", _viewMock.Object.Model.Folder);
+            Assert.AreEqual("some path", this.viewMock.Object.Model.Folder);
         }
     }
 }

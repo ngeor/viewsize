@@ -1,14 +1,18 @@
-﻿using System.Drawing;
+﻿// <copyright file="GdiGraphics.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSizeWpf.Common
 {
-    class GdiGraphics : IGraphics
+    internal class GdiGraphics : IGraphics
     {
         public GdiGraphics(Graphics graphics)
         {
-            Graphics = graphics;
+            this.Graphics = graphics;
         }
 
         private Graphics Graphics { get; }
@@ -17,7 +21,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
         {
             using (var pen = new Pen(color.ToColor(), width))
             {
-                Graphics.DrawRectangle(pen, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
+                this.Graphics.DrawRectangle(pen, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
             }
         }
 
@@ -32,10 +36,10 @@ namespace CRLFLabs.ViewSizeWpf.Common
                     SurroundColors = new[]
                     {
                         outer.ToColor()
-                    }                   
+                    }
                 })
                 {
-                    Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
+                    this.Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
                 }
             }
         }
@@ -55,7 +59,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
                     CenterPoint = centerPoint.ToPointF()
                 })
                 {
-                    Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
+                    this.Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
                 }
             }
         }
@@ -64,7 +68,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
         {
             using (var brush = new SolidBrush(color.ToColor()))
             {
-                Graphics.FillRectangle(brush, rect.ToRectangleF());
+                this.Graphics.FillRectangle(brush, rect.ToRectangleF());
             }
         }
     }

@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="TypeMapping.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace CRLFLabs.ViewSize.IoC
 {
@@ -8,11 +10,12 @@ namespace CRLFLabs.ViewSize.IoC
     {
         public TypeMapping(Type actualType, bool singleton)
         {
-            ActualType = actualType;
-            Singleton = singleton;
+            this.ActualType = actualType;
+            this.Singleton = singleton;
         }
 
         public Type ActualType { get; }
+
         public bool Singleton { get; }
     }
 }

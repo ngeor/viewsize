@@ -1,4 +1,8 @@
-﻿namespace CRLFLabs.ViewSize.Drawing
+﻿// <copyright file="Colors.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+namespace CRLFLabs.ViewSize.Drawing
 {
     public static class Colors
     {

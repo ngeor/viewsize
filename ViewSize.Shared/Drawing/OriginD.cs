@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="OriginD.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace CRLFLabs.ViewSize.Drawing
 {
@@ -24,8 +28,8 @@ namespace CRLFLabs.ViewSize.Drawing
                 throw new ArgumentOutOfRangeException(nameof(top));
             }
 
-            Left = left;
-            Top = top;
+            this.Left = left;
+            this.Top = top;
         }
 
         /// <summary>
@@ -38,7 +42,7 @@ namespace CRLFLabs.ViewSize.Drawing
         /// </summary>
         public double Top { get; }
 
-        public override string ToString() => $"({Left}, {Top})";
+        public override string ToString() => $"({this.Left}, {this.Top})";
 
         /// <summary>
         /// Creates a new origin which is moved relative to this origin by the given amounts.
@@ -46,6 +50,6 @@ namespace CRLFLabs.ViewSize.Drawing
         /// <param name="dleft">The amount by which to move the origin horizontally.</param>
         /// <param name="dtop">The amount by which to move the origin vertically.</param>
         /// <returns></returns>
-        public OriginD Move(double dleft, double dtop) => new OriginD(Left + dleft, Top + dtop);
+        public OriginD Move(double dleft, double dtop) => new OriginD(this.Left + dleft, this.Top + dtop);
     }
 }

@@ -1,20 +1,19 @@
-﻿using CRLFLabs.ViewSize;
-using CRLFLabs.ViewSize.Drawing;
-using CRLFLabs.ViewSizeWpf.Common;
+﻿// <copyright file="FileSystemEntry.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CRLFLabs.ViewSizeWpf.Common;
 
 namespace CRLFLabs.ViewSize.IO
 {
-    partial class FileSystemEntry : INotifyPropertyChanged
+    public partial class FileSystemEntry : INotifyPropertyChanged
     {
         private bool isExpanded;
         private bool isSelected;
@@ -23,14 +22,15 @@ namespace CRLFLabs.ViewSize.IO
         {
             get
             {
-                return isExpanded;
+                return this.isExpanded;
             }
+
             set
             {
-                if (isExpanded != value)
+                if (this.isExpanded != value)
                 {
-                    isExpanded = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsExpanded"));
+                    this.isExpanded = value;
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsExpanded"));
                 }
             }
         }
@@ -39,14 +39,15 @@ namespace CRLFLabs.ViewSize.IO
         {
             get
             {
-                return isSelected;
+                return this.isSelected;
             }
+
             set
             {
-                if (isSelected != value)
+                if (this.isSelected != value)
                 {
-                    isSelected = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelected"));
+                    this.isSelected = value;
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelected"));
                 }
             }
         }
@@ -55,7 +56,7 @@ namespace CRLFLabs.ViewSize.IO
         {
             get
             {
-                return GetIcon(Path, true, IsDirectory);
+                return GetIcon(this.Path, true, this.IsDirectory);
             }
         }
 

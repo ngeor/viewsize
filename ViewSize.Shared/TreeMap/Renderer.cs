@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="Renderer.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
@@ -13,36 +17,36 @@ namespace CRLFLabs.ViewSize.TreeMap
     {
         private readonly long totalSizeInBytes;
         private readonly double totalSizeInPixels;
-        private readonly RectangleD _fullBounds;
-        private readonly IReadOnlyList<FileSystemEntry> _fileSystemEntries;
+        private readonly RectangleD fullBounds;
+        private readonly IReadOnlyList<FileSystemEntry> fileSystemEntries;
 
         public Renderer(RectangleD fullBounds, IReadOnlyList<FileSystemEntry> fileSystemEntries, SortKey sortKey)
         {
             switch (sortKey)
             {
                 case SortKey.Size:
-                    Measurer = TotalSizeMeasurer;
+                    this.Measurer = TotalSizeMeasurer;
                     break;
                 case SortKey.Count:
-                    Measurer = FileCountMeasurer;
+                    this.Measurer = FileCountMeasurer;
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
             // e.g. real total size = 200 bytes
-            totalSizeInBytes = fileSystemEntries.Sum(Measurer);
+            this.totalSizeInBytes = fileSystemEntries.Sum(this.Measurer);
 
             // e.g. draw total size = 100 pixels = 20x5
-            totalSizeInPixels = fullBounds.Width * fullBounds.Height;
+            this.totalSizeInPixels = fullBounds.Width * fullBounds.Height;
 
-            _fullBounds = fullBounds;
-            _fileSystemEntries = fileSystemEntries;
+            this.fullBounds = fullBounds;
+            this.fileSystemEntries = fileSystemEntries;
         }
 
         public void Render()
         {
-            var partialRenderer = new PartialRenderer(this, _fullBounds, _fileSystemEntries);
+            var partialRenderer = new PartialRenderer(this, this.fullBounds, this.fileSystemEntries);
             partialRenderer.Render();
         }
 
@@ -52,7 +56,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             partialRenderer.Render();
         }
 
-        private double ToPixelSize(double sizeInBytes) => totalSizeInPixels * sizeInBytes / totalSizeInBytes;
+        private double ToPixelSize(double sizeInBytes) => this.totalSizeInPixels * sizeInBytes / this.totalSizeInBytes;
 
         /// <summary>
         /// Fills the given rectangle across one dimension.
@@ -64,7 +68,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <returns></returns>
         public RectangleD FillOneDimension(RectangleD bounds, bool drawVertically, long sizeInBytes)
         {
-            var amount = ToPixelSize(sizeInBytes);
+            var amount = this.ToPixelSize(sizeInBytes);
             if (drawVertically)
             {
                 return bounds.WithWidth(amount / bounds.Height);
@@ -80,14 +84,13 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         /// <param name="bounds"></param>
         /// <param name="drawVertically"></param>
-        /// <returns></returns>
         public void FillProportionally(RectangleD bounds, bool drawVertically, LinkedList<FileSystemEntry> streakCandidate)
         {
             double lastLeft = bounds.Left;
             double lastTop = bounds.Top;
             foreach (var entry in streakCandidate)
             {
-                var amount = ToPixelSize(Measurer(entry));
+                var amount = this.ToPixelSize(this.Measurer(entry));
                 if (drawVertically)
                 {
                     entry.Bounds = new RectangleD(bounds.Left, lastTop, bounds.Width, amount / bounds.Width);

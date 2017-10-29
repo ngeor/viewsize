@@ -1,13 +1,16 @@
-﻿using System;
+﻿// <copyright file="TreeMap.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
+using System.Drawing;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Drawing;
-using System.Windows.Interop;
 using CRLFLabs.ViewSize.Drawing;
-using CRLFLabs.ViewSize.TreeMap;
-using System.ComponentModel;
 using CRLFLabs.ViewSize.Mvp;
+using CRLFLabs.ViewSize.TreeMap;
 using CRLFLabs.ViewSizeWpf.Common;
 
 namespace ViewSizeWpf.Controls
@@ -18,14 +21,14 @@ namespace ViewSizeWpf.Controls
         public TreeMap()
         {
             PresenterFactory.Create(this);
-            Load?.Invoke(this, EventArgs.Empty);
+            this.Load?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler Load;
 
         public IMainModel Model { get; set; }
 
-        public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
+        public RectangleD BoundsD => new RectangleD(0, 0, this.ActualWidth, this.ActualHeight);
 
         public event EventHandler RedrawNeeded;
 
@@ -34,22 +37,22 @@ namespace ViewSizeWpf.Controls
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            RedrawNeeded?.Invoke(this, EventArgs.Empty);
-            var source = RenderWithGdi();
-            drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
+            this.RedrawNeeded?.Invoke(this, EventArgs.Empty);
+            var source = this.RenderWithGdi();
+            drawingContext.DrawImage(source, new Rect(0, 0, this.ActualWidth, this.ActualHeight));
         }
 
         private BitmapSource RenderWithGdi()
         {
-            int width = (int)ActualWidth;
-            int height = (int)ActualHeight;
+            int width = (int)this.ActualWidth;
+            int height = (int)this.ActualHeight;
             using (var tempBitmap = new Bitmap(width, height))
             {
                 using (var g = Graphics.FromImage(tempBitmap))
                 {
                     GdiGraphics graphics = new GdiGraphics(g);
                     DrawHelper drawHelper = new DrawHelper(graphics, (r) => true);
-                    drawHelper.Draw(Model, new RectangleD(0, 0, ActualWidth, ActualHeight));
+                    drawHelper.Draw(this.Model, new RectangleD(0, 0, this.ActualWidth, this.ActualHeight));
                 }
 
                 var hbmp = tempBitmap.GetHbitmap();
@@ -60,18 +63,18 @@ namespace ViewSizeWpf.Controls
 
         public void Redraw()
         {
-            InvalidateVisual();
+            this.InvalidateVisual();
         }
 
         public void SelectionChanging()
         {
-
+            // not needed for windows, we just do a full redraw
         }
 
         public void SelectionChanged()
         {
             // on windows we just do a full redraw
-            Redraw();
+            this.Redraw();
         }
 
         #endregion

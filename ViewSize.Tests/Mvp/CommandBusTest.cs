@@ -1,4 +1,7 @@
-﻿using System;
+﻿// <copyright file="CommandBusTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System.Collections.Generic;
 using CRLFLabs.ViewSize.Mvp;
 using NUnit.Framework;
@@ -7,12 +10,12 @@ namespace ViewSize.Tests.Mvp
 {
     public class CommandBusTest
     {
-        private CommandBus _commandBus;
+        private CommandBus commandBus;
 
         [SetUp]
         public void SetUp()
         {
-            _commandBus = new CommandBus();   
+            this.commandBus = new CommandBus();
         }
 
         [Test]
@@ -20,7 +23,7 @@ namespace ViewSize.Tests.Mvp
         {
             Assert.Throws<KeyNotFoundException>(() =>
             {
-                _commandBus.Publish("hello");
+                this.commandBus.Publish("hello");
             });
         }
 
@@ -28,12 +31,12 @@ namespace ViewSize.Tests.Mvp
         public void Publish_Consume_Works()
         {
             string result = "original";
-            _commandBus.Subscribe("hello", () =>
+            this.commandBus.Subscribe("hello", () =>
             {
                 result = "something else";
             });
 
-            _commandBus.Publish("hello");
+            this.commandBus.Publish("hello");
 
             Assert.AreEqual("something else", result);
         }

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="TreeMapPresenter.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.ComponentModel;
 using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
@@ -8,91 +12,91 @@ namespace CRLFLabs.ViewSize.Mvp
 {
     public class TreeMapPresenter : PresenterBase<ITreeMapView, IMainModel>
     {
-        private RectangleD _lastBounds;
-        private SortKey _lastSortKey;
-        private RectangleD _currentBounds;
+        private RectangleD lastBounds;
+        private SortKey lastSortKey;
+        private RectangleD currentBounds;
 
         public TreeMapPresenter(ITreeMapView view, IMainModel model)
             : base(view, model)
         {
-            Model.PropertyChanging += Model_PropertyChanging;
-            Model.PropertyChanged += Model_PropertyChanged;
+            this.Model.PropertyChanging += this.Model_PropertyChanging;
+            this.Model.PropertyChanged += this.Model_PropertyChanged;
         }
 
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            View.RedrawNeeded += View_RedrawNeeded;
+            this.View.RedrawNeeded += this.View_RedrawNeeded;
         }
 
-        void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
+        private void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
         {
             switch (e.PropertyName)
             {
                 case MainModel.SelectedPropertyName:
-                    View.SelectionChanging();
+                    this.View.SelectionChanging();
                     break;
             }
         }
 
-        void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
                 case MainModel.SelectedPropertyName:
-                    View.SelectionChanged();
+                    this.View.SelectionChanged();
                     break;
                 case MainModel.SortKeyPropertyName:
-                    ReCalculateTreeMap(true);
+                    this.ReCalculateTreeMap(true);
                     break;
                 case MainModel.ChildrenPropertyName:
                     // capture these two for recalculate
-                    _lastBounds = View.BoundsD;
-                    _lastSortKey = Model.SortKey;
-                    View.Redraw();
+                    this.lastBounds = this.View.BoundsD;
+                    this.lastSortKey = this.Model.SortKey;
+                    this.View.Redraw();
                     break;
                 case MainModel.IsScanningPropertyName:
                     // we are probably about to scan.
                     // capture the current bounds.
                     // this is done on the main thread.
-                    _currentBounds = View.BoundsD;
+                    this.currentBounds = this.View.BoundsD;
                     break;
                 case MainModel.TopLevelFoldersPropertyName:
                     // this is done on a background thread.
-                    var renderer = new Renderer(_currentBounds, Model.TopLevelFolders, Model.SortKey);
+                    var renderer = new Renderer(this.currentBounds, this.Model.TopLevelFolders, this.Model.SortKey);
                     renderer.Render();
                     break;
             }
         }
 
-        void View_RedrawNeeded(object sender, EventArgs e)
+        private void View_RedrawNeeded(object sender, EventArgs e)
         {
-            ReCalculateTreeMap(false);
+            this.ReCalculateTreeMap(false);
         }
 
         private void ReCalculateTreeMap(bool forceRedraw)
         {
-            if (Model.Children == null)
+            if (this.Model.Children == null)
             {
                 // no data yet
                 return;
             }
 
-            var bounds = View.BoundsD;
-            if (bounds.Size == _lastBounds.Size && Model.SortKey == _lastSortKey)
+            var bounds = this.View.BoundsD;
+            if (bounds.Size == this.lastBounds.Size && this.Model.SortKey == this.lastSortKey)
             {
                 return;
             }
 
-            _lastBounds = bounds;
-            _lastSortKey = Model.SortKey;
+            this.lastBounds = bounds;
+            this.lastSortKey = this.Model.SortKey;
 
-            var renderer = new Renderer(bounds, Model.Children, Model.SortKey);
+            var renderer = new Renderer(bounds, this.Model.Children, this.Model.SortKey);
             renderer.Render();
 
             if (forceRedraw)
             {
-                View.Redraw();
+                this.View.Redraw();
             }
         }
     }

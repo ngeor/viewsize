@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="FileSystemEventArgs.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace CRLFLabs.ViewSize.IO
 {
@@ -6,7 +10,7 @@ namespace CRLFLabs.ViewSize.IO
     {
         public FileSystemEventArgs(FileSystemEntry fileSystemEntry)
         {
-            FileSystemEntry = fileSystemEntry;
+            this.FileSystemEntry = fileSystemEntry;
         }
 
         public FileSystemEntry FileSystemEntry

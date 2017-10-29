@@ -1,35 +1,41 @@
-﻿using CRLFLabs.ViewSize.Mvp;
+﻿// <copyright file="FolderChooserView.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
-using System.ComponentModel;
 using System.Windows;
+using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeWpf
 {
     [Presenter(typeof(FolderChooserPresenter))]
-    class FolderChooserView : IFolderChooserView
+    internal class FolderChooserView : IFolderChooserView
     {
         public FolderChooserView(MainWindow mainWindow)
         {
             // assign references to main window
-            MainWindow = mainWindow;
-            MainWindow.btnSelectFolder.Click += BtnSelectFolder_Click;
-            MainWindow.txtFolder.TextChanged += TxtFolder_TextChanged;
+            this.MainWindow = mainWindow;
+            this.MainWindow.btnSelectFolder.Click += this.BtnSelectFolder_Click;
+            this.MainWindow.txtFolder.TextChanged += this.TxtFolder_TextChanged;
 
             // start MVP
             PresenterFactory.Create(this);
-            Load?.Invoke(this, EventArgs.Empty);
+            this.Load?.Invoke(this, EventArgs.Empty);
         }
 
         public IMainModel Model { get; set; }
+
         private MainWindow MainWindow { get; }
 
+        /// <inheritdoc/>
         public event EventHandler OnSelectFolderClick;
+
         public event EventHandler Load;
 
         public string Folder
         {
-            get => MainWindow.txtFolder.Text;
-            set => MainWindow.txtFolder.Text = value;
+            get => this.MainWindow.txtFolder.Text;
+            set => this.MainWindow.txtFolder.Text = value;
         }
 
         public string SelectFolder()
@@ -48,12 +54,12 @@ namespace ViewSizeWpf
 
         private void BtnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
+            this.OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
         }
 
         private void TxtFolder_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            Model.Folder = MainWindow.txtFolder.Text;
+            this.Model.Folder = this.MainWindow.txtFolder.Text;
         }
     }
 }

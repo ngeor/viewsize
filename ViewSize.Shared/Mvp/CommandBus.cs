@@ -1,15 +1,19 @@
-﻿using System;
+﻿// <copyright file="CommandBus.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
-    class CommandBus : ICommandBus
+    internal class CommandBus : ICommandBus
     {
-        private readonly Dictionary<string, List<Action>> _subscriptions = new Dictionary<string, List<Action>>();
+        private readonly Dictionary<string, List<Action>> subscriptions = new Dictionary<string, List<Action>>();
 
         public void Publish(string command)
         {
-            foreach (var handler in _subscriptions[command])
+            foreach (var handler in this.subscriptions[command])
             {
                 handler();
             }
@@ -17,19 +21,19 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public void Subscribe(string command, Action handler)
         {
-            var list = EnsureSubscriptions(command);
+            var list = this.EnsureSubscriptions(command);
             list.Add(handler);
         }
 
         private List<Action> EnsureSubscriptions(string command)
         {
-            if (_subscriptions.ContainsKey(command))
+            if (this.subscriptions.ContainsKey(command))
             {
-                return _subscriptions[command];
+                return this.subscriptions[command];
             }
 
             var list = new List<Action>();
-            _subscriptions.Add(command, list);
+            this.subscriptions.Add(command, list);
             return list;
         }
     }

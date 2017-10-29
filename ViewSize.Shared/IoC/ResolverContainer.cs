@@ -1,6 +1,10 @@
-﻿using CRLFLabs.ViewSize.IO;
-using CRLFLabs.ViewSize.Settings;
+﻿// <copyright file="ResolverContainer.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
+using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.IoC
 {

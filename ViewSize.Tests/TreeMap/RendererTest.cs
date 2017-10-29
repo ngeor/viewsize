@@ -1,13 +1,16 @@
-﻿using NUnit.Framework;
-using CRLFLabs.ViewSize;
-using CRLFLabs.ViewSize.TreeMap;
+﻿// <copyright file="RendererTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
-using Moq;
+using System.Diagnostics;
 using System.Linq;
 using CRLFLabs.ViewSize.Drawing;
-using System.Diagnostics;
-using System;
 using CRLFLabs.ViewSize.IO;
+using CRLFLabs.ViewSize.TreeMap;
+using Moq;
+using NUnit.Framework;
 
 namespace ViewSize.Tests.TreeMap
 {
@@ -37,8 +40,7 @@ namespace ViewSize.Tests.TreeMap
             // arrange
             RectangleD fullBounds = new RectangleD(0, 0, 100, 100);
             var entry = CreateFileSystemEntry(
-                children: Lists.Of(CreateFileSystemEntry())
-            );
+                children: Lists.Of(CreateFileSystemEntry()));
             var folders = Lists.Of(entry);
 
             // act
@@ -109,7 +111,7 @@ namespace ViewSize.Tests.TreeMap
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (var i = 0; i < iterations; i++)
             {
-                var renderer = new Renderer(new RectangleD(0,0,800,600), topLevelFolders, SortKey.Size);
+                var renderer = new Renderer(new RectangleD(0, 0, 800, 600), topLevelFolders, SortKey.Size);
                 renderer.Render();
             }
 
@@ -120,7 +122,7 @@ namespace ViewSize.Tests.TreeMap
 
         private static FileSystemEntry CreateFileSystemEntry(long totalSize = 1024, IReadOnlyList<FileSystemEntry> children = null)
         {
-            Mock<FileSystemEntry> mock = new Mock<FileSystemEntry>("", null);
+            Mock<FileSystemEntry> mock = new Mock<FileSystemEntry>(string.Empty, null);
             mock.SetupGet(e => e.TotalSize)
                 .Returns(children != null ? children.Sum(c => c.TotalSize) : totalSize);
             mock.SetupGet(e => e.Children).Returns(children ?? Lists.Empty<FileSystemEntry>());

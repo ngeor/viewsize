@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="SettingsManager.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Xml.Serialization;
@@ -11,8 +15,9 @@ namespace CRLFLabs.ViewSize.Settings
         private static readonly XmlSerializer serializer = new XmlSerializer(typeof(Settings));
 
         #region Settings Holder
-        private readonly Lazy<Settings> _settings = new Lazy<Settings>(() => Load());
-        public Settings Settings => _settings.Value;
+        private readonly Lazy<Settings> settings = new Lazy<Settings>(() => Load());
+
+        public Settings Settings => this.settings.Value;
 
         private static Settings Load()
         {
@@ -35,7 +40,7 @@ namespace CRLFLabs.ViewSize.Settings
 
         public void Save()
         {
-            if (!_settings.IsValueCreated)
+            if (!this.settings.IsValueCreated)
             {
                 // nothing changed apparently
                 return;
@@ -45,7 +50,7 @@ namespace CRLFLabs.ViewSize.Settings
             {
                 using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream(Filename, FileMode.Create, storage))
                 {
-                    serializer.Serialize(stream, _settings.Value);
+                    serializer.Serialize(stream, this.settings.Value);
                 }
             }
         }

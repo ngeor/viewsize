@@ -1,6 +1,8 @@
-﻿using System;
+﻿// <copyright file="FolderScannerTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using CRLFLabs.ViewSize.IO;
 using Moq;
@@ -11,14 +13,14 @@ namespace ViewSize.Tests.IO
     [TestFixture]
     public class FolderScannerTest
     {
-        private FolderScanner _folderScanner;
-        private Mock<IFileUtils> _fileUtilsMock;
+        private FolderScanner folderScanner;
+        private Mock<IFileUtils> fileUtilsMock;
 
         [SetUp]
         public void SetUp()
         {
-            _fileUtilsMock = new Mock<IFileUtils>();
-            _folderScanner = new FolderScanner(_fileUtilsMock.Object);
+            this.fileUtilsMock = new Mock<IFileUtils>();
+            this.folderScanner = new FolderScanner(this.fileUtilsMock.Object);
         }
 
         [Test]
@@ -26,23 +28,24 @@ namespace ViewSize.Tests.IO
         {
             // arrange
             const int count = 1000000;
-            _fileUtilsMock.Setup(p => p.EnumerateFileSystemEntries("test"))
+            this.fileUtilsMock.Setup(p => p.EnumerateFileSystemEntries("test"))
                           .Returns(Enumerable.Repeat("nope", count));
 
-            Task.Run(async () => {
+            Task.Run(async () =>
+            {
                 await Task.Delay(500); // so that it start scanning
 
                 // act
-                _folderScanner.Cancel();
+                this.folderScanner.Cancel();
             });
 
-            var result = _folderScanner.Scan("test");
+            var result = this.folderScanner.Scan("test");
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count);
             Assert.Less(result[0].Children.Count, count);
-            Assert.IsFalse(_folderScanner.CancelRequested);
+            Assert.IsFalse(this.folderScanner.CancelRequested);
         }
     }
 }

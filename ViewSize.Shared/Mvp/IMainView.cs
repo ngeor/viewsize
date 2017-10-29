@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="IMainView.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -24,17 +28,23 @@ namespace CRLFLabs.ViewSize.Mvp
         event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
 
         event EventHandler UpOneLevelClick;
+
         event EventHandler<CanExecuteEventArgs> UpOneLevelCanExecute;
 
         void EnableUI(bool enable);
+
         void SetTreeViewContents();
 
         void SetDurationLabel(string durationLabel);
+
         void SetSelectedTreeViewItem(FileSystemEntry selectedFileSystemEntry);
+
         void SetScanningItem(string path);
 
         void RunOnGuiThread(Action action);
+
         void ShowError(string message);
+
         void ShowError(Exception ex);
     }
 }

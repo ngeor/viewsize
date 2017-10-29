@@ -1,7 +1,11 @@
-﻿using Moq;
+﻿// <copyright file="FluentMoq.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 
 namespace ViewSize.Tests
 {

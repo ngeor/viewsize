@@ -1,5 +1,9 @@
-﻿using CRLFLabs.ViewSize.Drawing;
+﻿// <copyright file="ITreeMapView.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -24,6 +28,7 @@ namespace CRLFLabs.ViewSize.Mvp
         void Redraw();
 
         void SelectionChanging();
+
         void SelectionChanged();
     }
 }

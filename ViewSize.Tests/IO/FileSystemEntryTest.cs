@@ -1,10 +1,9 @@
-﻿using System;
+﻿// <copyright file="FileSystemEntryTest.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System.Linq;
-using CRLFLabs.ViewSize;
-using CRLFLabs.ViewSize.Drawing;
 using CRLFLabs.ViewSize.IO;
-using CRLFLabs.ViewSize.TreeMap;
-using Moq;
 using NUnit.Framework;
 
 namespace ViewSize.Tests.IO
@@ -38,7 +37,7 @@ namespace ViewSize.Tests.IO
             // assert
             CollectionAssert.AreEqual(new[] { parent }, ancestors);
         }
-        
+
         [Test]
         public void Ancestors_TwoAncestors_ShouldHaveNearestLast()
         {

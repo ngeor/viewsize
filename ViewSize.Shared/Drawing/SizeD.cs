@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="SizeD.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 
 namespace CRLFLabs.ViewSize.Drawing
 {
@@ -20,40 +24,41 @@ namespace CRLFLabs.ViewSize.Drawing
                 throw new ArgumentOutOfRangeException(nameof(height));
             }
 
-            Width = width;
-            Height = height;
+            this.Width = width;
+            this.Height = height;
         }
 
         /// <summary>
-        /// Gets or sets the width.
+        /// Gets the width.
         /// </summary>
         public double Width { get; }
 
         /// <summary>
-        /// Gets or sets the height.
+        /// Gets the height.
         /// </summary>
         public double Height { get; }
 
         /// <summary>
         /// Gets the aspect ratio.
         /// </summary>
-        public double AspectRatio => Math.Max(Width / Height, Height / Width);
+        public double AspectRatio => Math.Max(this.Width / this.Height, this.Height / this.Width);
 
-        public bool Equals(SizeD other) => Width == other.Width && Height == other.Height;
+        public bool Equals(SizeD other) => this.Width == other.Width && this.Height == other.Height;
 
         public override bool Equals(object obj)
         {
-            return (obj is SizeD size) && Equals(size);
+            return obj is SizeD size && this.Equals(size);
         }
 
         public override int GetHashCode()
         {
-            return Width.GetHashCode() ^ Height.GetHashCode();
+            return this.Width.GetHashCode() ^ this.Height.GetHashCode();
         }
 
-        public override string ToString() => $"({Width}, {Height})";
+        public override string ToString() => $"({this.Width}, {this.Height})";
 
         public static bool operator ==(SizeD left, SizeD right) => left.Equals(right);
+
         public static bool operator !=(SizeD left, SizeD right) => !left.Equals(right);
     }
 }

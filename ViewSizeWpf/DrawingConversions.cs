@@ -1,10 +1,9 @@
-﻿using CRLFLabs.ViewSize.Drawing;
-using System;
-using System.Collections.Generic;
+﻿// <copyright file="DrawingConversions.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CRLFLabs.ViewSize.Drawing;
 
 namespace CRLFLabs.ViewSizeWpf
 {

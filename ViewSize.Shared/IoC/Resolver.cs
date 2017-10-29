@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="Resolver.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,9 +10,9 @@ namespace CRLFLabs.ViewSize.IoC
 {
     public class Resolver
     {
-        private readonly Dictionary<Type, TypeMapping> _typeMappings = new Dictionary<Type, TypeMapping>();
-        private readonly Dictionary<Type, object> _singletons = new Dictionary<Type, object>();
-        private readonly Dictionary<Type, object> _externalInstances = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, TypeMapping> typeMappings = new Dictionary<Type, TypeMapping>();
+        private readonly Dictionary<Type, object> singletons = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> externalInstances = new Dictionary<Type, object>();
 
         public void Map(Type existingType, object existingInstance)
         {
@@ -17,32 +21,32 @@ namespace CRLFLabs.ViewSize.IoC
                 throw new ArgumentException($"Instance was not of type {existingType}", nameof(existingInstance));
             }
 
-            _externalInstances.Add(existingType, existingInstance);
+            this.externalInstances.Add(existingType, existingInstance);
         }
 
         public void Map<TFrom, TTo>(bool singleton = false)
         {
-            _typeMappings[typeof(TFrom)] = new TypeMapping(typeof(TTo), singleton);
+            this.typeMappings[typeof(TFrom)] = new TypeMapping(typeof(TTo), singleton);
         }
 
         public T Resolve<T>()
         {
             Type type = typeof(T);
-            return (T)Resolve(type);
+            return (T)this.Resolve(type);
         }
 
         public object Resolve(Type type)
         {
-            object externalInstance = _externalInstances.ContainsKey(type) ? _externalInstances[type] : null;
+            object externalInstance = this.externalInstances.ContainsKey(type) ? this.externalInstances[type] : null;
             if (externalInstance != null)
             {
                 return externalInstance;
             }
 
-            TypeMapping typeMapping = _typeMappings.ContainsKey(type) ? _typeMappings[type] : new TypeMapping(type, false);
-            if (typeMapping.Singleton && _singletons.ContainsKey(type))
+            TypeMapping typeMapping = this.typeMappings.ContainsKey(type) ? this.typeMappings[type] : new TypeMapping(type, false);
+            if (typeMapping.Singleton && this.singletons.ContainsKey(type))
             {
-                return _singletons[type];
+                return this.singletons[type];
             }
 
             Type finalType = typeMapping.ActualType;
@@ -60,11 +64,11 @@ namespace CRLFLabs.ViewSize.IoC
             var constructor = constructors[0];
             var parameters = constructor.GetParameters();
             var parameterTypes = parameters.Select(p => p.ParameterType).ToArray();
-            var parameterValues = parameterTypes.Select(pt => Resolve(pt)).ToArray();
+            var parameterValues = parameterTypes.Select(pt => this.Resolve(pt)).ToArray();
             var result = constructor.Invoke(parameterValues);
             if (typeMapping.Singleton)
             {
-                _singletons[type] = result;
+                this.singletons[type] = result;
             }
 
             return result;
