@@ -183,6 +183,8 @@ namespace ViewSizeWpf
         #region IMenuView
         public event EventHandler FileSizeTreeMapClick;
         public event EventHandler FileCountTreeMapClick;
+        public event EventHandler FileOpenClick;
+        public event EventHandler<RecentFileEventArgs> OpenRecentFileClick;
 
         public bool IsFileSizeTreeMapChecked
         {
@@ -194,6 +196,11 @@ namespace ViewSizeWpf
         {
             get => mnuFileCountTreeMap.IsChecked;
             set => mnuFileCountTreeMap.IsChecked = value;
+        }
+
+        public void ShowMainWindow()
+        {
+            // not used in Windows
         }
         #endregion
     }

@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\RecentFileEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\TreeMapPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MenuPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ICommandBus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\CommandBus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\RecentFileEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />
