@@ -102,11 +102,11 @@ namespace CRLFLabs.ViewSizeWpf.Common
 
             public SHFILEINFO(bool b)
             {
-                this.hIcon = IntPtr.Zero;
-                this.iIcon = 0;
-                this.dwAttributes = 0;
-                this.szDisplayName = string.Empty;
-                this.szTypeName = string.Empty;
+                hIcon = IntPtr.Zero;
+                iIcon = 0;
+                dwAttributes = 0;
+                szDisplayName = string.Empty;
+                szTypeName = string.Empty;
             }
         }
     }

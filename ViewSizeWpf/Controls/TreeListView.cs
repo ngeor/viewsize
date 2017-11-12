@@ -24,7 +24,7 @@ namespace ViewSizeWpf.Controls
         /// </summary>
         public TreeListView()
         {
-            this.Columns = new GridViewColumnCollection();
+            Columns = new GridViewColumnCollection();
         }
 
         #region Properties
@@ -35,8 +35,8 @@ namespace ViewSizeWpf.Controls
         /// </summary>
         public GridViewColumnCollection Columns
         {
-            get { return (GridViewColumnCollection)this.GetValue(ColumnsProperty); }
-            set { this.SetValue(ColumnsProperty, value); }
+            get { return (GridViewColumnCollection)GetValue(ColumnsProperty); }
+            set { SetValue(ColumnsProperty, value); }
         }
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace ViewSizeWpf.Controls
         /// </summary>
         public bool AllowsColumnReorder
         {
-            get { return (bool)this.GetValue(AllowsColumnReorderProperty); }
-            set { this.SetValue(AllowsColumnReorderProperty, value); }
+            get { return (bool)GetValue(AllowsColumnReorderProperty); }
+            set { SetValue(AllowsColumnReorderProperty, value); }
         }
         #endregion
 

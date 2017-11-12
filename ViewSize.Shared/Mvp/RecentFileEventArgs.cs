@@ -10,7 +10,7 @@ namespace CRLFLabs.ViewSize.Mvp
     {
         public RecentFileEventArgs(string filename)
         {
-            this.Filename = filename;
+            Filename = filename;
         }
 
         public string Filename { get; }

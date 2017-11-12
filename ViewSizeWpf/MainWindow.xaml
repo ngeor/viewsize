@@ -34,7 +34,13 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open" Command="Open" />
+                <MenuItem Header="_Open..." Command="Open" />
+                <Separator/>
+                <MenuItem Header="Recent Folders" x:Name="mnuRecentFolders">                    
+                    <Separator/>
+                    <MenuItem Header="Clear Recent Folders" />
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="E_xit" Command="Close" />
             </MenuItem>
             <MenuItem Header="_View">

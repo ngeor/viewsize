@@ -22,43 +22,43 @@ namespace ViewSize.Tests.Mvp
         [SetUp]
         public void SetUp()
         {
-            this.viewMock = new Mock<IMainView>();
-            this.folderScannerMock = new Mock<IFolderScanner>();
-            this.fileUtilsMock = new Mock<IFileUtils>();
-            this.presenter = new MainPresenter(
-                this.viewMock.Object,
-                this.model = new MainModel(),
-                this.folderScannerMock.Object,
-                this.fileUtilsMock.Object);
+            viewMock = new Mock<IMainView>();
+            folderScannerMock = new Mock<IFolderScanner>();
+            fileUtilsMock = new Mock<IFileUtils>();
+            presenter = new MainPresenter(
+                viewMock.Object,
+                model = new MainModel(),
+                folderScannerMock.Object,
+                fileUtilsMock.Object);
 
-            this.viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+            viewMock.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]
         public void OnBeginScan_NoFolderSelected_ShouldShowError()
         {
             // arrange
-            this.model.Folder = string.Empty;
+            model.Folder = string.Empty;
 
             // act
-            this.viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
+            viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
 
             // assert
-            this.viewMock.Verify(v => v.ShowError("No folder selected!"));
+            viewMock.Verify(v => v.ShowError("No folder selected!"));
         }
 
         [Test]
         public void OnBeginScan_SelectedFolderDoesNotExist_ShouldShowError()
         {
             // arrange
-            this.model.Folder = "test";
-            this.fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
+            model.Folder = "test";
+            fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
 
             // act
-            this.viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
+            viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
 
             // assert
-            this.viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
+            viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
         }
 
         [Test]
@@ -67,10 +67,10 @@ namespace ViewSize.Tests.Mvp
             // arrange
 
             // act
-            this.viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+            viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
 
             // assert
-            Assert.IsNull(this.model.Selected);
+            Assert.IsNull(model.Selected);
         }
 
         [Test]
@@ -78,13 +78,13 @@ namespace ViewSize.Tests.Mvp
         {
             // arrange
             var selected = new FileSystemEntry("test", null);
-            this.model.Selected = selected;
+            model.Selected = selected;
 
             // act
-            this.viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+            viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreSame(selected, this.model.Selected);
+            Assert.AreSame(selected, model.Selected);
         }
 
         [Test]
@@ -93,13 +93,13 @@ namespace ViewSize.Tests.Mvp
             // arrange
             var parent = new FileSystemEntry("test", null);
             var selected = new FileSystemEntry("child", parent);
-            this.model.Selected = selected;
+            model.Selected = selected;
 
             // act
-            this.viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
+            viewMock.Raise(v => v.UpOneLevelClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreSame(parent, this.model.Selected);
+            Assert.AreSame(parent, model.Selected);
         }
     }
 }

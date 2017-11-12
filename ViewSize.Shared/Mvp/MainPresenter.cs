@@ -21,12 +21,12 @@ namespace CRLFLabs.ViewSize.Mvp
         public MainPresenter(IMainView view, IMainModel model, IFolderScanner folderScanner, IFileUtils fileUtils)
             : base(view, model)
         {
-            this.FileUtils = fileUtils;
-            this.FolderScanner = folderScanner;
-            this.FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(this._folderScanner_Scanning);
+            FileUtils = fileUtils;
+            FolderScanner = folderScanner;
+            FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
 
-            this.Model.PropertyChanging += this.Model_PropertyChanging;
-            this.Model.PropertyChanged += this.Model_PropertyChanged;
+            Model.PropertyChanging += Model_PropertyChanging;
+            Model.PropertyChanged += Model_PropertyChanged;
         }
 
         private IFolderScanner FolderScanner { get; }
@@ -36,56 +36,56 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            this.View.OnBeginScanClick += this.View_OnBeginScanClick;
-            this.View.OnCancelScanClick += this.View_OnCancelScanClick;
-            this.View.OnTreeViewSelectionChanged += this.View_OnTreeViewSelectionChanged;
-            this.View.UpOneLevelClick += this.View_UpOneLevelClick;
-            this.View.UpOneLevelCanExecute += this.View_UpOneLevelCanExecute;
+            View.OnBeginScanClick += View_OnBeginScanClick;
+            View.OnCancelScanClick += View_OnCancelScanClick;
+            View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
+            View.UpOneLevelClick += View_UpOneLevelClick;
+            View.UpOneLevelCanExecute += View_UpOneLevelCanExecute;
         }
 
         private void View_UpOneLevelCanExecute(object sender, CanExecuteEventArgs e)
         {
-            e.CanExecute = this.Model.Selected?.Parent != null;
+            e.CanExecute = Model.Selected?.Parent != null;
         }
 
         private void View_UpOneLevelClick(object sender, EventArgs e)
         {
-            var parent = this.Model.Selected?.Parent;
+            var parent = Model.Selected?.Parent;
             if (parent != null)
             {
                 // need to check if it is null because on Mac the CanExecute event is not being used
-                this.Model.Selected = parent;
+                Model.Selected = parent;
             }
         }
 
         private void View_OnBeginScanClick(object sender, EventArgs e)
         {
-            string path = this.Model.Folder;
+            string path = Model.Folder;
             if (string.IsNullOrWhiteSpace(path))
             {
-                this.View.ShowError("No folder selected!");
+                View.ShowError("No folder selected!");
                 return;
             }
 
-            if (!this.FileUtils.IsDirectory(path))
+            if (!FileUtils.IsDirectory(path))
             {
-                this.View.ShowError($"Folder '{path}' does not exist!");
+                View.ShowError($"Folder '{path}' does not exist!");
                 return;
             }
 
-            this.Model.IsScanning = true;
-            this.View.EnableUI(false);
+            Model.IsScanning = true;
+            View.EnableUI(false);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             // progress task
             Task.Run(async () =>
             {
-                while (this.Model.IsScanning)
+                while (Model.IsScanning)
                 {
-                    this.View.RunOnGuiThread(() =>
+                    View.RunOnGuiThread(() =>
                     {
-                        this.View.SetDurationLabel(stopwatch.Elapsed.ToString("mm\\:ss"));
+                        View.SetDurationLabel(stopwatch.Elapsed.ToString("mm\\:ss"));
                     });
 
                     await Task.Delay(1000);
@@ -98,24 +98,24 @@ namespace CRLFLabs.ViewSize.Mvp
                 try
                 {
                     // this is picked up by TreeMapPresenter
-                    this.Model.TopLevelFolders = this.FolderScanner.Scan(path);
+                    Model.TopLevelFolders = FolderScanner.Scan(path);
                     stopwatch.Stop();
-                    this.View.RunOnGuiThread(() =>
+                    View.RunOnGuiThread(() =>
                     {
-                        this.Model.Selected = null;
-                        this.Model.Children = this.Model.TopLevelFolders;
+                        Model.Selected = null;
+                        Model.Children = Model.TopLevelFolders;
                     });
                 }
                 catch (Exception ex)
                 {
-                    this.View.RunOnGuiThread(() => this.View.ShowError(ex));
+                    View.RunOnGuiThread(() => View.ShowError(ex));
                 }
                 finally
                 {
-                    this.View.RunOnGuiThread(() =>
+                    View.RunOnGuiThread(() =>
                     {
-                        this.Model.IsScanning = false;
-                        this.View.EnableUI(true);
+                        Model.IsScanning = false;
+                        View.EnableUI(true);
                     });
                 }
             });
@@ -123,12 +123,12 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void View_OnCancelScanClick(object sender, EventArgs e)
         {
-            this.FolderScanner.Cancel();
+            FolderScanner.Cancel();
         }
 
         private void View_OnTreeViewSelectionChanged(object sender, FileSystemEventArgs e)
         {
-            this.Model.Selected = e.FileSystemEntry;
+            Model.Selected = e.FileSystemEntry;
         }
 
         private void Model_PropertyChanging(object sender, PropertyChangingEventArgs e)
@@ -140,19 +140,19 @@ namespace CRLFLabs.ViewSize.Mvp
             switch (e.PropertyName)
             {
                 case MainModel.SelectedPropertyName:
-                    this.View.SetSelectedTreeViewItem(this.Model.Selected);
+                    View.SetSelectedTreeViewItem(Model.Selected);
                     break;
                 case MainModel.ChildrenPropertyName:
-                    this.View.SetTreeViewContents();
+                    View.SetTreeViewContents();
                     break;
             }
         }
 
         private void _folderScanner_Scanning(object sender, FileSystemEventArgs e)
         {
-            this.View.RunOnGuiThread(() =>
+            View.RunOnGuiThread(() =>
             {
-                this.View.SetScanningItem(e.FileSystemEntry.Path);
+                View.SetScanningItem(e.FileSystemEntry.Path);
             });
         }
     }

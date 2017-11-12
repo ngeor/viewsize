@@ -21,32 +21,32 @@ namespace CRLFLabs.ViewSize.IoC
                 throw new ArgumentException($"Instance was not of type {existingType}", nameof(existingInstance));
             }
 
-            this.externalInstances.Add(existingType, existingInstance);
+            externalInstances.Add(existingType, existingInstance);
         }
 
         public void Map<TFrom, TTo>(bool singleton = false)
         {
-            this.typeMappings[typeof(TFrom)] = new TypeMapping(typeof(TTo), singleton);
+            typeMappings[typeof(TFrom)] = new TypeMapping(typeof(TTo), singleton);
         }
 
         public T Resolve<T>()
         {
             Type type = typeof(T);
-            return (T)this.Resolve(type);
+            return (T)Resolve(type);
         }
 
         public object Resolve(Type type)
         {
-            object externalInstance = this.externalInstances.ContainsKey(type) ? this.externalInstances[type] : null;
+            object externalInstance = externalInstances.ContainsKey(type) ? externalInstances[type] : null;
             if (externalInstance != null)
             {
                 return externalInstance;
             }
 
-            TypeMapping typeMapping = this.typeMappings.ContainsKey(type) ? this.typeMappings[type] : new TypeMapping(type, false);
-            if (typeMapping.Singleton && this.singletons.ContainsKey(type))
+            TypeMapping typeMapping = typeMappings.ContainsKey(type) ? typeMappings[type] : new TypeMapping(type, false);
+            if (typeMapping.Singleton && singletons.ContainsKey(type))
             {
-                return this.singletons[type];
+                return singletons[type];
             }
 
             Type finalType = typeMapping.ActualType;
@@ -64,11 +64,11 @@ namespace CRLFLabs.ViewSize.IoC
             var constructor = constructors[0];
             var parameters = constructor.GetParameters();
             var parameterTypes = parameters.Select(p => p.ParameterType).ToArray();
-            var parameterValues = parameterTypes.Select(pt => this.Resolve(pt)).ToArray();
+            var parameterValues = parameterTypes.Select(pt => Resolve(pt)).ToArray();
             var result = constructor.Invoke(parameterValues);
             if (typeMapping.Singleton)
             {
-                this.singletons[type] = result;
+                singletons[type] = result;
             }
 
             return result;

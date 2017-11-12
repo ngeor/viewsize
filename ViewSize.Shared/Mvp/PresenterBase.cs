@@ -16,8 +16,8 @@ namespace CRLFLabs.ViewSize.Mvp
                 throw new ArgumentNullException(nameof(view));
             }
 
-            this.View = view;
-            view.Load += this.OnViewLoad;
+            View = view;
+            view.Load += OnViewLoad;
         }
 
         public TView View { get; }
@@ -34,7 +34,7 @@ namespace CRLFLabs.ViewSize.Mvp
         public PresenterBase(TView view, TModel model)
             : base(view)
         {
-            this.Model = model;
+            Model = model;
         }
 
         protected TModel Model { get; }
@@ -42,7 +42,7 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            this.View.Model = this.Model;
+            View.Model = Model;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CRLFLabs.ViewSize.IO
 
         public FolderScanner(IFileUtils fileUtils)
         {
-            this.FileUtils = fileUtils;
+            FileUtils = fileUtils;
         }
 
         private IFileUtils FileUtils { get; }
@@ -45,7 +45,7 @@ namespace CRLFLabs.ViewSize.IO
         /// </summary>
         public void Cancel()
         {
-            this.CancelRequested = true;
+            CancelRequested = true;
         }
 
         /// <summary>
@@ -54,13 +54,13 @@ namespace CRLFLabs.ViewSize.IO
         /// <param name="paths">The paths to scan.</param>
         public IReadOnlyList<FileSystemEntry> Scan(params string[] paths)
         {
-            if (this.scanning)
+            if (scanning)
             {
                 throw new InvalidOperationException("Already scanning");
             }
 
-            this.scanning = true;
-            this.TotalSize = 0;
+            scanning = true;
+            TotalSize = 0;
 
             try
             {
@@ -69,24 +69,24 @@ namespace CRLFLabs.ViewSize.IO
                 {
                     var root = new FileSystemEntry(path, null);
                     result.Add(root);
-                    this.Calculate(root);
+                    Calculate(root);
                 }
 
                 // calculate the total size
                 // necessary for percentages etc
-                this.TotalSize = result.Select(f => f.TotalSize).Sum();
+                TotalSize = result.Select(f => f.TotalSize).Sum();
 
                 // apply properties that depend on that
-                this.SetPropertiesAfterScanOnChildren(result);
+                SetPropertiesAfterScanOnChildren(result);
 
                 return result;
             }
             finally
             {
-                this.scanning = false;
+                scanning = false;
 
                 // reset cancel flag
-                this.CancelRequested = false;
+                CancelRequested = false;
             }
         }
 
@@ -95,29 +95,29 @@ namespace CRLFLabs.ViewSize.IO
             entry.DisplayText = entry.IsTopLevel ? entry.Path : Path.GetFileName(entry.Path);
 
             // calculate children recursively
-            this.CalculateChildren(entry);
+            CalculateChildren(entry);
         }
 
         private void CalculateChildren(FileSystemEntry entry)
         {
-            if (this.CancelRequested)
+            if (CancelRequested)
             {
                 return;
             }
 
-            var paths = this.FileUtils.EnumerateFileSystemEntries(entry.Path);
+            var paths = FileUtils.EnumerateFileSystemEntries(entry.Path);
             entry.IsDirectory = paths != null;
             if (!entry.IsDirectory)
             {
                 // just a regular file, not a directory
                 // my file size (should be zero for directories)
-                entry.OwnSize = this.FileUtils.FileLength(entry.Path);
+                entry.OwnSize = FileUtils.FileLength(entry.Path);
                 entry.AdjustTotalSizeAndSortChildren();
                 return;
             }
 
             // only fire for directories because otherwise it's too slow
-            this.FireScanning(entry);
+            FireScanning(entry);
 
             // a directory after all
 
@@ -125,7 +125,7 @@ namespace CRLFLabs.ViewSize.IO
             // you don't know how many they are, and you need to be able to cancel the process!
             foreach (var path in paths)
             {
-                if (this.CancelRequested)
+                if (CancelRequested)
                 {
                     break;
                 }
@@ -134,7 +134,7 @@ namespace CRLFLabs.ViewSize.IO
                 var child = new FileSystemEntry(path, entry);
 
                 // recursion is done here
-                this.Calculate(child);
+                Calculate(child);
             }
 
             // now that children are done, we can calculate total size
@@ -144,22 +144,22 @@ namespace CRLFLabs.ViewSize.IO
         #region Setting properties after scan is complete
         private void SetPropertiesAfterScanRecursively(FileSystemEntry entry)
         {
-            this.SetPropertiesAfterScan(entry);
-            this.SetPropertiesAfterScanOnChildren(entry.Children);
+            SetPropertiesAfterScan(entry);
+            SetPropertiesAfterScanOnChildren(entry.Children);
         }
 
         private void SetPropertiesAfterScanOnChildren(IEnumerable<FileSystemEntry> entries)
         {
             foreach (var child in entries)
             {
-                this.SetPropertiesAfterScanRecursively(child);
+                SetPropertiesAfterScanRecursively(child);
             }
         }
 
         private void SetPropertiesAfterScan(FileSystemEntry entry)
         {
-            entry.Percentage = (double)entry.TotalSize / this.TotalSize;
-            entry.DisplaySize = this.FileUtils.FormatBytes(entry.TotalSize) + $" ({entry.Percentage:P2})";
+            entry.Percentage = (double)entry.TotalSize / TotalSize;
+            entry.DisplaySize = FileUtils.FormatBytes(entry.TotalSize) + $" ({entry.Percentage:P2})";
         }
         #endregion
 
@@ -168,7 +168,7 @@ namespace CRLFLabs.ViewSize.IO
 
         internal void FireScanning(FileSystemEntry folder)
         {
-            this.Scanning?.Invoke(this, new FileSystemEventArgs(folder));
+            Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }
         #endregion
     }

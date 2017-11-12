@@ -3,7 +3,7 @@
 // </copyright>
 
 using System;
-using System.ComponentModel;
+using System.Linq;
 using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -16,10 +16,10 @@ namespace CRLFLabs.ViewSize.Mvp
         public FolderChooserPresenter(IFolderChooserView view, IMainModel model, ISettingsManager settingsManager, ICommandBus commandBus)
             : base(view, model)
         {
-            this.SettingsManager = settingsManager;
-            this.Model.Folder = settingsManager.Settings.SelectedFolder;
-            this.Model.PropertyChanged += this.Model_PropertyChanged;
-            commandBus.Subscribe("SelectFolder", () => this.View_OnSelectFolderClick(null, EventArgs.Empty));
+            SettingsManager = settingsManager;
+
+            // allows MenuPresenter to trigger a SelectFolder request
+            commandBus.Subscribe("SelectFolder", () => View_OnSelectFolderClick(null, EventArgs.Empty));
         }
 
         private ISettingsManager SettingsManager { get; }
@@ -27,25 +27,41 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            this.View.OnSelectFolderClick += this.View_OnSelectFolderClick;
-            this.View.Folder = this.Model.Folder;
+            InitModelFromSettings();
+            SubscribeToViewEvents();
+            InitViewFromModel();
+        }
+
+        private void InitModelFromSettings()
+        {
+            Model.Folder = SettingsManager.Settings.SelectedFolder;
+        }
+
+        private void InitViewFromModel()
+        {
+            View.Folder = Model.Folder;
+        }
+
+        private void SubscribeToViewEvents()
+        {
+            View.OnSelectFolderClick += View_OnSelectFolderClick;
         }
 
         private void View_OnSelectFolderClick(object sender, EventArgs e)
         {
-            string folder = this.View.SelectFolder();
+            string folder = View.SelectFolder();
             if (folder != null)
             {
-                this.Model.Folder = folder;
-            }
-        }
+                Model.Folder = folder;
+                View.Folder = folder;
+                SettingsManager.Settings.SelectedFolder = folder;
+                if (!View.SupportsRecentFolders)
+                {
+                    SettingsManager.Settings.RecentFolders =
+                        Enumerable.Repeat(folder, 1).Concat(SettingsManager.Settings.RecentFolders ?? Enumerable.Empty<string>()).ToArray();
 
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == MainModel.FolderPropertyName)
-            {
-                this.View.Folder = this.Model.Folder;
-                this.SettingsManager.Settings.SelectedFolder = this.Model.Folder;
+                    View.AddRecentFolder(folder);
+                }
             }
         }
     }

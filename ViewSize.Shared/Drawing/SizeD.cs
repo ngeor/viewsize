@@ -24,8 +24,8 @@ namespace CRLFLabs.ViewSize.Drawing
                 throw new ArgumentOutOfRangeException(nameof(height));
             }
 
-            this.Width = width;
-            this.Height = height;
+            Width = width;
+            Height = height;
         }
 
         /// <summary>
@@ -41,9 +41,9 @@ namespace CRLFLabs.ViewSize.Drawing
         /// <summary>
         /// Gets the aspect ratio.
         /// </summary>
-        public double AspectRatio => Math.Max(this.Width / this.Height, this.Height / this.Width);
+        public double AspectRatio => Math.Max(Width / Height, Height / Width);
 
-        public bool Equals(SizeD other) => this.Width == other.Width && this.Height == other.Height;
+        public bool Equals(SizeD other) => Width == other.Width && Height == other.Height;
 
         public override bool Equals(object obj)
         {
@@ -52,10 +52,10 @@ namespace CRLFLabs.ViewSize.Drawing
 
         public override int GetHashCode()
         {
-            return this.Width.GetHashCode() ^ this.Height.GetHashCode();
+            return Width.GetHashCode() ^ Height.GetHashCode();
         }
 
-        public override string ToString() => $"({this.Width}, {this.Height})";
+        public override string ToString() => $"({Width}, {Height})";
 
         public static bool operator ==(SizeD left, SizeD right) => left.Equals(right);
 

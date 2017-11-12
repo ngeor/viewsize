@@ -19,43 +19,43 @@ namespace ViewSize.Tests.Mvp
         [SetUp]
         public void SetUp()
         {
-            this.viewMock = new Mock<IMenuView>();
-            this.mainModel = new MainModel();
-            this.commandBusMock = new Mock<ICommandBus>();
-            this.menuPresenter = new MenuPresenter(
-                this.viewMock.Object,
-                this.mainModel,
-                this.commandBusMock.Object);
+            viewMock = new Mock<IMenuView>();
+            mainModel = new MainModel();
+            commandBusMock = new Mock<ICommandBus>();
+            menuPresenter = new MenuPresenter(
+                viewMock.Object,
+                mainModel,
+                commandBusMock.Object);
 
-            this.viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+            viewMock.Raise(v => v.Load += null, EventArgs.Empty);
         }
 
         [Test]
         public void FileOpenClick_ShowsMainWindow()
         {
-            this.viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
-            this.viewMock.Verify(v => v.ShowMainWindow());
+            viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
+            viewMock.Verify(v => v.ShowMainWindow());
         }
 
         [Test]
         public void FileOpenClick_PublishesCommand()
         {
-            this.viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
-            this.commandBusMock.Verify(v => v.Publish("SelectFolder"));
+            viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
+            commandBusMock.Verify(v => v.Publish("SelectFolder"));
         }
 
         [Test]
         public void OpenRecentFileClick_ShowsMainWindow()
         {
-            this.viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
-            this.viewMock.Verify(v => v.ShowMainWindow());
+            viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
+            viewMock.Verify(v => v.ShowMainWindow());
         }
 
         [Test]
         public void OpenRecentFileClick_SetsModelFolder()
         {
-            this.viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
-            Assert.AreEqual("file", this.mainModel.Folder);
+            viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
+            Assert.AreEqual("file", mainModel.Folder);
         }
     }
 }

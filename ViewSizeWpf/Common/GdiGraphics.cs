@@ -12,7 +12,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
     {
         public GdiGraphics(Graphics graphics)
         {
-            this.Graphics = graphics;
+            Graphics = graphics;
         }
 
         private Graphics Graphics { get; }
@@ -21,7 +21,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
         {
             using (var pen = new Pen(color.ToColor(), width))
             {
-                this.Graphics.DrawRectangle(pen, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
+                Graphics.DrawRectangle(pen, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
             }
         }
 
@@ -39,7 +39,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
                     }
                 })
                 {
-                    this.Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
+                    Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
                 }
             }
         }
@@ -59,7 +59,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
                     CenterPoint = centerPoint.ToPointF()
                 })
                 {
-                    this.Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
+                    Graphics.FillEllipse(gradientBrush, rect.ToRectangleF());
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace CRLFLabs.ViewSizeWpf.Common
         {
             using (var brush = new SolidBrush(color.ToColor()))
             {
-                this.Graphics.FillRectangle(brush, rect.ToRectangleF());
+                Graphics.FillRectangle(brush, rect.ToRectangleF());
             }
         }
     }

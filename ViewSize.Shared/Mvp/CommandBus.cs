@@ -13,7 +13,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public void Publish(string command)
         {
-            foreach (var handler in this.subscriptions[command])
+            foreach (var handler in subscriptions[command])
             {
                 handler();
             }
@@ -21,19 +21,19 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public void Subscribe(string command, Action handler)
         {
-            var list = this.EnsureSubscriptions(command);
+            var list = EnsureSubscriptions(command);
             list.Add(handler);
         }
 
         private List<Action> EnsureSubscriptions(string command)
         {
-            if (this.subscriptions.ContainsKey(command))
+            if (subscriptions.ContainsKey(command))
             {
-                return this.subscriptions[command];
+                return subscriptions[command];
             }
 
             var list = new List<Action>();
-            this.subscriptions.Add(command, list);
+            subscriptions.Add(command, list);
             return list;
         }
     }

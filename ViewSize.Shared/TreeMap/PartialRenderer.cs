@@ -28,15 +28,15 @@ namespace CRLFLabs.ViewSize.TreeMap
         {
             this.renderer = renderer;
             this.fileSystemEntries = fileSystemEntries;
-            this.initialBounds = bounds;
+            initialBounds = bounds;
         }
 
         public void Render()
         {
             int i = 0;
 
-            this.SwitchBounds(this.initialBounds);
-            while (i < this.fileSystemEntries.Count)
+            SwitchBounds(initialBounds);
+            while (i < fileSystemEntries.Count)
             {
                 // start new streak
                 var streakCandidate = new LinkedList<FileSystemEntry>();
@@ -44,14 +44,14 @@ namespace CRLFLabs.ViewSize.TreeMap
                 double previousAspect = -1;
 
                 bool gotWorse = false;
-                while (i < this.fileSystemEntries.Count && !gotWorse)
+                while (i < fileSystemEntries.Count && !gotWorse)
                 {
                     // go on with current streak as long as it doesn't get worse aspect ratio
                     // take next entry
-                    var entry = this.fileSystemEntries[i];
+                    var entry = fileSystemEntries[i];
                     i++;
 
-                    if (this.renderer.Measurer(entry) <= 0)
+                    if (renderer.Measurer(entry) <= 0)
                     {
                         entry.Bounds = default(RectangleD);
                         continue;
@@ -61,7 +61,7 @@ namespace CRLFLabs.ViewSize.TreeMap
                     streakCandidate.AddLast(entry);
 
                     // e.g. draw total size = 10 pixels
-                    var streakBounds = this.CalculateStreakBounds(streakCandidate);
+                    var streakBounds = CalculateStreakBounds(streakCandidate);
 
                     var aspects = streakCandidate.Select(s => s.Bounds.Size.AspectRatio);
                     var worseAspect = aspects.Max();
@@ -77,11 +77,11 @@ namespace CRLFLabs.ViewSize.TreeMap
 
                         // render streak
                         // recalculate streak bounds
-                        streakBounds = this.CalculateStreakBounds(streakCandidate);
-                        this.RenderChildrenOfStreak(streakCandidate);
+                        streakBounds = CalculateStreakBounds(streakCandidate);
+                        RenderChildrenOfStreak(streakCandidate);
 
                         // continue in remaining bounds
-                        this.SwitchBounds(this.bounds.Subtract(streakBounds));
+                        SwitchBounds(bounds.Subtract(streakBounds));
                     }
                     else
                     {
@@ -92,9 +92,9 @@ namespace CRLFLabs.ViewSize.TreeMap
                 }
 
                 // if it's the last item let's draw what's left
-                if (i >= this.fileSystemEntries.Count)
+                if (i >= fileSystemEntries.Count)
                 {
-                    this.RenderChildrenOfStreak(streakCandidate);
+                    RenderChildrenOfStreak(streakCandidate);
                 }
             }
         }
@@ -115,15 +115,15 @@ namespace CRLFLabs.ViewSize.TreeMap
         private RectangleD CalculateStreakBounds(LinkedList<FileSystemEntry> streakCandidate)
         {
             // real size of the streak
-            var streakSizeInBytes = streakCandidate.Sum(this.renderer.Measurer);
+            var streakSizeInBytes = streakCandidate.Sum(renderer.Measurer);
 
             // e.g. draw total size = 10 pixels
-            var streakBounds = this.renderer.FillOneDimension(this.bounds, this.drawVertically, streakSizeInBytes);
+            var streakBounds = renderer.FillOneDimension(bounds, drawVertically, streakSizeInBytes);
 
             // distribute the streak proportionally within the given bounds
-            this.renderer.FillProportionally(streakBounds, this.drawVertically, streakCandidate);
+            renderer.FillProportionally(streakBounds, drawVertically, streakCandidate);
 
-            this.AdjustLastEntrySize(streakBounds, streakCandidate);
+            AdjustLastEntrySize(streakBounds, streakCandidate);
 
             return streakBounds;
         }
@@ -131,14 +131,14 @@ namespace CRLFLabs.ViewSize.TreeMap
         private void SwitchBounds(RectangleD bounds)
         {
             this.bounds = bounds;
-            this.drawVertically = bounds.Width > bounds.Height;
+            drawVertically = bounds.Width > bounds.Height;
         }
 
         private void AdjustLastEntrySize(RectangleD streakBounds, LinkedList<FileSystemEntry> streakCandidate)
         {
             // adjust bounds for last item due to rounding errors etc
             var folderWithDrawSize = streakCandidate.Last.Value;
-            if (this.drawVertically)
+            if (drawVertically)
             {
                 folderWithDrawSize.Bounds = folderWithDrawSize.Bounds.WithHeight(streakBounds.Bottom - folderWithDrawSize.Bounds.Top);
             }
@@ -162,11 +162,11 @@ namespace CRLFLabs.ViewSize.TreeMap
                 if (entry.Bounds.IsEmpty)
                 {
                     // it is empty, just nuke the children as well so we don't have previous rectangles appearing
-                    this.CopyBoundsToChildren(entry);
+                    CopyBoundsToChildren(entry);
                 }
                 else
                 {
-                    this.renderer.Render(entry);
+                    renderer.Render(entry);
                 }
             }
         }
@@ -176,7 +176,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             foreach (var child in entry.Children)
             {
                 child.Bounds = entry.Bounds;
-                this.CopyBoundsToChildren(child);
+                CopyBoundsToChildren(child);
             }
         }
     }

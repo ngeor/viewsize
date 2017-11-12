@@ -10,7 +10,7 @@ namespace CRLFLabs.ViewSize.IO
     {
         public FileSystemEventArgs(FileSystemEntry fileSystemEntry)
         {
-            this.FileSystemEntry = fileSystemEntry;
+            FileSystemEntry = fileSystemEntry;
         }
 
         public FileSystemEntry FileSystemEntry

@@ -25,20 +25,20 @@ namespace CRLFLabs.ViewSize.TreeMap
             switch (sortKey)
             {
                 case SortKey.Size:
-                    this.Measurer = TotalSizeMeasurer;
+                    Measurer = TotalSizeMeasurer;
                     break;
                 case SortKey.Count:
-                    this.Measurer = FileCountMeasurer;
+                    Measurer = FileCountMeasurer;
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
             // e.g. real total size = 200 bytes
-            this.totalSizeInBytes = fileSystemEntries.Sum(this.Measurer);
+            totalSizeInBytes = fileSystemEntries.Sum(Measurer);
 
             // e.g. draw total size = 100 pixels = 20x5
-            this.totalSizeInPixels = fullBounds.Width * fullBounds.Height;
+            totalSizeInPixels = fullBounds.Width * fullBounds.Height;
 
             this.fullBounds = fullBounds;
             this.fileSystemEntries = fileSystemEntries;
@@ -46,7 +46,7 @@ namespace CRLFLabs.ViewSize.TreeMap
 
         public void Render()
         {
-            var partialRenderer = new PartialRenderer(this, this.fullBounds, this.fileSystemEntries);
+            var partialRenderer = new PartialRenderer(this, fullBounds, fileSystemEntries);
             partialRenderer.Render();
         }
 
@@ -56,7 +56,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             partialRenderer.Render();
         }
 
-        private double ToPixelSize(double sizeInBytes) => this.totalSizeInPixels * sizeInBytes / this.totalSizeInBytes;
+        private double ToPixelSize(double sizeInBytes) => totalSizeInPixels * sizeInBytes / totalSizeInBytes;
 
         /// <summary>
         /// Fills the given rectangle across one dimension.
@@ -68,7 +68,7 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <returns></returns>
         public RectangleD FillOneDimension(RectangleD bounds, bool drawVertically, long sizeInBytes)
         {
-            var amount = this.ToPixelSize(sizeInBytes);
+            var amount = ToPixelSize(sizeInBytes);
             if (drawVertically)
             {
                 return bounds.WithWidth(amount / bounds.Height);
@@ -90,7 +90,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             double lastTop = bounds.Top;
             foreach (var entry in streakCandidate)
             {
-                var amount = this.ToPixelSize(this.Measurer(entry));
+                var amount = ToPixelSize(Measurer(entry));
                 if (drawVertically)
                 {
                     entry.Bounds = new RectangleD(bounds.Left, lastTop, bounds.Width, amount / bounds.Width);

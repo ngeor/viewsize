@@ -21,14 +21,14 @@ namespace ViewSizeWpf.Controls
         public TreeMap()
         {
             PresenterFactory.Create(this);
-            this.Load?.Invoke(this, EventArgs.Empty);
+            Load?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler Load;
 
         public IMainModel Model { get; set; }
 
-        public RectangleD BoundsD => new RectangleD(0, 0, this.ActualWidth, this.ActualHeight);
+        public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
 
         public event EventHandler RedrawNeeded;
 
@@ -37,22 +37,22 @@ namespace ViewSizeWpf.Controls
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            this.RedrawNeeded?.Invoke(this, EventArgs.Empty);
-            var source = this.RenderWithGdi();
-            drawingContext.DrawImage(source, new Rect(0, 0, this.ActualWidth, this.ActualHeight));
+            RedrawNeeded?.Invoke(this, EventArgs.Empty);
+            var source = RenderWithGdi();
+            drawingContext.DrawImage(source, new Rect(0, 0, ActualWidth, ActualHeight));
         }
 
         private BitmapSource RenderWithGdi()
         {
-            int width = (int)this.ActualWidth;
-            int height = (int)this.ActualHeight;
+            int width = (int)ActualWidth;
+            int height = (int)ActualHeight;
             using (var tempBitmap = new Bitmap(width, height))
             {
                 using (var g = Graphics.FromImage(tempBitmap))
                 {
                     GdiGraphics graphics = new GdiGraphics(g);
                     DrawHelper drawHelper = new DrawHelper(graphics, (r) => true);
-                    drawHelper.Draw(this.Model, new RectangleD(0, 0, this.ActualWidth, this.ActualHeight));
+                    drawHelper.Draw(Model, new RectangleD(0, 0, ActualWidth, ActualHeight));
                 }
 
                 var hbmp = tempBitmap.GetHbitmap();
@@ -63,7 +63,7 @@ namespace ViewSizeWpf.Controls
 
         public void Redraw()
         {
-            this.InvalidateVisual();
+            InvalidateVisual();
         }
 
         public void SelectionChanging()
@@ -74,7 +74,7 @@ namespace ViewSizeWpf.Controls
         public void SelectionChanged()
         {
             // on windows we just do a full redraw
-            this.Redraw();
+            Redraw();
         }
 
         #endregion

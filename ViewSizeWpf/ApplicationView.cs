@@ -13,14 +13,14 @@ namespace ViewSizeWpf
     {
         public ApplicationView(MainWindow mainWindow)
         {
-            mainWindow.Closing += this.MainWindow_Closing;
+            mainWindow.Closing += MainWindow_Closing;
             PresenterFactory.Create(this);
-            this.Load?.Invoke(this, EventArgs.Empty);
+            Load?.Invoke(this, EventArgs.Empty);
         }
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            this.Closing?.Invoke(this, EventArgs.Empty);
+            Closing?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler Closing;

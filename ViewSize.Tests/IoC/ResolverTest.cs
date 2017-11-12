@@ -155,7 +155,7 @@ namespace ViewSize.Tests.IoC
     {
         public OwnsSimple(Simple dependency)
         {
-            this.Dependency = dependency;
+            Dependency = dependency;
         }
 
         public Simple Dependency { get; }
@@ -165,7 +165,7 @@ namespace ViewSize.Tests.IoC
     {
         public OwnsISimple(ISimple dependency)
         {
-            this.Dependency = dependency;
+            Dependency = dependency;
         }
 
         public ISimple Dependency { get; }

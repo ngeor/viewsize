@@ -24,8 +24,8 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <param name="needsToDraw">A function that can determin if a rectangle needs drawing.</param>
         public DrawHelper(IGraphics graphics, Func<RectangleD, bool> needsToDraw)
         {
-            this.Graphics = graphics;
-            this.NeedsToDraw = needsToDraw;
+            Graphics = graphics;
+            NeedsToDraw = needsToDraw;
         }
 
         public IGraphics Graphics { get; }
@@ -44,7 +44,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (model == null || model.Children == null)
             {
                 // clear rect
-                this.Graphics.FillRect(Colors.White, dirtyRect);
+                Graphics.FillRect(Colors.White, dirtyRect);
                 return;
             }
 
@@ -52,12 +52,12 @@ namespace CRLFLabs.ViewSize.TreeMap
 
             if (drawContents)
             {
-                this.DrawChildren(model.Children, selected, 0);
+                DrawChildren(model.Children, selected, 0);
             }
 
             if (drawSelected)
             {
-                this.DrawSelected(selected);
+                DrawSelected(selected);
             }
         }
 
@@ -66,7 +66,7 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (selected != null)
             {
                 var rect = selected.Bounds;
-                this.Graphics.DrawRect(Colors.Yellow, rect, 2);
+                Graphics.DrawRect(Colors.Yellow, rect, 2);
             }
         }
 
@@ -81,14 +81,14 @@ namespace CRLFLabs.ViewSize.TreeMap
             // }
             foreach (var entry in elements)
             {
-                this.Draw(entry, selected, level + 1);
+                Draw(entry, selected, level + 1);
             }
         }
 
         private void Draw(FileSystemEntry entry, FileSystemEntry selected, int level)
         {
             var rect = entry.Bounds;
-            if (!this.NeedsToDraw(rect))
+            if (!NeedsToDraw(rect))
             {
                 return;
             }
@@ -96,31 +96,31 @@ namespace CRLFLabs.ViewSize.TreeMap
             if (entry.Children.Any())
             {
                 // recursion
-                this.DrawChildren(entry.Children, selected, level);
-                this.Graphics.DrawRect(Colors.Black, rect);
+                DrawChildren(entry.Children, selected, level);
+                Graphics.DrawRect(Colors.Black, rect);
             }
             else
             {
-                this.DrawFill(entry, rect, selected, level);
+                DrawFill(entry, rect, selected, level);
             }
         }
 
         private void DrawFill(FileSystemEntry entry, RectangleD rect, FileSystemEntry selected, int level)
         {
-            var fillColor = this.SelectFillColor(entry);
+            var fillColor = SelectFillColor(entry);
             var lightColor = fillColor.Lighter().Lighter();
-            this.Graphics.FillRect(fillColor, rect);
+            Graphics.FillRect(fillColor, rect);
 
             if (rect.Width >= 5 && rect.Height >= 5)
             {
                 var parent = entry.Parent as FileSystemEntry;
                 if (parent != null)
                 {
-                    this.Graphics.FillEllipseGradient(lightColor, fillColor, rect, parent.Bounds.Center);
+                    Graphics.FillEllipseGradient(lightColor, fillColor, rect, parent.Bounds.Center);
                 }
                 else
                 {
-                    this.Graphics.FillEllipseGradient(lightColor, fillColor, rect);
+                    Graphics.FillEllipseGradient(lightColor, fillColor, rect);
                 }
             }
         }

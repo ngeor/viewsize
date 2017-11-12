@@ -11,7 +11,7 @@ namespace CRLFLabs.ViewSize.Mvp
     {
         public PresenterAttribute(Type presenterType)
         {
-            this.PresenterType = presenterType;
+            PresenterType = presenterType;
         }
 
         public Type PresenterType { get; }

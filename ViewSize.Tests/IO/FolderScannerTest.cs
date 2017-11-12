@@ -19,8 +19,8 @@ namespace ViewSize.Tests.IO
         [SetUp]
         public void SetUp()
         {
-            this.fileUtilsMock = new Mock<IFileUtils>();
-            this.folderScanner = new FolderScanner(this.fileUtilsMock.Object);
+            fileUtilsMock = new Mock<IFileUtils>();
+            folderScanner = new FolderScanner(fileUtilsMock.Object);
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace ViewSize.Tests.IO
         {
             // arrange
             const int count = 1000000;
-            this.fileUtilsMock.Setup(p => p.EnumerateFileSystemEntries("test"))
+            fileUtilsMock.Setup(p => p.EnumerateFileSystemEntries("test"))
                           .Returns(Enumerable.Repeat("nope", count));
 
             Task.Run(async () =>
@@ -36,16 +36,16 @@ namespace ViewSize.Tests.IO
                 await Task.Delay(500); // so that it start scanning
 
                 // act
-                this.folderScanner.Cancel();
+                folderScanner.Cancel();
             });
 
-            var result = this.folderScanner.Scan("test");
+            var result = folderScanner.Scan("test");
 
             // assert
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count);
             Assert.Less(result[0].Children.Count, count);
-            Assert.IsFalse(this.folderScanner.CancelRequested);
+            Assert.IsFalse(folderScanner.CancelRequested);
         }
     }
 }

@@ -13,8 +13,8 @@ namespace CRLFLabs.ViewSize.Drawing
     {
         public PointD(double x, double y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public double X { get; }
@@ -28,14 +28,14 @@ namespace CRLFLabs.ViewSize.Drawing
 
         public override int GetHashCode()
         {
-            return this.X.GetHashCode() ^ this.Y.GetHashCode();
+            return X.GetHashCode() ^ Y.GetHashCode();
         }
 
-        public override string ToString() => $"({this.X}, {this.Y})";
+        public override string ToString() => $"({X}, {Y})";
 
         public bool Equals(PointD other)
         {
-            return this.X == other.X && this.Y == other.Y;
+            return X == other.X && Y == other.Y;
         }
 
         public static bool operator ==(PointD left, PointD right)

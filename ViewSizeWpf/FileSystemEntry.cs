@@ -22,15 +22,15 @@ namespace CRLFLabs.ViewSize.IO
         {
             get
             {
-                return this.isExpanded;
+                return isExpanded;
             }
 
             set
             {
-                if (this.isExpanded != value)
+                if (isExpanded != value)
                 {
-                    this.isExpanded = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsExpanded"));
+                    isExpanded = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsExpanded"));
                 }
             }
         }
@@ -39,15 +39,15 @@ namespace CRLFLabs.ViewSize.IO
         {
             get
             {
-                return this.isSelected;
+                return isSelected;
             }
 
             set
             {
-                if (this.isSelected != value)
+                if (isSelected != value)
                 {
-                    this.isSelected = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelected"));
+                    isSelected = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSelected"));
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace CRLFLabs.ViewSize.IO
         {
             get
             {
-                return GetIcon(this.Path, true, this.IsDirectory);
+                return GetIcon(Path, true, IsDirectory);
             }
         }
 

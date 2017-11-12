@@ -15,7 +15,7 @@ namespace ViewSize.Tests.Mvp
         [SetUp]
         public void SetUp()
         {
-            this.commandBus = new CommandBus();
+            commandBus = new CommandBus();
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace ViewSize.Tests.Mvp
         {
             Assert.Throws<KeyNotFoundException>(() =>
             {
-                this.commandBus.Publish("hello");
+                commandBus.Publish("hello");
             });
         }
 
@@ -31,12 +31,12 @@ namespace ViewSize.Tests.Mvp
         public void Publish_Consume_Works()
         {
             string result = "original";
-            this.commandBus.Subscribe("hello", () =>
+            commandBus.Subscribe("hello", () =>
             {
                 result = "something else";
             });
 
-            this.commandBus.Publish("hello");
+            commandBus.Publish("hello");
 
             Assert.AreEqual("something else", result);
         }

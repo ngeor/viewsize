@@ -12,35 +12,15 @@ namespace CRLFLabs.ViewSize.Settings
     public class SettingsManager : ISettingsManager
     {
         private const string Filename = "CRLFLabs.ViewSize.Settings.xml";
-        private static readonly XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(Settings));
 
-        #region Settings Holder
         private readonly Lazy<Settings> settings = new Lazy<Settings>(() => Load());
 
-        public Settings Settings => this.settings.Value;
-
-        private static Settings Load()
-        {
-            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForAssembly())
-            {
-                try
-                {
-                    using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream(Filename, FileMode.Open, storage))
-                    {
-                        return (Settings)serializer.Deserialize(stream);
-                    }
-                }
-                catch (FileNotFoundException)
-                {
-                    return new Settings();
-                }
-            }
-        }
-        #endregion
+        public Settings Settings => settings.Value;
 
         public void Save()
         {
-            if (!this.settings.IsValueCreated)
+            if (!settings.IsValueCreated)
             {
                 // nothing changed apparently
                 return;
@@ -50,7 +30,25 @@ namespace CRLFLabs.ViewSize.Settings
             {
                 using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream(Filename, FileMode.Create, storage))
                 {
-                    serializer.Serialize(stream, this.settings.Value);
+                    Serializer.Serialize(stream, settings.Value);
+                }
+            }
+        }
+
+        private static Settings Load()
+        {
+            using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForAssembly())
+            {
+                try
+                {
+                    using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream(Filename, FileMode.Open, storage))
+                    {
+                        return (Settings)Serializer.Deserialize(stream);
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    return new Settings();
                 }
             }
         }

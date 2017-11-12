@@ -20,9 +20,9 @@ namespace CRLFLabs.ViewSize.IO
                 throw new ArgumentNullException(nameof(path));
             }
 
-            this.Path = path;
-            this.Parent = parent;
-            this.AddToChildrenOfParent();
+            Path = path;
+            Parent = parent;
+            AddToChildrenOfParent();
         }
 
         // core properties
@@ -44,9 +44,9 @@ namespace CRLFLabs.ViewSize.IO
         public FileSystemEntry Parent { get; }
 
         // virtual for unit tests
-        public virtual IReadOnlyList<FileSystemEntry> Children => this.children;
+        public virtual IReadOnlyList<FileSystemEntry> Children => children;
 
-        public bool IsTopLevel => this.Parent == null;
+        public bool IsTopLevel => Parent == null;
 
         // UI
         public string DisplayText { get; set; }
@@ -58,7 +58,7 @@ namespace CRLFLabs.ViewSize.IO
 
         public override string ToString()
         {
-            return $"[FileSystemEntry: Path={this.Path}]";
+            return $"[FileSystemEntry: Path={Path}]";
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace CRLFLabs.ViewSize.IO
 
         public IEnumerable<FileSystemEntry> Ancestors()
         {
-            var parent = this.Parent as FileSystemEntry;
+            var parent = Parent as FileSystemEntry;
             if (parent == null)
             {
                 return Enumerable.Empty<FileSystemEntry>();
@@ -97,16 +97,16 @@ namespace CRLFLabs.ViewSize.IO
 
         internal void AdjustTotalSizeAndSortChildren()
         {
-            if (!this.IsDirectory)
+            if (!IsDirectory)
             {
-                this.TotalSize = this.OwnSize;
-                this.FileCount = 1;
+                TotalSize = OwnSize;
+                FileCount = 1;
                 return;
             }
 
-            this.TotalSize = this.children.Select(c => c.TotalSize).Sum();
-            this.FileCount = this.children.Select(c => c.FileCount).Sum();
-            this.children.Sort((x, y) =>
+            TotalSize = children.Select(c => c.TotalSize).Sum();
+            FileCount = children.Select(c => c.FileCount).Sum();
+            children.Sort((x, y) =>
             {
                 if (x.TotalSize > y.TotalSize)
                 {
@@ -125,7 +125,7 @@ namespace CRLFLabs.ViewSize.IO
 
         private void AddToChildrenOfParent()
         {
-            this.Parent?.children.Add(this);
+            Parent?.children.Add(this);
         }
     }
 }

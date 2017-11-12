@@ -10,8 +10,8 @@ namespace CRLFLabs.ViewSize.IoC
     {
         public TypeMapping(Type actualType, bool singleton)
         {
-            this.ActualType = actualType;
-            this.Singleton = singleton;
+            ActualType = actualType;
+            Singleton = singleton;
         }
 
         public Type ActualType { get; }

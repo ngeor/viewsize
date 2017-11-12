@@ -30,28 +30,28 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public bool IsScanning
         {
-            get => this.isScanning;
+            get => isScanning;
             set
             {
-                if (this.isScanning != value)
+                if (isScanning != value)
                 {
-                    this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(IsScanningPropertyName));
-                    this.isScanning = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(IsScanningPropertyName));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(IsScanningPropertyName));
+                    isScanning = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(IsScanningPropertyName));
                 }
             }
         }
 
         public string Folder
         {
-            get => this.folder;
+            get => folder;
             set
             {
-                if (this.folder != value)
+                if (folder != value)
                 {
-                    this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(FolderPropertyName));
-                    this.folder = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(FolderPropertyName));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(FolderPropertyName));
+                    folder = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(FolderPropertyName));
                 }
             }
         }
@@ -60,30 +60,30 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             get
             {
-                return this.sortKey;
+                return sortKey;
             }
 
             set
             {
-                if (this.sortKey != value)
+                if (sortKey != value)
                 {
-                    this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SortKeyPropertyName));
-                    this.sortKey = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SortKeyPropertyName));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SortKeyPropertyName));
+                    sortKey = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SortKeyPropertyName));
                 }
             }
         }
 
         public IReadOnlyList<FileSystemEntry> TopLevelFolders
         {
-            get => this.topLevelFolders;
+            get => topLevelFolders;
             set
             {
-                if (this.topLevelFolders != value)
+                if (topLevelFolders != value)
                 {
-                    this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(TopLevelFoldersPropertyName));
-                    this.topLevelFolders = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(TopLevelFoldersPropertyName));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(TopLevelFoldersPropertyName));
+                    topLevelFolders = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(TopLevelFoldersPropertyName));
                 }
             }
         }
@@ -92,16 +92,16 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             get
             {
-                return this.children;
+                return children;
             }
 
             set
             {
-                if (this.children != value)
+                if (children != value)
                 {
-                    this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(ChildrenPropertyName));
-                    this.children = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(ChildrenPropertyName));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(ChildrenPropertyName));
+                    children = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(ChildrenPropertyName));
                 }
             }
         }
@@ -110,16 +110,16 @@ namespace CRLFLabs.ViewSize.Mvp
         {
             get
             {
-                return this.selected;
+                return selected;
             }
 
             set
             {
-                if (this.selected != value)
+                if (selected != value)
                 {
-                    this.PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SelectedPropertyName));
-                    this.selected = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SelectedPropertyName));
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(SelectedPropertyName));
+                    selected = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SelectedPropertyName));
                 }
             }
         }

@@ -21,9 +21,9 @@ namespace CRLFLabs.ViewSize
         private bool ShouldFireEvent()
         {
             var now = DateTime.UtcNow;
-            if (this.lastEvent == DateTime.MinValue || now - this.lastEvent > this.threshold)
+            if (lastEvent == DateTime.MinValue || now - lastEvent > threshold)
             {
-                this.lastEvent = now;
+                lastEvent = now;
                 return true;
             }
 
@@ -32,9 +32,9 @@ namespace CRLFLabs.ViewSize
 
         public void ThrottledEventHandler(object sender, T args)
         {
-            if (this.ShouldFireEvent())
+            if (ShouldFireEvent())
             {
-                this.eventHandler(sender, args);
+                eventHandler(sender, args);
             }
         }
 

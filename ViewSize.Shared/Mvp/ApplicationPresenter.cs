@@ -12,7 +12,7 @@ namespace CRLFLabs.ViewSize.Mvp
         public ApplicationPresenter(IApplicationView view, ISettingsManager settingsManager)
             : base(view)
         {
-            this.SettingsManager = settingsManager;
+            SettingsManager = settingsManager;
         }
 
         private ISettingsManager SettingsManager { get; }
@@ -20,12 +20,12 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            this.View.Closing += this.View_Closing;
+            View.Closing += View_Closing;
         }
 
         private void View_Closing(object sender, EventArgs e)
         {
-            this.SettingsManager.Save();
+            SettingsManager.Save();
         }
     }
 }

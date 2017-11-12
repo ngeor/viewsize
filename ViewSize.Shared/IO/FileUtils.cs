@@ -63,7 +63,7 @@ namespace CRLFLabs.ViewSize.IO
         {
             try
             {
-                if (!this.IsDirectory(path))
+                if (!IsDirectory(path))
                 {
                     return null;
                 }

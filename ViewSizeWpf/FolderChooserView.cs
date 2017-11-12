@@ -4,6 +4,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeWpf
@@ -14,29 +15,31 @@ namespace ViewSizeWpf
         public FolderChooserView(MainWindow mainWindow)
         {
             // assign references to main window
-            this.MainWindow = mainWindow;
-            this.MainWindow.btnSelectFolder.Click += this.BtnSelectFolder_Click;
-            this.MainWindow.txtFolder.TextChanged += this.TxtFolder_TextChanged;
+            MainWindow = mainWindow;
+            MainWindow.btnSelectFolder.Click += BtnSelectFolder_Click;
+            MainWindow.txtFolder.TextChanged += TxtFolder_TextChanged;
 
             // start MVP
             PresenterFactory.Create(this);
-            this.Load?.Invoke(this, EventArgs.Empty);
+            Load?.Invoke(this, EventArgs.Empty);
         }
-
-        public IMainModel Model { get; set; }
-
-        private MainWindow MainWindow { get; }
 
         /// <inheritdoc/>
         public event EventHandler OnSelectFolderClick;
 
         public event EventHandler Load;
 
+        public IMainModel Model { get; set; }
+
         public string Folder
         {
-            get => this.MainWindow.txtFolder.Text;
-            set => this.MainWindow.txtFolder.Text = value;
+            get => MainWindow.txtFolder.Text;
+            set => MainWindow.txtFolder.Text = value;
         }
+
+        public bool SupportsRecentFolders => false;
+
+        private MainWindow MainWindow { get; }
 
         public string SelectFolder()
         {
@@ -52,14 +55,24 @@ namespace ViewSizeWpf
             return null;
         }
 
+        public void AddRecentFolder(string folder)
+        {
+            var menuItem = new MenuItem
+            {
+                Header = folder
+            };
+
+            MainWindow.mnuRecentFolders.Items.Insert(0, menuItem);
+        }
+
         private void BtnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            this.OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
+            OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
         }
 
         private void TxtFolder_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            this.Model.Folder = this.MainWindow.txtFolder.Text;
+            Model.Folder = MainWindow.txtFolder.Text;
         }
     }
 }
