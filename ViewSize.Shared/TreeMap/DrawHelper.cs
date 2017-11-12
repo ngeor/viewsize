@@ -35,9 +35,11 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// </summary>
         private Func<RectangleD, bool> NeedsToDraw { get; }
 
-        public void Draw(IMainModel model, RectangleD dirtyRect,
-                        bool drawContents = true,
-                        bool drawSelected = true)
+        public void Draw(
+            IMainModel model,
+            RectangleD dirtyRect,
+            bool drawContents = true,
+            bool drawSelected = true)
         {
             if (model == null || model.Children == null)
             {

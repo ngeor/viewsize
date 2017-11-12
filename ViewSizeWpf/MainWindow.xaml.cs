@@ -19,6 +19,13 @@ namespace ViewSizeWpf
     [Presenter(typeof(MenuPresenter))]
     public partial class MainWindow : Window, IMainView, IMenuView
     {
+#pragma warning disable SA1401 // Fields must be private
+        public static RoutedCommand ShowInExplorerCommand = new RoutedCommand();
+        public static RoutedCommand UpOneLevelCommand = new RoutedCommand();
+        public static RoutedCommand FileSizeTreeMapCommand = new RoutedCommand();
+        public static RoutedCommand FileCountTreeMapCommand = new RoutedCommand();
+#pragma warning restore SA1401 // Fields must be private
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -30,15 +37,13 @@ namespace ViewSizeWpf
             new ApplicationView(this);
         }
 
-        #region IMainView implementation
-        public void RunOnGuiThread(Action action) => this.Dispatcher.Invoke(action);
+        public event EventHandler FileSizeTreeMapClick;
 
-        public void ShowError(Exception ex) => this.ShowError(ex.Message + ex.StackTrace);
+        public event EventHandler FileCountTreeMapClick;
 
-        public void ShowError(string message)
-        {
-            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+        public event EventHandler FileOpenClick;
+
+        public event EventHandler<RecentFileEventArgs> OpenRecentFileClick;
 
         public event EventHandler Load;
 
@@ -52,12 +57,33 @@ namespace ViewSizeWpf
 
         public event EventHandler<CanExecuteEventArgs> UpOneLevelCanExecute;
 
+        public IMainModel Model { get; set; }
+
+        public bool IsFileSizeTreeMapChecked
+        {
+            get => this.mnuFileSizeTreeMap.IsChecked;
+            set => this.mnuFileSizeTreeMap.IsChecked = value;
+        }
+
+        public bool IsFileCountTreeMapChecked
+        {
+            get => this.mnuFileCountTreeMap.IsChecked;
+            set => this.mnuFileCountTreeMap.IsChecked = value;
+        }
+
+        public void RunOnGuiThread(Action action) => this.Dispatcher.Invoke(action);
+
+        public void ShowError(Exception ex) => this.ShowError(ex.Message + ex.StackTrace);
+
+        public void ShowError(string message)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         public void SetTreeViewContents()
         {
             // not needed for Windows, treeView.DataContext = Model is done once in the constructor
         }
-
-        public IMainModel Model { get; set; }
 
         public void EnableUI(bool enable)
         {
@@ -88,9 +114,10 @@ namespace ViewSizeWpf
             }
         }
 
-        #endregion
-
-        #region WPF Event Handlers
+        public void ShowMainWindow()
+        {
+            // not used in Windows
+        }
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
         {
@@ -123,13 +150,6 @@ namespace ViewSizeWpf
 
             this.OnTreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(fileSystemEntry));
         }
-
-        #endregion
-
-        public static RoutedCommand ShowInExplorerCommand = new RoutedCommand();
-        public static RoutedCommand UpOneLevelCommand = new RoutedCommand();
-        public static RoutedCommand FileSizeTreeMapCommand = new RoutedCommand();
-        public static RoutedCommand FileCountTreeMapCommand = new RoutedCommand();
 
         private void FileSizeTreeMap_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -190,31 +210,9 @@ namespace ViewSizeWpf
             this.Close();
         }
 
-        #region IMenuView
-        public event EventHandler FileSizeTreeMapClick;
-
-        public event EventHandler FileCountTreeMapClick;
-
-        public event EventHandler FileOpenClick;
-
-        public event EventHandler<RecentFileEventArgs> OpenRecentFileClick;
-
-        public bool IsFileSizeTreeMapChecked
+        private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            get => this.mnuFileSizeTreeMap.IsChecked;
-            set => this.mnuFileSizeTreeMap.IsChecked = value;
+            this.FileOpenClick?.Invoke(this, EventArgs.Empty);
         }
-
-        public bool IsFileCountTreeMapChecked
-        {
-            get => this.mnuFileCountTreeMap.IsChecked;
-            set => this.mnuFileCountTreeMap.IsChecked = value;
-        }
-
-        public void ShowMainWindow()
-        {
-            // not used in Windows
-        }
-        #endregion
     }
 }

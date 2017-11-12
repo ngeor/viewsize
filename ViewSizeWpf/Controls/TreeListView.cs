@@ -58,16 +58,21 @@ namespace ViewSizeWpf.Controls
 
         // Using a DependencyProperty as the backing store for Columns.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ColumnsProperty =
-            DependencyProperty.Register("Columns", typeof(GridViewColumnCollection),
-            typeof(TreeListView),
-            new UIPropertyMetadata(null));
+            DependencyProperty.Register(
+                "Columns",
+                typeof(GridViewColumnCollection),
+                typeof(TreeListView),
+                new UIPropertyMetadata(null));
 
         /// <summary>
         /// This dependency property enables selected items to be scrolled into visible view automatically.
         /// </summary>
         public static readonly DependencyProperty BringIntoViewWhenSelectedProperty =
-            DependencyProperty.RegisterAttached("BringIntoViewWhenSelected", typeof(bool),
-                typeof(TreeListView), new UIPropertyMetadata(false, OnBringIntoViewWhenSelected));
+            DependencyProperty.RegisterAttached(
+                "BringIntoViewWhenSelected",
+                typeof(bool),
+                typeof(TreeListView),
+                new UIPropertyMetadata(false, OnBringIntoViewWhenSelected));
         #endregion
 
         /// <summary>
