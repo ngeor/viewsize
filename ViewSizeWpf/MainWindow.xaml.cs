@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
@@ -117,6 +118,17 @@ namespace ViewSizeWpf
         public void ShowMainWindow()
         {
             // not used in Windows
+        }
+
+        public void AddRecentFolder(string folder)
+        {
+            var menuItem = new MenuItem
+            {
+                Header = folder
+            };
+
+            // -2 because of the separator and the 'clear recent folders' entry
+            mnuRecentFolders.Items.Insert(mnuRecentFolders.Items.Count - 2, menuItem);
         }
 
         private void btnScan_Click(object sender, RoutedEventArgs e)

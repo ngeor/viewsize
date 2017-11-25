@@ -21,5 +21,7 @@ namespace CRLFLabs.ViewSize.Mvp
         bool IsFileCountTreeMapChecked { get; set; }
 
         void ShowMainWindow();
+
+        void AddRecentFolder(string path);
     }
 }

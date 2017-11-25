@@ -3,19 +3,24 @@
 // </copyright>
 
 using System;
+using System.Linq;
 using CRLFLabs.ViewSize.IO;
+using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
     public class MenuPresenter : PresenterBase<IMenuView, IMainModel>
     {
-        public MenuPresenter(IMenuView view, IMainModel model, ICommandBus commandBus)
+        public MenuPresenter(IMenuView view, IMainModel model, ICommandBus commandBus, ISettingsManager settingsManager)
             : base(view, model)
         {
             CommandBus = commandBus;
+            SettingsManager = settingsManager;
         }
 
         private ICommandBus CommandBus { get; }
+
+        private ISettingsManager SettingsManager { get; }
 
         protected override void OnViewLoad(object sender, EventArgs e)
         {
@@ -24,6 +29,11 @@ namespace CRLFLabs.ViewSize.Mvp
             View.FileCountTreeMapClick += View_FileCountTreeMapClick;
             View.FileOpenClick += View_FileOpenClick;
             View.OpenRecentFileClick += View_OpenRecentFileClick;
+
+            foreach (var folder in SettingsManager.Settings?.RecentFolders ?? Enumerable.Empty<string>())
+            {
+                View.AddRecentFolder(folder);
+            }
         }
 
         private void View_FileSizeTreeMapClick(object sender, EventArgs e)
