@@ -127,6 +127,8 @@ namespace ViewSizeWpf
                 Header = folder
             };
 
+            menuItem.Click += (s, a) => OpenRecentFileClick?.Invoke(this, new RecentFileEventArgs(folder));
+
             // -2 because of the separator and the 'clear recent folders' entry
             mnuRecentFolders.Items.Insert(mnuRecentFolders.Items.Count - 2, menuItem);
         }

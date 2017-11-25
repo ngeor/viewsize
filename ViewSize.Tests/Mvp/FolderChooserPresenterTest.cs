@@ -15,6 +15,7 @@ namespace ViewSize.Tests.Mvp
     {
         private FolderChooserPresenter presenter;
         private Mock<IFolderChooserView> viewMock;
+        private MainModel model;
         private Mock<ISettingsManager> settingsManagerMock;
         private Settings settings;
         private CommandBus commandBus;
@@ -22,6 +23,7 @@ namespace ViewSize.Tests.Mvp
         [SetUp]
         public void SetUp()
         {
+            model = new MainModel();
             viewMock = new Mock<IFolderChooserView>();
             settings = new Settings
             {
@@ -33,11 +35,12 @@ namespace ViewSize.Tests.Mvp
             };
             settingsManagerMock = new Mock<ISettingsManager>();
             settingsManagerMock.SetupGet(m => m.Settings).Returns(settings);
+            viewMock.SetupProperty(v => v.Folder);
             viewMock.SetupProperty(v => v.Model);
             commandBus = new CommandBus();
             presenter = new FolderChooserPresenter(
                 viewMock.Object,
-                Mock.Of<IMainModel>(),
+                model,
                 settingsManagerMock.Object,
                 commandBus);
 
@@ -54,7 +57,7 @@ namespace ViewSize.Tests.Mvp
             viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("some path", viewMock.Object.Model.Folder);
+            Assert.AreEqual("some path", model.Folder);
         }
 
         [Test]
@@ -67,7 +70,7 @@ namespace ViewSize.Tests.Mvp
             viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
 
             // assert
-            Assert.AreEqual("/tmp", viewMock.Object.Model.Folder);
+            Assert.AreEqual("/tmp", model.Folder);
         }
 
         [Test]
@@ -158,7 +161,17 @@ namespace ViewSize.Tests.Mvp
             commandBus.Publish("SelectFolder");
 
             // assert
-            Assert.AreEqual("some path", viewMock.Object.Model.Folder);
+            Assert.AreEqual("some path", model.Folder);
+        }
+
+        [Test]
+        public void ModelFolderChanged_UpdatesView()
+        {
+            // act
+            model.Folder = "something else";
+
+            // assert
+            Assert.AreEqual("something else", viewMock.Object.Folder);
         }
     }
 }

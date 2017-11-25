@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using CRLFLabs.ViewSize.Settings;
+using System.ComponentModel;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -35,6 +36,7 @@ namespace CRLFLabs.ViewSize.Mvp
         private void InitModelFromSettings()
         {
             Model.Folder = SettingsManager.Settings.SelectedFolder;
+            Model.PropertyChanged += Model_PropertyChanged;
         }
 
         private void InitViewFromModel()
@@ -53,6 +55,14 @@ namespace CRLFLabs.ViewSize.Mvp
             if (folder != null)
             {
                 Model.Folder = folder;
+            }
+        }
+
+        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == MainModel.FolderPropertyName)
+            {
+                var folder = Model.Folder;
                 View.Folder = folder;
                 SettingsManager.Settings.SelectedFolder = folder;
                 if (!View.SupportsRecentFolders)
