@@ -27,8 +27,6 @@ namespace ViewSizeWpf.Controls
             Columns = new GridViewColumnCollection();
         }
 
-        #region Properties
-
         /// <summary>
         /// Gets or sets the collection of System.Windows.Controls.GridViewColumn
         /// objects that is defined for this TreeListView.
@@ -40,7 +38,7 @@ namespace ViewSizeWpf.Controls
         }
 
         /// <summary>
-        /// Gets or sets whether columns in a TreeListView can be
+        /// Gets or sets a value indicating whether columns in a TreeListView can be
         /// reordered by a drag-and-drop operation. This is a dependency property.
         /// </summary>
         public bool AllowsColumnReorder
@@ -48,9 +46,6 @@ namespace ViewSizeWpf.Controls
             get { return (bool)GetValue(AllowsColumnReorderProperty); }
             set { SetValue(AllowsColumnReorderProperty, value); }
         }
-        #endregion
-
-        #region Static Dependency Properties
 
         // Using a DependencyProperty as the backing store for AllowsColumnReorder.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty AllowsColumnReorderProperty =
@@ -73,7 +68,6 @@ namespace ViewSizeWpf.Controls
                 typeof(bool),
                 typeof(TreeListView),
                 new UIPropertyMetadata(false, OnBringIntoViewWhenSelected));
-        #endregion
 
         /// <summary>
         /// Called when the property <c>BringIntoViewWhenSelected</c> changes.

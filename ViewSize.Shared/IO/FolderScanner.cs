@@ -25,10 +25,7 @@ namespace CRLFLabs.ViewSize.IO
             FileUtils = fileUtils;
         }
 
-        private IFileUtils FileUtils { get; }
-
-        // TODO: remove TotalSize from here, move it to the Model
-        private long TotalSize { get; set; }
+        public event EventHandler<FileSystemEventArgs> Scanning;
 
         /// <summary>
         /// Gets a value indicating whether the user has requested to cancel the scan.
@@ -39,6 +36,11 @@ namespace CRLFLabs.ViewSize.IO
             get;
             private set;
         }
+
+        // TODO: remove TotalSize from here, move it to the Model
+        private long TotalSize { get; set; }
+
+        private IFileUtils FileUtils { get; }
 
         /// <summary>
         /// Requests to terminate scanning.
@@ -88,6 +90,11 @@ namespace CRLFLabs.ViewSize.IO
                 // reset cancel flag
                 CancelRequested = false;
             }
+        }
+
+        internal void FireScanning(FileSystemEntry folder)
+        {
+            Scanning?.Invoke(this, new FileSystemEventArgs(folder));
         }
 
         private void Calculate(FileSystemEntry entry)
@@ -141,7 +148,6 @@ namespace CRLFLabs.ViewSize.IO
             entry.AdjustTotalSizeAndSortChildren();
         }
 
-        #region Setting properties after scan is complete
         private void SetPropertiesAfterScanRecursively(FileSystemEntry entry)
         {
             SetPropertiesAfterScan(entry);
@@ -161,15 +167,5 @@ namespace CRLFLabs.ViewSize.IO
             entry.Percentage = (double)entry.TotalSize / TotalSize;
             entry.DisplaySize = FileUtils.FormatBytes(entry.TotalSize) + $" ({entry.Percentage:P2})";
         }
-        #endregion
-
-        #region Events
-        public event EventHandler<FileSystemEventArgs> Scanning;
-
-        internal void FireScanning(FileSystemEntry folder)
-        {
-            Scanning?.Invoke(this, new FileSystemEventArgs(folder));
-        }
-        #endregion
     }
 }

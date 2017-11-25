@@ -9,7 +9,6 @@ using System.Windows.Input;
 using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSizeWpf;
-using System.Windows.Controls;
 
 namespace ViewSizeWpf
 {

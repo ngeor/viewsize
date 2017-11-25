@@ -26,13 +26,27 @@ namespace ViewSizeWpf.Controls
 
         public event EventHandler Load;
 
+        public event EventHandler RedrawNeeded;
+
         public IMainModel Model { get; set; }
 
         public RectangleD BoundsD => new RectangleD(0, 0, ActualWidth, ActualHeight);
 
-        public event EventHandler RedrawNeeded;
+        public void Redraw()
+        {
+            InvalidateVisual();
+        }
 
-        #region Rendering
+        public void SelectionChanging()
+        {
+            // not needed for windows, we just do a full redraw
+        }
+
+        public void SelectionChanged()
+        {
+            // on windows we just do a full redraw
+            Redraw();
+        }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -60,23 +74,5 @@ namespace ViewSizeWpf.Controls
                 return Imaging.CreateBitmapSourceFromHBitmap(hbmp, IntPtr.Zero, Int32Rect.Empty, options);
             }
         }
-
-        public void Redraw()
-        {
-            InvalidateVisual();
-        }
-
-        public void SelectionChanging()
-        {
-            // not needed for windows, we just do a full redraw
-        }
-
-        public void SelectionChanged()
-        {
-            // on windows we just do a full redraw
-            Redraw();
-        }
-
-        #endregion
     }
 }

@@ -63,9 +63,6 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// If we're drawing vertically, it fills the entire height.
         /// Otherwise, it fills the entire width.
         /// </summary>
-        /// <param name="bounds"></param>
-        /// <param name="drawVertically"></param>
-        /// <returns></returns>
         public RectangleD FillOneDimension(RectangleD bounds, bool drawVertically, long sizeInBytes)
         {
             var amount = ToPixelSize(sizeInBytes);
@@ -82,8 +79,6 @@ namespace CRLFLabs.ViewSize.TreeMap
         /// <summary>
         /// Assuming this area is a sub-area of the given total area, it fills the given bounds proportionally.
         /// </summary>
-        /// <param name="bounds"></param>
-        /// <param name="drawVertically"></param>
         public void FillProportionally(RectangleD bounds, bool drawVertically, LinkedList<FileSystemEntry> streakCandidate)
         {
             double lastLeft = bounds.Left;

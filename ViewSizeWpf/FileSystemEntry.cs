@@ -18,6 +18,8 @@ namespace CRLFLabs.ViewSize.IO
         private bool isExpanded;
         private bool isSelected;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public bool IsExpanded
         {
             get
@@ -85,7 +87,5 @@ namespace CRLFLabs.ViewSize.IO
             Interop.DestroyIcon(iconHandle);
             return img;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

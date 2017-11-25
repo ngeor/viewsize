@@ -16,7 +16,7 @@ namespace CRLFLabs.ViewSize.Mvp
     public class MainPresenter : PresenterBase<IMainView, IMainModel>
     {
         /// <summary>
-        /// Creates an instance of this class.
+        /// Initializes a new instance of the <see cref="MainPresenter"/> class.
         /// </summary>
         public MainPresenter(IMainView view, IMainModel model, IFolderScanner folderScanner, IFileUtils fileUtils)
             : base(view, model)

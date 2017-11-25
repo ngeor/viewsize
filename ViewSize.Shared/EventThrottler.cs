@@ -6,16 +6,30 @@ using System;
 
 namespace CRLFLabs.ViewSize
 {
-    public class EventThrottler<T> where T : EventArgs
+    public class EventThrottler<T>
+        where T : EventArgs
     {
-        private DateTime lastEvent = DateTime.MinValue;
         private readonly TimeSpan threshold;
         private readonly EventHandler<T> eventHandler;
+        private DateTime lastEvent = DateTime.MinValue;
 
         public EventThrottler(EventHandler<T> eventHandler, TimeSpan threshold)
         {
             this.eventHandler = eventHandler;
             this.threshold = threshold;
+        }
+
+        public static EventHandler<T> Throttle(EventHandler<T> eventHandler, int milliseconds = 75)
+        {
+            return new EventThrottler<T>(eventHandler, TimeSpan.FromMilliseconds(milliseconds)).ThrottledEventHandler;
+        }
+
+        public void ThrottledEventHandler(object sender, T args)
+        {
+            if (ShouldFireEvent())
+            {
+                eventHandler(sender, args);
+            }
         }
 
         private bool ShouldFireEvent()
@@ -28,19 +42,6 @@ namespace CRLFLabs.ViewSize
             }
 
             return false;
-        }
-
-        public void ThrottledEventHandler(object sender, T args)
-        {
-            if (ShouldFireEvent())
-            {
-                eventHandler(sender, args);
-            }
-        }
-
-        public static EventHandler<T> Throttle(EventHandler<T> eventHandler, int milliseconds = 75)
-        {
-            return new EventThrottler<T>(eventHandler, TimeSpan.FromMilliseconds(milliseconds)).ThrottledEventHandler;
         }
     }
 }

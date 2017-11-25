@@ -28,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\RecentFileEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\TreeMapPresenter.cs" />
@@ -46,7 +47,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FolderScanner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IFolderScanner.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase`1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\SortKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />

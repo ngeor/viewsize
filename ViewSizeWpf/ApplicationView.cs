@@ -18,13 +18,13 @@ namespace ViewSizeWpf
             Load?.Invoke(this, EventArgs.Empty);
         }
 
+        public event EventHandler Closing;
+
+        public event EventHandler Load;
+
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             Closing?.Invoke(this, EventArgs.Empty);
         }
-
-        public event EventHandler Closing;
-
-        public event EventHandler Load;
     }
 }

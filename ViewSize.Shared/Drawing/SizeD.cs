@@ -43,6 +43,10 @@ namespace CRLFLabs.ViewSize.Drawing
         /// </summary>
         public double AspectRatio => Math.Max(Width / Height, Height / Width);
 
+        public static bool operator ==(SizeD left, SizeD right) => left.Equals(right);
+
+        public static bool operator !=(SizeD left, SizeD right) => !left.Equals(right);
+
         public bool Equals(SizeD other) => Width == other.Width && Height == other.Height;
 
         public override bool Equals(object obj)
@@ -56,9 +60,5 @@ namespace CRLFLabs.ViewSize.Drawing
         }
 
         public override string ToString() => $"({Width}, {Height})";
-
-        public static bool operator ==(SizeD left, SizeD right) => left.Equals(right);
-
-        public static bool operator !=(SizeD left, SizeD right) => !left.Equals(right);
     }
 }
