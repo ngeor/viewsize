@@ -19,7 +19,7 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <summary>
         /// Gets a value indicating whether this view handles recent folder storage automatically.
         /// </summary>
-        bool SupportsRecentFolders { get; }
+        bool HasNativeRecentFolders { get; }
 
         /// <summary>
         /// Gets or sets the selected folder.
@@ -32,11 +32,5 @@ namespace CRLFLabs.ViewSize.Mvp
         /// </summary>
         /// <returns>The folder.</returns>
         string SelectFolder();
-
-        /// <summary>
-        /// Adds a recent folder to the recent folder menu.
-        /// </summary>
-        /// <param name="folder">The recent folder.</param>
-        void AddRecentFolder(string folder);
     }
 }

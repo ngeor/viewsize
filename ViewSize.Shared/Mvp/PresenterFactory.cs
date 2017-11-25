@@ -47,7 +47,7 @@ namespace CRLFLabs.ViewSize.Mvp
             }
 
             // map the view object to the view type, so that resolver will now what to do with view type
-            resolver.Map(viewType, view);
+            resolver.MapExistingInstance(viewType, view);
 
             // create presenter (ignore presenter object returned)
             resolver.Resolve(presenterType);

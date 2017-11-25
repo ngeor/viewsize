@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using CRLFLabs.ViewSize.IoC;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.Settings;
 using Moq;
@@ -12,78 +13,132 @@ namespace ViewSize.Tests.Mvp
 {
     public class MenuPresenterTest
     {
-        private MenuPresenter menuPresenter;
-        private Mock<IMenuView> viewMock;
-        private MainModel mainModel;
-        private Mock<ICommandBus> commandBusMock;
-        private Mock<ISettingsManager> settingsManagerMock;
-
-        [SetUp]
-        public void SetUp()
+        public class Base
         {
-            viewMock = new Mock<IMenuView>();
-            mainModel = new MainModel();
-            commandBusMock = new Mock<ICommandBus>();
-            settingsManagerMock = new Mock<ISettingsManager>();
-            menuPresenter = new MenuPresenter(
-                viewMock.Object,
-                mainModel,
-                commandBusMock.Object,
-                settingsManagerMock.Object);
+#pragma warning disable SA1401 // Fields must be private
+            protected MenuPresenter menuPresenter;
+            protected Mock<IMenuView> viewMock;
+            protected MainModel mainModel;
+            protected Mock<IResolver> resolverMock;
+            protected Mock<ISettingsManager> settingsManagerMock;
+            protected Mock<IFolderChooserPresenter> folderChooserPresenterMock;
+#pragma warning restore SA1401 // Fields must be private
 
-            viewMock.Raise(v => v.Load += null, EventArgs.Empty);
-        }
-
-        [Test]
-        public void Load_WhenNoRecentFoldersExist_AddRecentFolderIsNotCalled()
-        {
-            viewMock.Verify(v => v.AddRecentFolder(It.IsAny<string>()), Times.Never);
-        }
-
-        [Test]
-        public void Load_WhenRecentFoldersExist_AddRecentFolderIsCalled()
-        {
-            // arrange
-            var settings = new Settings
+            [SetUp]
+            public void SetUp()
             {
-                RecentFolders = new[] { "a", "b" }
-            };
-            settingsManagerMock.SetupGet(m => m.Settings).Returns(settings);
+                viewMock = new Mock<IMenuView>();
+                mainModel = new MainModel();
+                settingsManagerMock = new Mock<ISettingsManager>();
+                resolverMock = new Mock<IResolver>();
+                folderChooserPresenterMock = new Mock<IFolderChooserPresenter>();
 
-            // act
-            viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+                menuPresenter = new MenuPresenter(
+                    viewMock.Object,
+                    mainModel,
+                    settingsManagerMock.Object,
+                    resolverMock.Object);
 
-            // assert
-            viewMock.Verify(v => v.AddRecentFolder("a"));
-            viewMock.Verify(v => v.AddRecentFolder("b"));
+                viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+
+                resolverMock.Setup(r => r.Resolve<IFolderChooserPresenter>()).Returns(folderChooserPresenterMock.Object);
+            }
         }
 
-        [Test]
-        public void FileOpenClick_ShowsMainWindow()
+        public class Ctor : Base
         {
-            viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
-            viewMock.Verify(v => v.ShowMainWindow());
+            [Test]
+            public void RegistersAsIMenuPresenter()
+            {
+                resolverMock.Verify(v => v.MapExistingInstance(typeof(IMenuPresenter), menuPresenter));
+            }
         }
 
-        [Test]
-        public void FileOpenClick_PublishesCommand()
+        public class Load : Base
         {
-            viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
-            commandBusMock.Verify(v => v.Publish("SelectFolder"));
+            [Test]
+            public void WhenNoRecentFoldersExist_AddRecentFolderIsNotCalled()
+            {
+                viewMock.Verify(v => v.AddRecentFolder(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+            }
+
+            [Test]
+            public void WhenRecentFoldersExist_AddRecentFolderIsCalled()
+            {
+                // arrange
+                var settings = new Settings
+                {
+                    RecentFolders = new[] { "a", "b" }
+                };
+                settingsManagerMock.SetupGet(m => m.Settings).Returns(settings);
+
+                // act
+                viewMock.Raise(v => v.Load += null, EventArgs.Empty);
+
+                // assert
+                viewMock.Verify(v => v.AddRecentFolder("a", false));
+                viewMock.Verify(v => v.AddRecentFolder("b", false));
+            }
         }
 
-        [Test]
-        public void OpenRecentFileClick_ShowsMainWindow()
+        public class FileOpenClick : Base
         {
-            viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
-            viewMock.Verify(v => v.ShowMainWindow());
+            [SetUp]
+            public new void SetUp()
+            {
+                // act
+                viewMock.Raise(v => v.FileOpenClick += null, EventArgs.Empty);
+            }
+
+            [Test]
+            public void ShowsMainWindow()
+            {
+                viewMock.Verify(v => v.ShowMainWindow());
+            }
+
+            [Test]
+            public void PublishesCommand()
+            {
+                folderChooserPresenterMock.Verify(p => p.OpenSelectFolder());
+            }
         }
 
-        [Test]
-        public void OpenRecentFileClick_SetsModelFolder()
+        public class OpenRecentFileClick : Base
         {
-            viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
-            Assert.AreEqual("file", mainModel.Folder);
+            [SetUp]
+            public new void SetUp()
+            {
+                // act
+                viewMock.Raise(v => v.OpenRecentFileClick += null, new RecentFileEventArgs("file"));
+            }
+
+            [Test]
+            public void ShowsMainWindow()
+            {
+                viewMock.Verify(v => v.ShowMainWindow());
+            }
+
+            [Test]
+            public void SetsModelFolder()
+            {
+                Assert.AreEqual("file", mainModel.Folder);
+            }
+        }
+
+        public class AddRecentFolder : Base
+        {
+            [SetUp]
+            public new void SetUp()
+            {
+                // act
+                menuPresenter.AddRecentFolder("some new folder");
+            }
+
+            [Test]
+            public void AddsRecentFolderToView()
+            {
+                viewMock.Verify(v => v.AddRecentFolder("some new folder", true));
+            }
         }
     }
 }

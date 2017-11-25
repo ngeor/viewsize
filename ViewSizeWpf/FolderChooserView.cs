@@ -4,7 +4,6 @@
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using CRLFLabs.ViewSize.Mvp;
 
 namespace ViewSizeWpf
@@ -37,7 +36,7 @@ namespace ViewSizeWpf
             set => MainWindow.txtFolder.Text = value;
         }
 
-        public bool SupportsRecentFolders => false;
+        public bool HasNativeRecentFolders => false;
 
         private MainWindow MainWindow { get; }
 
@@ -53,16 +52,6 @@ namespace ViewSizeWpf
             }
 
             return null;
-        }
-
-        public void AddRecentFolder(string folder)
-        {
-            var menuItem = new MenuItem
-            {
-                Header = folder
-            };
-
-            MainWindow.mnuRecentFolders.Items.Insert(0, menuItem);
         }
 
         private void BtnSelectFolder_Click(object sender, RoutedEventArgs e)

@@ -8,13 +8,19 @@ using System.Linq;
 
 namespace CRLFLabs.ViewSize.IoC
 {
-    public class Resolver
+    public class Resolver : IResolver
     {
         private readonly Dictionary<Type, TypeMapping> typeMappings = new Dictionary<Type, TypeMapping>();
         private readonly Dictionary<Type, object> singletons = new Dictionary<Type, object>();
         private readonly Dictionary<Type, object> externalInstances = new Dictionary<Type, object>();
 
-        public void Map(Type existingType, object existingInstance)
+        public Resolver()
+        {
+            // register this instance as the IResolver
+            MapExistingInstance(typeof(IResolver), this);
+        }
+
+        public void MapExistingInstance(Type existingType, object existingInstance)
         {
             if (!existingType.IsInstanceOfType(existingInstance))
             {

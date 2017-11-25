@@ -16,14 +16,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\OriginD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\RectangleD.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Drawing\SizeD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IoC\IResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IoC\Resolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IoC\ResolverContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IoC\TypeMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileSystemEntryCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\FileUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\CanExecuteEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
@@ -53,8 +56,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MenuPresenter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\ICommandBus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\CommandBus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Settings\" />

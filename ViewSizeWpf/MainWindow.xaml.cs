@@ -120,7 +120,7 @@ namespace ViewSizeWpf
             // not used in Windows
         }
 
-        public void AddRecentFolder(string folder)
+        public void AddRecentFolder(string folder, bool insertFirst)
         {
             var menuItem = new MenuItem
             {
@@ -130,7 +130,8 @@ namespace ViewSizeWpf
             menuItem.Click += (s, a) => OpenRecentFileClick?.Invoke(this, new RecentFileEventArgs(folder));
 
             // -2 because of the separator and the 'clear recent folders' entry
-            mnuRecentFolders.Items.Insert(mnuRecentFolders.Items.Count - 2, menuItem);
+            var position = insertFirst ? 0 : mnuRecentFolders.Items.Count - 2;
+            mnuRecentFolders.Items.Insert(position, menuItem);
         }
 
         private void btnScan_Click(object sender, RoutedEventArgs e)

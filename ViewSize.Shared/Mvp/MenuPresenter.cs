@@ -5,22 +5,36 @@
 using System;
 using System.Linq;
 using CRLFLabs.ViewSize.IO;
+using CRLFLabs.ViewSize.IoC;
 using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
-    public class MenuPresenter : PresenterBase<IMenuView, IMainModel>
+    public class MenuPresenter : PresenterBase<IMenuView, IMainModel>, IMenuPresenter
     {
-        public MenuPresenter(IMenuView view, IMainModel model, ICommandBus commandBus, ISettingsManager settingsManager)
+        public MenuPresenter(
+            IMenuView view,
+            IMainModel model,
+            ISettingsManager settingsManager,
+            IResolver resolver)
             : base(view, model)
         {
-            CommandBus = commandBus;
             SettingsManager = settingsManager;
+            Resolver = resolver;
+
+            // let the resolver know he can use this instance for IMenuPresenter
+            // will be used by other presenters
+            resolver.MapExistingInstance(typeof(IMenuPresenter), this);
         }
 
-        private ICommandBus CommandBus { get; }
+        private IResolver Resolver { get; }
 
         private ISettingsManager SettingsManager { get; }
+
+        public void AddRecentFolder(string folder)
+        {
+            View.AddRecentFolder(folder, insertFirst: true);
+        }
 
         protected override void OnViewLoad(object sender, EventArgs e)
         {
@@ -32,7 +46,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
             foreach (var folder in SettingsManager.Settings?.RecentFolders ?? Enumerable.Empty<string>())
             {
-                View.AddRecentFolder(folder);
+                View.AddRecentFolder(folder, insertFirst: false);
             }
         }
 
@@ -52,7 +66,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void View_FileOpenClick(object sender, EventArgs e)
         {
-            CommandBus.Publish("SelectFolder");
+            Resolver.Resolve<IFolderChooserPresenter>().OpenSelectFolder();
             View.ShowMainWindow();
         }
 

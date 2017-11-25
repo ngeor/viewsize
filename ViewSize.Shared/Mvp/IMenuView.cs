@@ -22,6 +22,6 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void ShowMainWindow();
 
-        void AddRecentFolder(string path);
+        void AddRecentFolder(string path, bool insertFirst);
     }
 }

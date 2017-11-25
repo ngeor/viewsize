@@ -3,27 +3,38 @@
 // </copyright>
 
 using System;
-using System.Linq;
-using CRLFLabs.ViewSize.Settings;
 using System.ComponentModel;
+using System.Linq;
+using CRLFLabs.ViewSize.IoC;
+using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
     /// <summary>
     /// Folder chooser presenter.
     /// </summary>
-    public class FolderChooserPresenter : PresenterBase<IFolderChooserView, IMainModel>
+    public class FolderChooserPresenter : PresenterBase<IFolderChooserView, IMainModel>, IFolderChooserPresenter
     {
-        public FolderChooserPresenter(IFolderChooserView view, IMainModel model, ISettingsManager settingsManager, ICommandBus commandBus)
+        public FolderChooserPresenter(
+            IFolderChooserView view,
+            IMainModel model,
+            ISettingsManager settingsManager,
+            IResolver resolver)
             : base(view, model)
         {
             SettingsManager = settingsManager;
-
-            // allows MenuPresenter to trigger a SelectFolder request
-            commandBus.Subscribe("SelectFolder", () => View_OnSelectFolderClick(null, EventArgs.Empty));
+            Resolver = resolver;
+            Resolver.MapExistingInstance(typeof(IFolderChooserPresenter), this);
         }
 
         private ISettingsManager SettingsManager { get; }
+
+        private IResolver Resolver { get; }
+
+        public void OpenSelectFolder()
+        {
+            View_OnSelectFolderClick(null, EventArgs.Empty);
+        }
 
         protected override void OnViewLoad(object sender, EventArgs e)
         {
@@ -65,12 +76,13 @@ namespace CRLFLabs.ViewSize.Mvp
                 var folder = Model.Folder;
                 View.Folder = folder;
                 SettingsManager.Settings.SelectedFolder = folder;
-                if (!View.SupportsRecentFolders)
+                if (!View.HasNativeRecentFolders)
                 {
                     SettingsManager.Settings.RecentFolders =
                         Enumerable.Repeat(folder, 1).Concat(SettingsManager.Settings.RecentFolders ?? Enumerable.Empty<string>()).ToArray();
 
-                    View.AddRecentFolder(folder);
+                    var menuPresenter = Resolver.Resolve<IMenuPresenter>();
+                    menuPresenter.AddRecentFolder(folder);
                 }
             }
         }

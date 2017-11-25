@@ -119,7 +119,7 @@ namespace ViewSize.Tests.IoC
             // arrange
             Resolver resolver = new Resolver();
             var simple = new Simple();
-            resolver.Map(typeof(ISimple), simple);
+            resolver.MapExistingInstance(typeof(ISimple), simple);
 
             // act
             var result = resolver.Resolve<ISimple>();
@@ -138,7 +138,7 @@ namespace ViewSize.Tests.IoC
             // act & assert
             Assert.Throws<ArgumentException>(() =>
             {
-                resolver.Map(typeof(ISimple), ownsISimple);
+                resolver.MapExistingInstance(typeof(ISimple), ownsISimple);
             });
         }
     }
