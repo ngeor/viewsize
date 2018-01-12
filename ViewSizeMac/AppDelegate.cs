@@ -90,5 +90,10 @@ namespace ViewSizeMac
             var window = q.FirstOrDefault();
             window.MakeKeyAndOrderFront(this);
         }
+
+        public void AddRecentFolder(string path, bool insertFirst)
+        {
+            // not called in mac
+        }
     }
 }

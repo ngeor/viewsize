@@ -16,6 +16,8 @@ namespace ViewSizeMac
             set => txtFolder.StringValue = value;
         }
 
+        public bool HasNativeRecentFolders => true;
+
         public string SelectFolder()
         {
             var dlg = NSOpenPanel.OpenPanel;
