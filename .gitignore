@@ -1,9 +1,10 @@
+.DS_Store
 bin/
 obj/
 *.userprefs
 .vs/
 UpgradeLog.htm
 packages/
-coveragereport/
-results.xml
+coverage/
+opencover.xml
 TestResult.xml
