@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -121,18 +122,26 @@ namespace ViewSizeWpf
             // not used in Windows
         }
 
-        public void AddRecentFolder(string folder, bool insertFirst)
+        public void SetRecentFolders(IEnumerable<string> folders)
         {
-            var menuItem = new MenuItem
+            while (mnuRecentFolders.Items.Count > 2)
             {
-                Header = folder
-            };
+                mnuRecentFolders.Items.RemoveAt(0);
+            }
 
-            menuItem.Click += (s, a) => OpenRecentFileClick?.Invoke(this, new RecentFileEventArgs(folder));
+            foreach (var folder in folders)
+            {
+                var menuItem = new MenuItem
+                {
+                    Header = folder
+                };
 
-            // -2 because of the separator and the 'clear recent folders' entry
-            var position = insertFirst ? 0 : mnuRecentFolders.Items.Count - 2;
-            mnuRecentFolders.Items.Insert(position, menuItem);
+                menuItem.Click += (s, a) => OpenRecentFileClick?.Invoke(this, new RecentFileEventArgs(folder));
+
+                // -2 because of the separator and the 'clear recent folders' entry
+                var position = mnuRecentFolders.Items.Count - 2;
+                mnuRecentFolders.Items.Insert(position, menuItem);
+            }
         }
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
@@ -233,12 +242,14 @@ namespace ViewSizeWpf
 
         private void ClearRecentFolders_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-
+            // since this is Windows only, it is implemented directly here
+            e.CanExecute = Model.RecentFolders.Count > 0;
         }
 
         private void ClearRecentFolders_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            // since this is Windows only, it is implemented directly here
+            Model.RecentFolders = new string[0];
         }
     }
 }

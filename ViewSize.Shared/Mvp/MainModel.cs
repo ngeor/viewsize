@@ -151,7 +151,11 @@ namespace CRLFLabs.ViewSize.Mvp
         private void UpdateRecentFolders()
         {
             var oldRecentFolders = RecentFolders;
-            var newRecentFolders = Enumerable.Repeat(Folder, 1).Concat(oldRecentFolders).ToList();
+            var newRecentFolders = Enumerable.Repeat(Folder, 1)
+                .Concat(oldRecentFolders)
+                .Distinct()
+                .Take(10)
+                .ToList();
             RecentFolders = newRecentFolders;
         }
     }

@@ -3,9 +3,8 @@
 // </copyright>
 
 using System;
-using System.Linq;
+using System.ComponentModel;
 using CRLFLabs.ViewSize.IO;
-using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -14,15 +13,11 @@ namespace CRLFLabs.ViewSize.Mvp
         public MenuPresenter(
             IMenuView view,
             IMainModel model,
-            ISettingsManager settingsManager,
             IFolderChooserAction folderChooserAction)
             : base(view, model)
         {
-            SettingsManager = settingsManager;
             FolderChooserAction = folderChooserAction;
         }
-
-        private ISettingsManager SettingsManager { get; }
 
         private IFolderChooserAction FolderChooserAction { get; }
 
@@ -33,10 +28,15 @@ namespace CRLFLabs.ViewSize.Mvp
             View.FileCountTreeMapClick += View_FileCountTreeMapClick;
             View.FileOpenClick += View_FileOpenClick;
             View.OpenRecentFileClick += View_OpenRecentFileClick;
+            View.SetRecentFolders(Model.RecentFolders);
+            Model.PropertyChanged += Model_PropertyChanged;
+        }
 
-            foreach (var folder in SettingsManager.Settings?.RecentFolders ?? Enumerable.Empty<string>())
+        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == MainModel.RecentFoldersPropertyName)
             {
-                View.AddRecentFolder(folder, insertFirst: false);
+                View.SetRecentFolders(Model.RecentFolders);
             }
         }
 

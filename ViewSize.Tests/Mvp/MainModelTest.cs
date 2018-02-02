@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CRLFLabs.ViewSize.Mvp;
 using FluentAssertions;
 using NUnit.Framework;
@@ -93,6 +94,52 @@ namespace ViewSize.Tests.Mvp
                 // assert
                 propertyNames.Should().Equal("Folder", "RecentFolders");
                 model.RecentFolders.Should().Equal("/tmp", "/var/log");
+            }
+
+            [Test]
+            public void SettingFolderRemovesDuplicates()
+            {
+                var model = new MainModel
+                {
+                    Folder = "/var/log",
+                    RecentFolders = new[] { "/var/log", "/var/log", "/var/lib", "/var/usr", "/var/lib" }
+                };
+
+                var propertyNames = new List<string>();
+                model.PropertyChanged += (_, args) =>
+                {
+                    propertyNames.Add(args.PropertyName);
+                };
+
+                // act
+                model.Folder = "/var/usr";
+
+                // assert
+                propertyNames.Should().Equal("Folder", "RecentFolders");
+                model.RecentFolders.Should().Equal("/var/usr", "/var/log", "/var/lib");
+            }
+
+            [Test]
+            public void SettingFolderKeepsMaxTenFolders()
+            {
+                var model = new MainModel
+                {
+                    Folder = "/var/log",
+                    RecentFolders = Enumerable.Range(1, 10).Select(i => i.ToString()).ToArray()
+                };
+
+                var propertyNames = new List<string>();
+                model.PropertyChanged += (_, args) =>
+                {
+                    propertyNames.Add(args.PropertyName);
+                };
+
+                // act
+                model.Folder = "/var/usr";
+
+                // assert
+                propertyNames.Should().Equal("Folder", "RecentFolders");
+                model.RecentFolders.Should().Equal("/var/usr", "1", "2", "3", "4", "5", "6", "7", "8", "9");
             }
         }
     }

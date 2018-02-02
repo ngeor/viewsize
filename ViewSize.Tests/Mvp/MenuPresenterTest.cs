@@ -3,9 +3,7 @@
 // </copyright>
 
 using System;
-using CRLFLabs.ViewSize.IoC;
 using CRLFLabs.ViewSize.Mvp;
-using CRLFLabs.ViewSize.Settings;
 using Moq;
 using NUnit.Framework;
 
@@ -18,23 +16,25 @@ namespace ViewSize.Tests.Mvp
 #pragma warning disable SA1401 // Fields must be private
             protected MenuPresenter menuPresenter;
             protected Mock<IMenuView> viewMock;
-            protected MainModel mainModel;
+            protected Mock<IMainModel> mainModelMock;
             protected Mock<IFolderChooserAction> folderChooserActionMock;
-            protected Mock<ISettingsManager> settingsManagerMock;
 #pragma warning restore SA1401 // Fields must be private
 
             [SetUp]
             public void SetUp()
             {
                 viewMock = new Mock<IMenuView>();
-                mainModel = new MainModel();
-                settingsManagerMock = new Mock<ISettingsManager>();
+
+                mainModelMock = new Mock<IMainModel>();
+                mainModelMock.SetupProperty(m => m.Folder)
+                    .SetupProperty(m => m.RecentFolders)
+                    .Object.RecentFolders = new string[0];
+
                 folderChooserActionMock = new Mock<IFolderChooserAction>();
 
                 menuPresenter = new MenuPresenter(
                     viewMock.Object,
-                    mainModel,
-                    settingsManagerMock.Object,
+                    mainModelMock.Object,
                     folderChooserActionMock.Object);
 
                 viewMock.Raise(v => v.Load += null, EventArgs.Empty);
@@ -50,25 +50,20 @@ namespace ViewSize.Tests.Mvp
             [Test]
             public void WhenNoRecentFoldersExist_AddRecentFolderIsNotCalled()
             {
-                viewMock.Verify(v => v.AddRecentFolder(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+                viewMock.Verify(v => v.SetRecentFolders(new string[0]));
             }
 
             [Test]
             public void WhenRecentFoldersExist_AddRecentFolderIsCalled()
             {
                 // arrange
-                var settings = new Settings
-                {
-                    RecentFolders = new[] { "a", "b" }
-                };
-                settingsManagerMock.SetupGet(m => m.Settings).Returns(settings);
+                mainModelMock.Object.RecentFolders = new[] { "a", "b" };
 
                 // act
                 viewMock.Raise(v => v.Load += null, EventArgs.Empty);
 
                 // assert
-                viewMock.Verify(v => v.AddRecentFolder("a", false));
-                viewMock.Verify(v => v.AddRecentFolder("b", false));
+                viewMock.Verify(v => v.SetRecentFolders(new[] { "a", "b" }));
             }
         }
 
@@ -112,7 +107,7 @@ namespace ViewSize.Tests.Mvp
             [Test]
             public void SetsModelFolder()
             {
-                Assert.AreEqual("file", mainModel.Folder);
+                Assert.AreEqual("file", mainModelMock.Object.Folder);
             }
         }
     }

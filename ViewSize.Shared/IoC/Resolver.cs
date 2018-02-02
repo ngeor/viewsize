@@ -145,7 +145,7 @@ namespace CRLFLabs.ViewSize.IoC
             return finalType;
         }
 
-        class LazyResolver<T>
+        private class LazyResolver<T>
         {
             private readonly IResolver resolver;
 

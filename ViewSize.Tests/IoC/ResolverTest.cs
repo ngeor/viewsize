@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using CRLFLabs.ViewSize.IoC;
 using FluentAssertions;
 using NUnit.Framework;
@@ -185,6 +186,27 @@ namespace ViewSize.Tests.IoC
                 {
                     resolver.MapExistingInstance(typeof(ISimple), ownsISimple);
                 });
+            }
+        }
+
+        public class PostCreateAction
+        {
+            [Test]
+            public void RunsPostCreateActions()
+            {
+                // arrange
+                var resolver = new Resolver();
+                var list = new List<string>();
+                resolver.SetPostCreationAction<ISimple>(r =>
+                {
+                    list.Add("hello");
+                });
+
+                // act
+                resolver.Resolve<ISimple>();
+
+                // assert
+                list.Should().Equal("hello");
             }
         }
     }

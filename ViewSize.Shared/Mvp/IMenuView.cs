@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -22,6 +23,6 @@ namespace CRLFLabs.ViewSize.Mvp
 
         void ShowMainWindow();
 
-        void AddRecentFolder(string path, bool insertFirst);
+        void SetRecentFolders(IEnumerable<string> folders);
     }
 }
