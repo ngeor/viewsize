@@ -19,7 +19,8 @@ namespace ViewSizeWpf
     /// </summary>
     [Presenter(typeof(MainPresenter))]
     [Presenter(typeof(MenuPresenter))]
-    public partial class MainWindow : Window, IMainView, IMenuView
+    [Presenter(typeof(RecentFoldersPresenter))]
+    public partial class MainWindow : Window, IMainView, IMenuView, IRecentFoldersView
     {
 #pragma warning disable SA1401 // Fields must be private
         public static RoutedCommand ShowInExplorerCommand = new RoutedCommand();

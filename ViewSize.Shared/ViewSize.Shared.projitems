@@ -41,6 +41,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IRecentFoldersView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
@@ -62,7 +63,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IRecentFoldersView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\RecentFoldersPresenter.cs" />
   </ItemGroup>
 </Project>
