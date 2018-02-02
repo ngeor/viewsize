@@ -62,5 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IRecentFoldersView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\RecentFoldersPresenter.cs" />
   </ItemGroup>
 </Project>

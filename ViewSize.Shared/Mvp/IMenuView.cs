@@ -3,7 +3,6 @@
 // </copyright>
 
 using System;
-using System.Collections.Generic;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
@@ -22,7 +21,5 @@ namespace CRLFLabs.ViewSize.Mvp
         bool IsFileCountTreeMapChecked { get; set; }
 
         void ShowMainWindow();
-
-        void SetRecentFolders(IEnumerable<string> folders);
     }
 }

@@ -3,7 +3,6 @@
 // </copyright>
 
 using System;
-using System.ComponentModel;
 using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -28,16 +27,6 @@ namespace CRLFLabs.ViewSize.Mvp
             View.FileCountTreeMapClick += View_FileCountTreeMapClick;
             View.FileOpenClick += View_FileOpenClick;
             View.OpenRecentFileClick += View_OpenRecentFileClick;
-            View.SetRecentFolders(Model.RecentFolders);
-            Model.PropertyChanged += Model_PropertyChanged;
-        }
-
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == MainModel.RecentFoldersPropertyName)
-            {
-                View.SetRecentFolders(Model.RecentFolders);
-            }
         }
 
         private void View_FileSizeTreeMapClick(object sender, EventArgs e)

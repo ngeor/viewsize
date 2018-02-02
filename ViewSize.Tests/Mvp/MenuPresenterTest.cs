@@ -45,28 +45,6 @@ namespace ViewSize.Tests.Mvp
         {
         }
 
-        public class Load : Base
-        {
-            [Test]
-            public void WhenNoRecentFoldersExist_AddRecentFolderIsNotCalled()
-            {
-                viewMock.Verify(v => v.SetRecentFolders(new string[0]));
-            }
-
-            [Test]
-            public void WhenRecentFoldersExist_AddRecentFolderIsCalled()
-            {
-                // arrange
-                mainModelMock.Object.RecentFolders = new[] { "a", "b" };
-
-                // act
-                viewMock.Raise(v => v.Load += null, EventArgs.Empty);
-
-                // assert
-                viewMock.Verify(v => v.SetRecentFolders(new[] { "a", "b" }));
-            }
-        }
-
         public class FileOpenClick : Base
         {
             [SetUp]
@@ -111,4 +89,5 @@ namespace ViewSize.Tests.Mvp
             }
         }
     }
+
 }
