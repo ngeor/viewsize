@@ -18,9 +18,7 @@ namespace CRLFLabs.ViewSize.IoC
         private static Resolver ConfigureResolver()
         {
             var resolver = new Resolver();
-            resolver.Map<IFileUtils, FileUtils>();
             resolver.Map<ISettingsManager, SettingsManager>(singleton: true);
-            resolver.Map<IFolderScanner, FolderScanner>();
             resolver.Map<IMainModel, MainModel>(singleton: true);
             return resolver;
         }

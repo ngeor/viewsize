@@ -17,11 +17,6 @@ namespace CRLFLabs.ViewSize.Mvp
         event EventHandler OnSelectFolderClick;
 
         /// <summary>
-        /// Gets a value indicating whether this view handles recent folder storage automatically.
-        /// </summary>
-        bool HasNativeRecentFolders { get; }
-
-        /// <summary>
         /// Gets or sets the selected folder.
         /// </summary>
         /// <value>The folder.</value>

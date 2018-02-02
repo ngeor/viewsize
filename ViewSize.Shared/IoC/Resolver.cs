@@ -13,6 +13,7 @@ namespace CRLFLabs.ViewSize.IoC
         private readonly Dictionary<Type, TypeMapping> typeMappings = new Dictionary<Type, TypeMapping>();
         private readonly Dictionary<Type, object> singletons = new Dictionary<Type, object>();
         private readonly Dictionary<Type, object> externalInstances = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, Action<IResolver>> postCreationActions = new Dictionary<Type, Action<IResolver>>();
 
         public Resolver()
         {
@@ -55,7 +56,7 @@ namespace CRLFLabs.ViewSize.IoC
                 return singletons[type];
             }
 
-            Type finalType = typeMapping.ActualType;
+            Type finalType = ResolveConcreteClass(typeMapping.ActualType);
             var constructors = finalType.GetConstructors();
             if (constructors == null || constructors.Length <= 0)
             {
@@ -77,7 +78,26 @@ namespace CRLFLabs.ViewSize.IoC
                 singletons[type] = result;
             }
 
+            var postCreationAction = postCreationActions.ContainsKey(type) ? postCreationActions[type] : null;
+            postCreationAction?.Invoke(this);
+
             return result;
+        }
+
+        public void SetPostCreationAction<T>(Action<IResolver> postCreationAction)
+        {
+            postCreationActions[typeof(T)] = postCreationAction;
+        }
+
+        private Type ResolveConcreteClass(Type type)
+        {
+            Type finalType = type;
+            if (finalType.IsInterface)
+            {
+                finalType = finalType.Assembly.GetType(finalType.Namespace + '.' + finalType.Name.Substring(1));
+            }
+
+            return finalType;
         }
     }
 }

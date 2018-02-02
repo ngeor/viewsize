@@ -1,4 +1,7 @@
-﻿
+﻿// <copyright file="FolderOutlineDataSource.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using AppKit;
 using Foundation;
 using System.Linq;

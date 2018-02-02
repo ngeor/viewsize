@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using CRLFLabs.ViewSize.IO;
-using CRLFLabs.ViewSize.IoC;
 using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -16,25 +15,16 @@ namespace CRLFLabs.ViewSize.Mvp
             IMenuView view,
             IMainModel model,
             ISettingsManager settingsManager,
-            IResolver resolver)
+            IFolderChooserAction folderChooserAction)
             : base(view, model)
         {
             SettingsManager = settingsManager;
-            Resolver = resolver;
-
-            // let the resolver know he can use this instance for IMenuPresenter
-            // will be used by other presenters
-            resolver.MapExistingInstance(typeof(IMenuPresenter), this);
+            FolderChooserAction = folderChooserAction;
         }
-
-        private IResolver Resolver { get; }
 
         private ISettingsManager SettingsManager { get; }
 
-        public void AddRecentFolder(string folder)
-        {
-            View.AddRecentFolder(folder, insertFirst: true);
-        }
+        private IFolderChooserAction FolderChooserAction { get; }
 
         protected override void OnViewLoad(object sender, EventArgs e)
         {
@@ -66,7 +56,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void View_FileOpenClick(object sender, EventArgs e)
         {
-            Resolver.Resolve<IFolderChooserPresenter>().OpenSelectFolder();
+            FolderChooserAction.SelectFolder();
             View.ShowMainWindow();
         }
 

@@ -2,8 +2,10 @@
 // Copyright (c) CRLFLabs. All rights reserved.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
@@ -16,6 +18,7 @@ namespace CRLFLabs.ViewSize.Mvp
         public const string SelectedPropertyName = "Selected";
         public const string FolderPropertyName = "Folder";
         public const string TopLevelFoldersPropertyName = "TopLevelFolders";
+        public const string RecentFoldersPropertyName = "RecentFolders";
 
         private bool isScanning;
         private string folder;
@@ -23,6 +26,7 @@ namespace CRLFLabs.ViewSize.Mvp
         private IReadOnlyList<FileSystemEntry> children;
         private FileSystemEntry selected;
         private IReadOnlyList<FileSystemEntry> topLevelFolders;
+        private IReadOnlyList<string> recentFolders = new List<string>();
 
         public event PropertyChangingEventHandler PropertyChanging;
 
@@ -52,6 +56,7 @@ namespace CRLFLabs.ViewSize.Mvp
                     PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(FolderPropertyName));
                     folder = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(FolderPropertyName));
+                    UpdateRecentFolders();
                 }
             }
         }
@@ -84,6 +89,25 @@ namespace CRLFLabs.ViewSize.Mvp
                     PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(TopLevelFoldersPropertyName));
                     topLevelFolders = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(TopLevelFoldersPropertyName));
+                }
+            }
+        }
+
+        public IReadOnlyList<string> RecentFolders
+        {
+            get => recentFolders;
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                if (recentFolders != value)
+                {
+                    PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(RecentFoldersPropertyName));
+                    recentFolders = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(RecentFoldersPropertyName));
                 }
             }
         }
@@ -122,6 +146,13 @@ namespace CRLFLabs.ViewSize.Mvp
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(SelectedPropertyName));
                 }
             }
+        }
+
+        private void UpdateRecentFolders()
+        {
+            var oldRecentFolders = RecentFolders;
+            var newRecentFolders = Enumerable.Repeat(Folder, 1).Concat(oldRecentFolders).ToList();
+            RecentFolders = newRecentFolders;
         }
     }
 }

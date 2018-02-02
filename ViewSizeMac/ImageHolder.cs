@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ImageHolder.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using AppKit;
 
 namespace ViewSizeMac

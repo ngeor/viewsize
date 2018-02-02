@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="DrawingConversions.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using AppKit;
 using CoreGraphics;
 using CRLFLabs.ViewSize.Drawing;

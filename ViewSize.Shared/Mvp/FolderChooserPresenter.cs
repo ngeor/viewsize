@@ -18,23 +18,13 @@ namespace CRLFLabs.ViewSize.Mvp
         public FolderChooserPresenter(
             IFolderChooserView view,
             IMainModel model,
-            ISettingsManager settingsManager,
-            IResolver resolver)
+            IFolderChooserAction folderChooserAction)
             : base(view, model)
         {
-            SettingsManager = settingsManager;
-            Resolver = resolver;
-            Resolver.MapExistingInstance(typeof(IFolderChooserPresenter), this);
+            FolderChooserAction = folderChooserAction;
         }
 
-        private ISettingsManager SettingsManager { get; }
-
-        private IResolver Resolver { get; }
-
-        public void OpenSelectFolder()
-        {
-            View_OnSelectFolderClick(null, EventArgs.Empty);
-        }
+        private IFolderChooserAction FolderChooserAction { get; }
 
         protected override void OnViewLoad(object sender, EventArgs e)
         {
@@ -46,7 +36,6 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void InitModelFromSettings()
         {
-            Model.Folder = SettingsManager.Settings.SelectedFolder;
             Model.PropertyChanged += Model_PropertyChanged;
         }
 
@@ -62,28 +51,14 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void View_OnSelectFolderClick(object sender, EventArgs e)
         {
-            string folder = View.SelectFolder();
-            if (folder != null)
-            {
-                Model.Folder = folder;
-            }
+            FolderChooserAction.SelectFolder();
         }
 
         private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == MainModel.FolderPropertyName)
             {
-                var folder = Model.Folder;
-                View.Folder = folder;
-                SettingsManager.Settings.SelectedFolder = folder;
-                if (!View.HasNativeRecentFolders)
-                {
-                    SettingsManager.Settings.RecentFolders =
-                        Enumerable.Repeat(folder, 1).Concat(SettingsManager.Settings.RecentFolders ?? Enumerable.Empty<string>()).ToArray();
-
-                    var menuPresenter = Resolver.Resolve<IMenuPresenter>();
-                    menuPresenter.AddRecentFolder(folder);
-                }
+                InitViewFromModel();
             }
         }
     }

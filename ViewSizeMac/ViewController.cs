@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ViewController.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using AppKit;
 using Foundation;
 using CRLFLabs.ViewSize.Mvp;
@@ -6,6 +10,10 @@ using CRLFLabs.ViewSize.IO;
 
 namespace ViewSizeMac
 {
+    /// <summary>
+    /// View controller for the main application view.
+    /// Listens to actions from the view.
+    /// </summary>
     [Presenter(typeof(MainPresenter))]
     public partial class ViewController : NSViewController, IMainView
     {

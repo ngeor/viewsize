@@ -19,9 +19,8 @@ namespace ViewSize.Tests.Mvp
             protected MenuPresenter menuPresenter;
             protected Mock<IMenuView> viewMock;
             protected MainModel mainModel;
-            protected Mock<IResolver> resolverMock;
+            protected Mock<IFolderChooserAction> folderChooserActionMock;
             protected Mock<ISettingsManager> settingsManagerMock;
-            protected Mock<IFolderChooserPresenter> folderChooserPresenterMock;
 #pragma warning restore SA1401 // Fields must be private
 
             [SetUp]
@@ -30,28 +29,20 @@ namespace ViewSize.Tests.Mvp
                 viewMock = new Mock<IMenuView>();
                 mainModel = new MainModel();
                 settingsManagerMock = new Mock<ISettingsManager>();
-                resolverMock = new Mock<IResolver>();
-                folderChooserPresenterMock = new Mock<IFolderChooserPresenter>();
+                folderChooserActionMock = new Mock<IFolderChooserAction>();
 
                 menuPresenter = new MenuPresenter(
                     viewMock.Object,
                     mainModel,
                     settingsManagerMock.Object,
-                    resolverMock.Object);
+                    folderChooserActionMock.Object);
 
                 viewMock.Raise(v => v.Load += null, EventArgs.Empty);
-
-                resolverMock.Setup(r => r.Resolve<IFolderChooserPresenter>()).Returns(folderChooserPresenterMock.Object);
             }
         }
 
         public class Ctor : Base
         {
-            [Test]
-            public void RegistersAsIMenuPresenter()
-            {
-                resolverMock.Verify(v => v.MapExistingInstance(typeof(IMenuPresenter), menuPresenter));
-            }
         }
 
         public class Load : Base
@@ -99,7 +90,7 @@ namespace ViewSize.Tests.Mvp
             [Test]
             public void PublishesCommand()
             {
-                folderChooserPresenterMock.Verify(p => p.OpenSelectFolder());
+                folderChooserActionMock.Verify(p => p.SelectFolder());
             }
         }
 
@@ -122,22 +113,6 @@ namespace ViewSize.Tests.Mvp
             public void SetsModelFolder()
             {
                 Assert.AreEqual("file", mainModel.Folder);
-            }
-        }
-
-        public class AddRecentFolder : Base
-        {
-            [SetUp]
-            public new void SetUp()
-            {
-                // act
-                menuPresenter.AddRecentFolder("some new folder");
-            }
-
-            [Test]
-            public void AddsRecentFolderToView()
-            {
-                viewMock.Verify(v => v.AddRecentFolder("some new folder", true));
             }
         }
     }

@@ -28,5 +28,7 @@ namespace CRLFLabs.ViewSize.Mvp
         IReadOnlyList<FileSystemEntry> TopLevelFolders { get; set; }
 
         FileSystemEntry Selected { get; set; }
+
+        IReadOnlyList<string> RecentFolders { get; set; }
     }
 }

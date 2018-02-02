@@ -1,21 +1,34 @@
+// <copyright file="AppDelegate.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
 using System;
+using System.Linq;
 using AppKit;
 using CRLFLabs.ViewSize.Mvp;
 using Foundation;
-using System.Linq;
 
 namespace ViewSizeMac
 {
+    /// <summary>
+    /// Responsible for initialization and termination of the application.
+    /// Responds to menu actions.
+    /// </summary>
     [Register("AppDelegate")]
     [Presenter(typeof(ApplicationPresenter))]
     [Presenter(typeof(MenuPresenter))]
     public partial class AppDelegate : NSApplicationDelegate, IApplicationView, IMenuView
     {
         public event EventHandler Load;
+
         public event EventHandler Closing;
+
         public event EventHandler FileSizeTreeMapClick;
+
         public event EventHandler FileCountTreeMapClick;
+
         public event EventHandler FileOpenClick;
+
         public event EventHandler<RecentFileEventArgs> OpenRecentFileClick;
 
         public bool IsFileSizeTreeMapChecked

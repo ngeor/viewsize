@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="FolderChooserView.cs" company="CRLFLabs">
+// Copyright (c) CRLFLabs. All rights reserved.
+// </copyright>
+
+using System;
 using AppKit;
 using CRLFLabs.ViewSize.Mvp;
 using Foundation;

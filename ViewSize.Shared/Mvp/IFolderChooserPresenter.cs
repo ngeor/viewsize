@@ -6,6 +6,5 @@ namespace CRLFLabs.ViewSize.Mvp
 {
     public interface IFolderChooserPresenter
     {
-        void OpenSelectFolder();
     }
 }
