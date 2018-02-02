@@ -33,7 +33,7 @@ namespace CRLFLabs.ViewSize.IoC
 
         public void Map<TFrom, TTo>(bool singleton = false)
         {
-            typeMappings[typeof(TFrom)] = new TypeMapping(typeof(TTo), singleton);
+            typeMappings[typeof(TFrom)] = new TypeMapping(typeof(TFrom), typeof(TTo), singleton);
         }
 
         public T Resolve<T>()
@@ -44,28 +44,61 @@ namespace CRLFLabs.ViewSize.IoC
 
         public object Resolve(Type type)
         {
-            object externalInstance = externalInstances.ContainsKey(type) ? externalInstances[type] : null;
-            if (externalInstance != null)
+            return ResolveExternalInstance(type) ?? ResolveInternalInstance(type);
+        }
+
+        public void SetPostCreationAction<T>(Action<IResolver> postCreationAction)
+        {
+            postCreationActions[typeof(T)] = postCreationAction;
+        }
+
+        private object ResolveExternalInstance(Type type)
+        {
+            return externalInstances.ContainsKey(type) ? externalInstances[type] : null;
+        }
+
+        private object ResolveInternalInstance(Type type)
+        {
+            return ResolveExistingSingleton(type) ?? ResolveNonExistingSingleton(type);
+        }
+
+        private object ResolveExistingSingleton(Type type)
+        {
+            return singletons.ContainsKey(type) ? singletons[type] : null;
+        }
+
+        private object ResolveNonExistingSingleton(Type type)
+        {
+            TypeMapping typeMapping = typeMappings.ContainsKey(type) ? typeMappings[type] : new TypeMapping(type, type, false);
+            return ResolveInternalInstance(typeMapping);
+        }
+
+        private object ResolveInternalInstance(TypeMapping typeMapping)
+        {
+            Type finalType = ResolveConcreteClass(typeMapping.To);
+            if (finalType == null)
             {
-                return externalInstance;
+                throw new InvalidOperationException($"Cannot resolve type {typeMapping.From}");
             }
 
-            TypeMapping typeMapping = typeMappings.ContainsKey(type) ? typeMappings[type] : new TypeMapping(type, false);
-            if (typeMapping.Singleton && singletons.ContainsKey(type))
+            if (finalType.IsGenericType)
             {
-                return singletons[type];
+                var genericTypeDefinition = finalType.GetGenericTypeDefinition();
+                if (genericTypeDefinition.Equals(typeof(Lazy<>)))
+                {
+                    return ResolveLazy(finalType);
+                }
             }
 
-            Type finalType = ResolveConcreteClass(typeMapping.ActualType);
             var constructors = finalType.GetConstructors();
             if (constructors == null || constructors.Length <= 0)
             {
-                throw new InvalidOperationException($"No constructors available for type {type}");
+                throw new InvalidOperationException($"No constructors available for type {typeMapping.From}");
             }
 
             if (constructors.Length != 1)
             {
-                throw new InvalidOperationException($"Too many constructors available for type {type}");
+                throw new InvalidOperationException($"Too many constructors available for type {typeMapping.From}");
             }
 
             var constructor = constructors[0];
@@ -75,18 +108,30 @@ namespace CRLFLabs.ViewSize.IoC
             var result = constructor.Invoke(parameterValues);
             if (typeMapping.Singleton)
             {
-                singletons[type] = result;
+                singletons[typeMapping.From] = result;
             }
 
-            var postCreationAction = postCreationActions.ContainsKey(type) ? postCreationActions[type] : null;
+            var postCreationAction = postCreationActions.ContainsKey(typeMapping.From) ? postCreationActions[typeMapping.From] : null;
             postCreationAction?.Invoke(this);
 
             return result;
         }
 
-        public void SetPostCreationAction<T>(Action<IResolver> postCreationAction)
+        private object ResolveLazy(Type finalType)
         {
-            postCreationActions[typeof(T)] = postCreationAction;
+            // e.g. ISimple
+            Type interfaceType = finalType.GenericTypeArguments[0];
+
+            // e.g. LazyResolver<ISimpe>
+            Type lazyResolverType = typeof(LazyResolver<>).MakeGenericType(interfaceType);
+
+            // e.g. new Lazy<ISimple>
+            var ctor = lazyResolverType.GetConstructors().Single();
+
+            // invoke new Lazy<ISimple>(func)
+            var lazyResolver = ctor.Invoke(new object[] { this });
+
+            return lazyResolverType.GetMethod("Resolve").Invoke(lazyResolver, null);
         }
 
         private Type ResolveConcreteClass(Type type)
@@ -98,6 +143,21 @@ namespace CRLFLabs.ViewSize.IoC
             }
 
             return finalType;
+        }
+
+        class LazyResolver<T>
+        {
+            private readonly IResolver resolver;
+
+            public LazyResolver(IResolver resolver)
+            {
+                this.resolver = resolver;
+            }
+
+            public Lazy<T> Resolve()
+            {
+                return new Lazy<T>(() => resolver.Resolve<T>());
+            }
         }
     }
 }

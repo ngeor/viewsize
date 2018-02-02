@@ -25,6 +25,7 @@ namespace ViewSizeWpf
         public static RoutedCommand UpOneLevelCommand = new RoutedCommand();
         public static RoutedCommand FileSizeTreeMapCommand = new RoutedCommand();
         public static RoutedCommand FileCountTreeMapCommand = new RoutedCommand();
+        public static RoutedCommand ClearRecentFoldersCommand = new RoutedCommand();
 #pragma warning restore SA1401 // Fields must be private
 
         public MainWindow()
@@ -186,6 +187,12 @@ namespace ViewSizeWpf
             FileCountTreeMapClick?.Invoke(this, e);
         }
 
+        private void ShowInExplorer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
+            e.CanExecute = fileSystemEntry != null;
+        }
+
         private void ShowInExplorer_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
@@ -200,12 +207,6 @@ namespace ViewSizeWpf
             }
 
             Process.Start(path);
-        }
-
-        private void ShowInExplorer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            var fileSystemEntry = treeView.SelectedItem as FileSystemEntry;
-            e.CanExecute = fileSystemEntry != null;
         }
 
         private void UpOneLevel_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -228,6 +229,16 @@ namespace ViewSizeWpf
         private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             FileOpenClick?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ClearRecentFolders_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearRecentFolders_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
         }
     }
 }

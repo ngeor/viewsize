@@ -12,10 +12,13 @@
                         CanExecute="ShowInExplorer_CanExecute"
                         Executed="ShowInExplorer_Executed"
                         />
+        
         <CommandBinding Command="Open"
                         Executed="OpenCommand_Executed"/>
+        
         <CommandBinding Command="Close"
                         Executed="CloseCommand_Executed"/>
+        
         <CommandBinding Command="{x:Static custom:MainWindow.UpOneLevelCommand}"
                         CanExecute="UpOneLevel_CanExecute"
                         Executed="UpOneLevel_Executed"/>
@@ -27,6 +30,10 @@
         <CommandBinding Command="{x:Static custom:MainWindow.FileCountTreeMapCommand}"
                         CanExecute="FileCountTreeMap_CanExecute"
                         Executed="FileCountTreeMap_Executed"/>
+
+        <CommandBinding Command="{x:Static custom:MainWindow.ClearRecentFoldersCommand}"
+                        CanExecute="ClearRecentFolders_CanExecute"
+                        Executed="ClearRecentFolders_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="U" Modifiers="Ctrl" Command="{x:Static custom:MainWindow.UpOneLevelCommand}"/>
@@ -36,9 +43,9 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open..." Command="Open" />
                 <Separator/>
-                <MenuItem Header="Recent Folders" x:Name="mnuRecentFolders">                    
+                <MenuItem Header="Recent Folders" x:Name="mnuRecentFolders">
                     <Separator/>
-                    <MenuItem Header="Clear Recent Folders" />
+                    <MenuItem Header="Clear Recent Folders" Command="{x:Static custom:MainWindow.ClearRecentFoldersCommand}" />
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="E_xit" Command="Close" />
@@ -46,8 +53,10 @@
             <MenuItem Header="_View">
                 <MenuItem Header="_Up One Level" Command="{x:Static custom:MainWindow.UpOneLevelCommand}" InputGestureText="Ctrl+U"/>
                 <Separator />
-                <MenuItem x:Name="mnuFileSizeTreeMap" Header="File Size Tree Map" IsChecked="True" Command="{x:Static custom:MainWindow.FileSizeTreeMapCommand}"/>
-                <MenuItem x:Name="mnuFileCountTreeMap" Header="File Count Tree Map" Command="{x:Static custom:MainWindow.FileCountTreeMapCommand}"/>
+                <MenuItem x:Name="mnuFileSizeTreeMap" Header="File Size Tree Map" IsChecked="True"
+                          Command="{x:Static custom:MainWindow.FileSizeTreeMapCommand}"/>
+                <MenuItem x:Name="mnuFileCountTreeMap" Header="File Count Tree Map"
+                          Command="{x:Static custom:MainWindow.FileCountTreeMapCommand}"/>
             </MenuItem>
         </Menu>
         <Grid DockPanel.Dock="Top">

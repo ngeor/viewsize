@@ -2,6 +2,7 @@
 bin/
 obj/
 *.userprefs
+*.user
 .vs/
 UpgradeLog.htm
 packages/

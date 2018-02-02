@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewSizeWpf", "ViewSizeWpf\ViewSizeWpf.csproj", "{BB6E4909-9A32-4682-801F-CF4B2ABD5C5C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewSizeMac", "ViewSizeMac\ViewSizeMac.csproj", "{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ViewSize.Shared", "ViewSize.Shared\ViewSize.Shared.shproj", "{41F7F827-B6E5-47D1-A4B3-5D7E888E17BC}"
 EndProject
@@ -38,14 +36,6 @@ Global
 		{BB6E4909-9A32-4682-801F-CF4B2ABD5C5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB6E4909-9A32-4682-801F-CF4B2ABD5C5C}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB6E4909-9A32-4682-801F-CF4B2ABD5C5C}.Release|x86.Build.0 = Release|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Debug|x86.Build.0 = Debug|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Release|x86.ActiveCfg = Release|Any CPU
-		{47D9CEE7-9B2C-4C24-9317-A8853A58BC28}.Release|x86.Build.0 = Release|Any CPU
 		{7E97AF5C-4FDF-4763-ABD6-8D4F82DFC571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E97AF5C-4FDF-4763-ABD6-8D4F82DFC571}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E97AF5C-4FDF-4763-ABD6-8D4F82DFC571}.Debug|x86.ActiveCfg = Debug|Any CPU

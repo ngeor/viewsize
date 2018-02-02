@@ -3,6 +3,8 @@
 // </copyright>
 
 using System.Windows;
+using CRLFLabs.ViewSize.IoC;
+using CRLFLabs.ViewSize.Mvp;
 
 namespace WpfApp1
 {
@@ -11,5 +13,13 @@ namespace WpfApp1
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            ResolverContainer.Resolver.SetPostCreationAction<IMainModel>(r =>
+            {
+                r.Resolve<ModelSettingsFolderSync>();
+                r.Resolve<ModelSettingsRecentFoldersSync>();
+            });
+        }
     }
 }

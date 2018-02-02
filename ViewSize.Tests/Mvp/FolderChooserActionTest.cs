@@ -6,6 +6,7 @@ using CRLFLabs.ViewSize.Mvp;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using System;
 
 namespace ViewSize.Tests.Mvp
 {
@@ -31,7 +32,7 @@ namespace ViewSize.Tests.Mvp
 
                 action = new FolderChooserAction(
                     modelMock.Object,
-                    viewMock.Object);
+                    new Lazy<IFolderChooserView>(() => viewMock.Object));
             }
         }
 

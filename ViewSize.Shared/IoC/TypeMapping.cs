@@ -8,13 +8,16 @@ namespace CRLFLabs.ViewSize.IoC
 {
     public class TypeMapping
     {
-        public TypeMapping(Type actualType, bool singleton)
+        public TypeMapping(Type from, Type to, bool singleton)
         {
-            ActualType = actualType;
+            From = from;
+            To = to;
             Singleton = singleton;
         }
 
-        public Type ActualType { get; }
+        public Type From { get; }
+
+        public Type To { get; }
 
         public bool Singleton { get; }
     }

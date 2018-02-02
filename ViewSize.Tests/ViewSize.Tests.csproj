@@ -70,6 +70,10 @@
     <Compile Include="Drawing\RectangleDTest.cs" />
     <Compile Include="Drawing\SizeDTest.cs" />
     <Compile Include="FluentMoq.cs" />
+    <Compile Include="IoC\ISimple.cs" />
+    <Compile Include="IoC\OwnsISimple.cs" />
+    <Compile Include="IoC\OwnsSimple.cs" />
+    <Compile Include="IoC\Simple.cs" />
     <Compile Include="IO\FileSystemEntryTest.cs" />
     <Compile Include="IO\FolderScannerTest.cs" />
     <Compile Include="IoC\ResolverTest.cs" />

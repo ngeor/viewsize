@@ -44,8 +44,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModelObserver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModelSettingsObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\MenuPresenter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\ModelSettingsFolderSync.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mvp\ModelSettingsRecentFoldersSync.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase`1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\PresenterBase`2.cs" />
@@ -58,12 +62,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\DrawHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\PartialRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TreeMap\Renderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModelObserver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\MainModelSettingsObserver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\ModelSettingsRecentFoldersSync.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\ModelSettingsFolderSync.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Settings\" />
   </ItemGroup>
 </Project>

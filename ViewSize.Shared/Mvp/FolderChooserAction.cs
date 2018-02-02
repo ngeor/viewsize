@@ -2,11 +2,13 @@
 // Copyright (c) CRLFLabs. All rights reserved.
 // </copyright>
 
+using System;
+
 namespace CRLFLabs.ViewSize.Mvp
 {
     public class FolderChooserAction : IFolderChooserAction
     {
-        public FolderChooserAction(IMainModel model, IFolderChooserView view)
+        public FolderChooserAction(IMainModel model, Lazy<IFolderChooserView> view)
         {
             Model = model;
             View = view;
@@ -14,11 +16,11 @@ namespace CRLFLabs.ViewSize.Mvp
 
         public IMainModel Model { get; }
 
-        public IFolderChooserView View { get; }
+        public Lazy<IFolderChooserView> View { get; }
 
         public void SelectFolder()
         {
-            string folder = View.SelectFolder();
+            string folder = View.Value.SelectFolder();
             if (folder != null)
             {
                 Model.Folder = folder;

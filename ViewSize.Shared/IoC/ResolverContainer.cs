@@ -2,7 +2,6 @@
 // Copyright (c) CRLFLabs. All rights reserved.
 // </copyright>
 
-using CRLFLabs.ViewSize.IO;
 using CRLFLabs.ViewSize.Mvp;
 using CRLFLabs.ViewSize.Settings;
 
