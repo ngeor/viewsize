@@ -11,46 +11,49 @@ namespace ViewSize.Tests.IO
     [TestFixture]
     public class FileSystemEntryTest
     {
-        [Test]
-        public void Ancestors_Root_ShouldBeEmpty()
+        public class Ancestors
         {
-            // arrange
-            var entry = new FileSystemEntry("entry", null);
+            [Test]
+            public void RootShouldBeEmpty()
+            {
+                // arrange
+                var entry = new FileSystemEntry("entry", null);
 
-            // act
-            var ancestors = entry.Ancestors();
+                // act
+                var ancestors = entry.Ancestors();
 
-            // assert
-            Assert.IsFalse(ancestors.Any());
-        }
+                // assert
+                Assert.IsFalse(ancestors.Any());
+            }
 
-        [Test]
-        public void Ancestors_SingleAncestor_ShouldHaveOne()
-        {
-            // arrange
-            var parent = new FileSystemEntry("parent", null);
-            var entry = new FileSystemEntry("child", parent);
+            [Test]
+            public void SingleAncestorShouldHaveOne()
+            {
+                // arrange
+                var parent = new FileSystemEntry("parent", null);
+                var entry = new FileSystemEntry("child", parent);
 
-            // act
-            var ancestors = entry.Ancestors();
+                // act
+                var ancestors = entry.Ancestors();
 
-            // assert
-            CollectionAssert.AreEqual(new[] { parent }, ancestors);
-        }
+                // assert
+                CollectionAssert.AreEqual(new[] { parent }, ancestors);
+            }
 
-        [Test]
-        public void Ancestors_TwoAncestors_ShouldHaveNearestLast()
-        {
-            // arrange
-            var grandParent = new FileSystemEntry("grand parent", null);
-            var parent = new FileSystemEntry("parent", grandParent);
-            var entry = new FileSystemEntry("child", parent);
+            [Test]
+            public void TwoAncestorsShouldHaveNearestLast()
+            {
+                // arrange
+                var grandParent = new FileSystemEntry("grand parent", null);
+                var parent = new FileSystemEntry("parent", grandParent);
+                var entry = new FileSystemEntry("child", parent);
 
-            // act
-            var ancestors = entry.Ancestors();
+                // act
+                var ancestors = entry.Ancestors();
 
-            // assert
-            CollectionAssert.AreEqual(new[] { grandParent, parent }, ancestors);
+                // assert
+                CollectionAssert.AreEqual(new[] { grandParent, parent }, ancestors);
+            }
         }
     }
 }
