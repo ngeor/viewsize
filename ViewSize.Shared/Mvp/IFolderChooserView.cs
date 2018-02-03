@@ -14,7 +14,7 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <summary>
         /// Occurs when the user clicks the select folder button.
         /// </summary>
-        event EventHandler OnSelectFolderClick;
+        event EventHandler SelectFolderClick;
 
         /// <summary>
         /// Gets or sets the selected folder.

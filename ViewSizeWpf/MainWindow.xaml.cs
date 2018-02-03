@@ -51,11 +51,11 @@ namespace ViewSizeWpf
 
         public event EventHandler Load;
 
-        public event EventHandler OnBeginScanClick;
+        public event EventHandler BeginScanClick;
 
-        public event EventHandler OnCancelScanClick;
+        public event EventHandler CancelScanClick;
 
-        public event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+        public event EventHandler<FileSystemEventArgs> TreeViewSelectionChanged;
 
         public event EventHandler UpOneLevelClick;
 
@@ -147,12 +147,12 @@ namespace ViewSizeWpf
 
         private void btnScan_Click(object sender, RoutedEventArgs e)
         {
-            OnBeginScanClick?.Invoke(this, e);
+            BeginScanClick?.Invoke(this, e);
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            OnCancelScanClick?.Invoke(this, e);
+            CancelScanClick?.Invoke(this, e);
         }
 
         private void treeMap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -174,7 +174,7 @@ namespace ViewSizeWpf
                 return;
             }
 
-            OnTreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(fileSystemEntry));
+            TreeViewSelectionChanged?.Invoke(this, new FileSystemEventArgs(fileSystemEntry));
         }
 
         private void FileSizeTreeMap_CanExecute(object sender, CanExecuteRoutedEventArgs e)

@@ -4,16 +4,13 @@
 
 using System;
 using System.ComponentModel;
-using System.Linq;
-using CRLFLabs.ViewSize.IoC;
-using CRLFLabs.ViewSize.Settings;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
     /// <summary>
     /// Folder chooser presenter.
     /// </summary>
-    public class FolderChooserPresenter : PresenterBase<IFolderChooserView, IMainModel>, IFolderChooserPresenter
+    public class FolderChooserPresenter : PresenterBase<IFolderChooserView, IMainModel>
     {
         public FolderChooserPresenter(
             IFolderChooserView view,
@@ -46,12 +43,7 @@ namespace CRLFLabs.ViewSize.Mvp
 
         private void SubscribeToViewEvents()
         {
-            View.OnSelectFolderClick += View_OnSelectFolderClick;
-        }
-
-        private void View_OnSelectFolderClick(object sender, EventArgs e)
-        {
-            FolderChooserAction.SelectFolder();
+            View.SelectFolderClick += (_, e) => FolderChooserAction.SelectFolder();
         }
 
         private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -4,7 +4,6 @@
 
 using System;
 using CRLFLabs.ViewSize.Mvp;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -44,7 +43,7 @@ namespace ViewSize.Tests.Mvp
         {
         }
 
-        public class OnSelectFolderClick : Base
+        public class SelectFolderClick : Base
         {
             [SetUp]
             public new void SetUp()
@@ -53,7 +52,7 @@ namespace ViewSize.Tests.Mvp
                 viewMock.Setup(v => v.SelectFolder()).Returns("some path");
 
                 // act
-                viewMock.Raise(v => v.OnSelectFolderClick += null, EventArgs.Empty);
+                viewMock.Raise(v => v.SelectFolderClick += null, EventArgs.Empty);
             }
 
             [Test]

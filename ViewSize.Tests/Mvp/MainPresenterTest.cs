@@ -39,7 +39,7 @@ namespace ViewSize.Tests.Mvp
             }
         }
 
-        public class OnBeginScan : Base
+        public class BeginScanClick : Base
         {
             [Test]
             public void NoFolderSelected_ShouldShowError()
@@ -48,7 +48,7 @@ namespace ViewSize.Tests.Mvp
                 model.Folder = string.Empty;
 
                 // act
-                viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
+                viewMock.Raise(v => v.BeginScanClick += null, EventArgs.Empty);
 
                 // assert
                 viewMock.Verify(v => v.ShowError("No folder selected!"));
@@ -62,14 +62,14 @@ namespace ViewSize.Tests.Mvp
                 fileUtilsMock.Setup(f => f.IsDirectory("test")).Returns(false);
 
                 // act
-                viewMock.Raise(v => v.OnBeginScanClick += null, EventArgs.Empty);
+                viewMock.Raise(v => v.BeginScanClick += null, EventArgs.Empty);
 
                 // assert
                 viewMock.Verify(v => v.ShowError("Folder 'test' does not exist!"));
             }
         }
 
-        public class UpOneLevel : Base
+        public class UpOneLevelClick : Base
         {
             [Test]
             public void NoSelected_DoesNothing()

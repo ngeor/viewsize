@@ -18,12 +18,16 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPresenter"/> class.
         /// </summary>
+        /// <param name="view">The view.</param>
+        /// <param name="model">The model.</param>
+        /// <param name="folderScanner">The folder scanner.</param>
+        /// <param name="fileUtils">The file utilities.</param>
         public MainPresenter(IMainView view, IMainModel model, IFolderScanner folderScanner, IFileUtils fileUtils)
             : base(view, model)
         {
             FileUtils = fileUtils;
             FolderScanner = folderScanner;
-            FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(_folderScanner_Scanning);
+            FolderScanner.Scanning += EventThrottler<FileSystemEventArgs>.Throttle(Scanning);
 
             Model.PropertyChanging += Model_PropertyChanging;
             Model.PropertyChanged += Model_PropertyChanged;
@@ -36,19 +40,19 @@ namespace CRLFLabs.ViewSize.Mvp
         protected override void OnViewLoad(object sender, EventArgs e)
         {
             base.OnViewLoad(sender, e);
-            View.OnBeginScanClick += View_OnBeginScanClick;
-            View.OnCancelScanClick += View_OnCancelScanClick;
-            View.OnTreeViewSelectionChanged += View_OnTreeViewSelectionChanged;
-            View.UpOneLevelClick += View_UpOneLevelClick;
-            View.UpOneLevelCanExecute += View_UpOneLevelCanExecute;
+            View.BeginScanClick += BeginScanClick;
+            View.CancelScanClick += CancelScanClick;
+            View.TreeViewSelectionChanged += TreeViewSelectionChanged;
+            View.UpOneLevelClick += UpOneLevelClick;
+            View.UpOneLevelCanExecute += UpOneLevelCanExecute;
         }
 
-        private void View_UpOneLevelCanExecute(object sender, CanExecuteEventArgs e)
+        private void UpOneLevelCanExecute(object sender, CanExecuteEventArgs e)
         {
             e.CanExecute = Model.Selected?.Parent != null;
         }
 
-        private void View_UpOneLevelClick(object sender, EventArgs e)
+        private void UpOneLevelClick(object sender, EventArgs e)
         {
             var parent = Model.Selected?.Parent;
             if (parent != null)
@@ -58,7 +62,7 @@ namespace CRLFLabs.ViewSize.Mvp
             }
         }
 
-        private void View_OnBeginScanClick(object sender, EventArgs e)
+        private void BeginScanClick(object sender, EventArgs e)
         {
             string path = Model.Folder;
             if (string.IsNullOrWhiteSpace(path))
@@ -121,12 +125,12 @@ namespace CRLFLabs.ViewSize.Mvp
             });
         }
 
-        private void View_OnCancelScanClick(object sender, EventArgs e)
+        private void CancelScanClick(object sender, EventArgs e)
         {
             FolderScanner.Cancel();
         }
 
-        private void View_OnTreeViewSelectionChanged(object sender, FileSystemEventArgs e)
+        private void TreeViewSelectionChanged(object sender, FileSystemEventArgs e)
         {
             Model.Selected = e.FileSystemEntry;
         }
@@ -148,7 +152,12 @@ namespace CRLFLabs.ViewSize.Mvp
             }
         }
 
-        private void _folderScanner_Scanning(object sender, FileSystemEventArgs e)
+        /// <summary>
+        /// Called when folder scanner scans a new item and updates the UI accordingly.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">Event arguments.</param>
+        private void Scanning(object sender, FileSystemEventArgs e)
         {
             View.RunOnGuiThread(() =>
             {

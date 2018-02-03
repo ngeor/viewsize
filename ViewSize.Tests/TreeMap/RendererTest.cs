@@ -102,7 +102,7 @@ namespace ViewSize.Tests.TreeMap
         [Category("Performance")]
         public void TestPerformance()
         {
-            const string path = @"C:\\Users\\ngeor\\Projects\\crlflabs";
+            const string path = @"C:\\Users\\ngeor\\Projects\\bitbucket\\viewsize";
             const int iterations = 100;
 
             FolderScanner fs = new FolderScanner(new FileUtils());

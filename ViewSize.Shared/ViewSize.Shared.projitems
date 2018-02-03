@@ -35,11 +35,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\FolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IApplicationView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserAction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IFolderChooserView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMainView.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuPresenter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IMenuView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\IRecentFoldersView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mvp\ITreeMapView.cs" />

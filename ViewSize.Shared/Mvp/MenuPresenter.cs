@@ -7,7 +7,7 @@ using CRLFLabs.ViewSize.IO;
 
 namespace CRLFLabs.ViewSize.Mvp
 {
-    public class MenuPresenter : PresenterBase<IMenuView, IMainModel>, IMenuPresenter
+    public class MenuPresenter : PresenterBase<IMenuView, IMainModel>
     {
         public MenuPresenter(
             IMenuView view,

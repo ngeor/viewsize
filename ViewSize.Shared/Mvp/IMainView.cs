@@ -15,17 +15,17 @@ namespace CRLFLabs.ViewSize.Mvp
         /// <summary>
         /// Occurs when the user wants to start the folder scan.
         /// </summary>
-        event EventHandler OnBeginScanClick;
+        event EventHandler BeginScanClick;
 
         /// <summary>
         /// Occurs when the user wants to abort the folder scan.
         /// </summary>
-        event EventHandler OnCancelScanClick;
+        event EventHandler CancelScanClick;
 
         /// <summary>
         /// Occurs when the user has selected a file system entry on the tree view.
         /// </summary>
-        event EventHandler<FileSystemEventArgs> OnTreeViewSelectionChanged;
+        event EventHandler<FileSystemEventArgs> TreeViewSelectionChanged;
 
         event EventHandler UpOneLevelClick;
 

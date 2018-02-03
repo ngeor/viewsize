@@ -24,7 +24,7 @@ namespace ViewSizeWpf
         }
 
         /// <inheritdoc/>
-        public event EventHandler OnSelectFolderClick;
+        public event EventHandler SelectFolderClick;
 
         public event EventHandler Load;
 
@@ -56,7 +56,7 @@ namespace ViewSizeWpf
 
         private void BtnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-            OnSelectFolderClick?.Invoke(this, EventArgs.Empty);
+            SelectFolderClick?.Invoke(this, EventArgs.Empty);
         }
 
         private void TxtFolder_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
